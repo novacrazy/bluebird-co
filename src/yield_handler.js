@@ -2,7 +2,6 @@
  * Created by Aaron on 7/3/2015.
  */
 
-import assert from 'assert';
 import Promise from 'bluebird';
 
 let yieldHandlers = [];
@@ -167,9 +166,12 @@ function toPromise( value, strict ) {
 }
 
 export function addYieldHandler( handler ) {
-    assert.strictEqual( typeof handler, 'function', 'handler must be a function' );
+    if( typeof handler !== 'function' ) {
+        throw new TypeError( 'yield handler is not a function' );
 
-    yieldHandlers.push( handler );
+    } else {
+        yieldHandlers.push( handler );
+    }
 }
 
 let addedYieldHandler = false;
