@@ -25,6 +25,9 @@ export function isGeneratorFunction( obj ) {
     }
 }
 
+class YieldException extends TypeError {
+}
+
 function objectToPromise( obj ) {
     var results = new obj.constructor();
     var promises = [];
@@ -145,6 +148,8 @@ function toPromise( value ) {
             } );
         }
 
+    } else {
+        throw new YieldException( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${value}"` );
     }
 }
 
@@ -156,7 +161,12 @@ if( !addedYieldHandler ) {
             return toPromise.call( this, value );
 
         } catch( err ) {
-            return Promise.reject( err );
+            if( err instanceof YieldException ) {
+                return void 0;
+
+            } else {
+                return Promise.reject( err );
+            }
         }
     } );
 
