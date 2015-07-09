@@ -61,10 +61,6 @@ function _inherits( subClass, superClass ) {
     }
 }
 
-var _assert = require( 'assert' );
-
-var _assert2 = _interopRequireDefault( _assert );
-
 var _bluebird = require( 'bluebird' );
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
@@ -185,14 +181,18 @@ function resolveGenerator( gen ) {
                     if( ret.done ) {
                         return resolve( ret.value );
                     } else {
-                        var value = toPromise.call( _this2, ret.value, true );
+                        try {
+                            var value = toPromise.call( _this2, ret.value, true );
 
-                        if( isThenable( value ) ) {
-                            return value.then( onFulfilled ).catch( onRejected );
-                        } else {
-                            var err = new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
-                                                     + ret.value + '"' );
+                            if( isThenable( value ) ) {
+                                return value.then( onFulfilled ).catch( onRejected );
+                            } else {
+                                var err = new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
+                                                         + ret.value + '"' );
 
+                                return onRejected( err );
+                            }
+                        } catch( err ) {
                             return onRejected( err );
                         }
                     }
@@ -281,9 +281,11 @@ function toPromise( value, strict ) {
 }
 
 function addYieldHandler( handler ) {
-    _assert2.default.strictEqual( typeof handler, 'function', 'handler must be a function' );
-
-    yieldHandlers.push( handler );
+    if( typeof handler !== 'function' ) {
+        throw new TypeError( 'yield handler is not a function' );
+    } else {
+        yieldHandlers.push( handler );
+    }
 }
 
 var addedYieldHandler = false;
