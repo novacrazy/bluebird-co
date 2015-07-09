@@ -131,12 +131,15 @@ function toPromise( value, strict ) {
             //Thunks
             return new Promise( ( resolve, reject ) => {
                 try {
-                    value.call( this, ( err, res ) => {
+                    value.call( this, ( err, ...res ) => {
                         if( err ) {
                             reject( err );
 
-                        } else {
+                        } else if( res.length > 1 ) {
                             resolve( res );
+
+                        } else {
+                            resolve( res[0] );
                         }
                     } );
 
