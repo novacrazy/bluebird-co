@@ -1,6 +1,6 @@
 {
   "name":            "bluebird-co",
-  "version":         "1.0.0",
+  "version":         "1.0.1",
   "description":     "A set of yield handlers for Bluebird coroutines",
   "main":            "index.js",
   "scripts":         {
@@ -15,6 +15,7 @@
     "async",
     "await",
     "es6",
+    "es7",
     "generators"
   ],
   "author":          "Aaron Trent <novacrazy@gmail.com>",
