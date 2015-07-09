@@ -47,6 +47,20 @@ myAsyncFunction().then(...);
 
 ##### For more examples, see the [tj/co README](https://github.com/tj/co/blob/master/Readme.md#examples) and the [Bluebird Coroutines API](https://github.com/petkaantonov/bluebird/blob/master/API.md#generators).
 
+## Overriding `co.wrap`
+In my own experience, mixing bluebird coroutines and co/co.wrap can result in less than savory stack traces and other things. Here is a simple way to override almost all common usages of the co library.
+
+```javascript
+var Promise = require('bluebird');
+var co = require('co');
+
+co.wrap = function(fn) {
+    return Promise.coroutine(fn);
+}
+```
+
+I've been using this method with Koa and a few other libraries for a while now and it seems to work. However, if a library invokes `co` directly, it will fail to replace that. 
+
 ## License
 
 The MIT License (MIT)
