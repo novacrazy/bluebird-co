@@ -70,7 +70,7 @@ function resolveGenerator( gen ) {
                     return resolve( ret.value );
 
                 } else {
-                    var value = toPromise.call( this, ret.value );
+                    var value = toPromise.call( this, ret.value, true );
 
                     if( isThenable( value ) ) {
                         return value.then( onFulfilled ).catch( onRejected );
