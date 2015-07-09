@@ -152,17 +152,15 @@ function toPromise( value ) {
 
 let addedYieldHandler = false;
 
-export default function addYieldHandler() {
-    if( !addedYieldHandler ) {
-        Promise.coroutine.addYieldHandler( function( value ) {
-            try {
-                return toPromise.call( this, value );
+if( !addedYieldHandler ) {
+    Promise.coroutine.addYieldHandler( function( value ) {
+        try {
+            return toPromise.call( this, value );
 
-            } catch( err ) {
-                return Promise.reject( err );
-            }
-        } );
+        } catch( err ) {
+            return Promise.reject( err );
+        }
+    } );
 
-        addedYieldHandler = true;
-    }
+    addedYieldHandler = true;
 }
