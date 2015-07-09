@@ -17,9 +17,9 @@ var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 
 var myAsyncFunction = Promise.coroutine(function*(){
-    var results = yield [Promise.delay(10).return(42), 
-                         fs.readFileAsync('somefile.txt', 'utf-8'), 
-                         [1, Promise.resolve(12)]];
+    var results = yield [Promise.delay( 10 ).return( 42 ),
+                         readFileAsync( 'index.js', 'utf-8' ),
+                         [Promise.resolve( 1 ), Promise.resolve( 12 )]];
     
     console.log(results); //[42, "somefile contents", [1, 12]]
 });
@@ -35,9 +35,9 @@ import {readFile} from 'fs';
 let readFileAsync = Promise.promisify(readFile);
 
 async function myAsyncFunction() {
-    let results = await [Promise.delay(10).return(42), 
-                         readFileAsync('somefile.txt', 'utf-8'), 
-                         [1, Promise.resolve(12)]];
+    let results = await [Promise.delay( 10 ).return( 42 ),
+                         readFileAsync( 'index.js', 'utf-8' ),
+                         [Promise.resolve( 1 ), Promise.resolve( 12 )]];
                          
     console.log(results); //[42, "somefile contents", [1, 12]]
 }
