@@ -11,6 +11,32 @@ Combined with [Babel's `bluebirdCoroutines`](http://babeljs.io/docs/advanced/tra
 ## Usage
 `require('bluebird-co')` and done.
 
+##### Usage in detail (to ensure everything works)
+
+`bluebird-co` works by requiring `bluebird` and calling `Bluebird.coroutine.addYieldHandler` to add the appropriate functionality. 
+
+However, to ensure everything works you will need to install `bluebird` before any other module, so it exists in your `node_modules` folder. Then when you install any other module, including `bluebird-co`, they will require the already installed copy of `bluebird` instead of installing another, independent copy in their own `node_modules` folder.
+
+Likewise, if you intend to override `co.wrap`, you will have to install `co` before any module that relies on `co`, that way `koa` and the like will use it instead of installing their own copy.
+
+Your package.json should look something like this:
+```json
+{
+    "...": "...",
+    "dependencies": {
+        "bluebird":     "^2.9.33",
+        "co":           "^4.5.4",
+        "bluebird-co":  "^1.0.2"
+    },
+    "...": "..."
+}
+```
+
+before installing any other module that relies on those.
+
+#####**NOTE**: Before you delete your package.json out of frustration
+You can achieve the desired state of your `node_modules` by simply installing `bluebird`, `co` optionally, then `bluebird-co`, saving them to your `package.json`, then deleting your `node_modules` folder. Then run `npm install`, and it'll install your dependencies without duplicates.
+
 ## Example coroutine
 ```javascript
 var Promise = require('bluebird');
