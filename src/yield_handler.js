@@ -77,9 +77,9 @@ function resolveGenerator( gen ) {
                         return value.then( onFulfilled ).catch( onRejected );
 
                     } else {
-                        return onRejected( new TypeError( 'You may only yield a function, promise, generator, array, or object, '
-                                                          + 'but the following object was passed: "'
-                                                          + String( ret.value ) + '"' ) );
+                        let err = new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` );
+
+                        return onRejected( err );
                     }
                 }
             };
@@ -114,7 +114,7 @@ function toPromise( value ) {
     } else if( Array.isArray( value ) ) {
         return Promise.all( value.map( toPromise, this ) );
 
-    } else if( typeof value === 'object' ) {
+    } else if( typeof value === 'object' && value !== null ) {
         if( isGenerator( value ) ) {
             return resolveGenerator.call( this, value );
 
@@ -145,8 +145,6 @@ function toPromise( value ) {
             } );
         }
 
-    } else {
-        return Promise.resolve( value );
     }
 }
 
