@@ -6,7 +6,7 @@ A set of yield handlers for Bluebird coroutines.
 ## Description
 This is a port of [tj/co](https://github.com/tj/co) generator coroutines to [bluebird](https://github.com/petkaantonov/bluebird) using [Bluebird.addYieldHandler](https://github.com/petkaantonov/bluebird/blob/master/API.md#promisecoroutineaddyieldhandlerfunction-handler---void) to add in a yield handler that can transform all the types of yieldable values tj/co can into normal promises to resolve.
 
-Combined with [Babel's `bluebirdCoroutines`](http://babeljs.io/docs/advanced/transformers/other/bluebird-coroutines/) transformer, you can write easy and compresensive `async/await` functions.
+Combined with [Babel's `bluebirdCoroutines`](http://babeljs.io/docs/advanced/transformers/other/bluebird-coroutines/) transformer, you can write easy and comprehensive `async/await` functions.
 
 ## Usage
 `require('bluebird-co')` and done.
