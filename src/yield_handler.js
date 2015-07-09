@@ -106,26 +106,14 @@ function resolveGenerator( gen ) {
     } );
 }
 
-function toPromise( value ) {
-    try {
-        return toPromiseTop( value );
-
-    } catch( err ) {
-        if( err instanceof YieldException ) {
-            return Promise.resolve( value );
-
-        } else {
-            return Promise.reject( err );
-        }
-    }
-}
-
-function toPromiseTop( value ) {
+function toPromise( value, strict ) {
     if( isThenable( value ) ) {
         return value;
 
     } else if( Array.isArray( value ) ) {
-        return Promise.all( value.map( toPromise, this ) );
+        return Promise.all( value.map( val => {
+            return toPromise.call( this, val );
+        } ) );
 
     } else if( typeof value === 'object' && value !== null ) {
         if( isGenerator( value ) ) {
@@ -167,8 +155,11 @@ function toPromiseTop( value ) {
             }
         }
 
-    } else {
+    } else if( strict ) {
         throw new YieldException( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${value}"` );
+
+    } else {
+        return Promise.resolve( value );
     }
 }
 
@@ -183,7 +174,7 @@ let addedYieldHandler = false;
 if( !addedYieldHandler ) {
     Promise.coroutine.addYieldHandler( function( value ) {
         try {
-            return toPromiseTop.call( this, value );
+            return toPromise.call( this, value, true );
 
         } catch( err ) {
             if( err instanceof YieldException ) {
@@ -199,8 +190,9 @@ if( !addedYieldHandler ) {
 }
 
 export default {
-    addYieldHandler,
-    isThenable,
-    isGenerator,
-    isGeneratorFunction
+               addYieldHandler,
+               isThenable,
+    isPromise: isThenable,
+               isGenerator,
+               isGeneratorFunction
 };
