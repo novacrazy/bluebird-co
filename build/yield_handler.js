@@ -185,7 +185,7 @@ function resolveGenerator( gen ) {
                     if( ret.done ) {
                         return resolve( ret.value );
                     } else {
-                        var value = toPromise.call( _this2, ret.value );
+                        var value = toPromise.call( _this2, ret.value, true );
 
                         if( isThenable( value ) ) {
                             return value.then( onFulfilled ).catch( onRejected );
@@ -226,11 +226,18 @@ function toPromise( value, strict ) {
             //Thunks
             return new _bluebird2.default( function( resolve, reject ) {
                 try {
-                    value.call( _this3, function( err, res ) {
+                    value.call( _this3, function( err ) {
+                        for( var _len = arguments.length, res = Array( _len > 1 ? _len - 1 : 0 ), _key = 1; _key < _len;
+                             _key++ ) {
+                            res[_key - 1] = arguments[_key];
+                        }
+
                         if( err ) {
                             reject( err );
-                        } else {
+                        } else if( res.length > 1 ) {
                             resolve( res );
+                        } else {
+                            resolve( res[0] );
                         }
                     } );
                 } catch( err ) {
