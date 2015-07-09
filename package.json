@@ -1,6 +1,6 @@
 {
   "name":            "bluebird-co",
-  "version":         "1.0.1",
+  "version":         "1.0.2",
   "description":     "A set of yield handlers for Bluebird coroutines",
   "main":            "index.js",
   "scripts":         {
@@ -20,6 +20,13 @@
   ],
   "author":          "Aaron Trent <novacrazy@gmail.com>",
   "license":         "MIT",
+  "repository":      {
+    "type": "git",
+    "url":  "https://github.com/novacrazy/bluebird-co"
+  },
+  "bugs":            {
+    "url": "https://github.com/novacrazy/bluebird-co/issues"
+  },
   "dependencies":    {
     "bluebird": "^2.9.32"
   },
