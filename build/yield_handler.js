@@ -32,15 +32,44 @@ exports.__esModule = true;
 exports.isThenable = isThenable;
 exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
-exports.default = addYieldHandler;
+exports.addYieldHandler = addYieldHandler;
 
 function _interopRequireDefault( obj ) {
     return obj && obj.__esModule ? obj : {'default': obj};
 }
 
+function _classCallCheck( instance, Constructor ) {
+    if( !(instance instanceof Constructor) ) {
+        throw new TypeError( 'Cannot call a class as a function' );
+    }
+}
+
+function _inherits( subClass, superClass ) {
+    if( typeof superClass !== 'function' && superClass !== null ) {
+        throw new TypeError( 'Super expression must either be null or a function, not ' + typeof superClass );
+    }
+    subClass.prototype = Object.create( superClass && superClass.prototype, {
+        constructor: {
+            value:        subClass,
+            enumerable:   false,
+            writable:     true,
+            configurable: true
+        }
+    } );
+    if( superClass ) {
+        subClass.__proto__ = superClass;
+    }
+}
+
+var _assert = require( 'assert' );
+
+var _assert2 = _interopRequireDefault( _assert );
+
 var _bluebird = require( 'bluebird' );
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
+
+var yieldHandlers = [];
 
 function isThenable( obj ) {
     return obj !== void 0 && obj !== null && (obj instanceof _bluebird2.default || typeof obj.then === 'function');
@@ -60,55 +89,70 @@ function isGeneratorFunction( obj ) {
     }
 }
 
+var YieldException = (function( _TypeError ) {
+    function YieldException() {
+        _classCallCheck( this, YieldException );
+
+        _TypeError.apply( this, arguments );
+    }
+
+    _inherits( YieldException, _TypeError );
+
+    return YieldException;
+})( TypeError );
+
 function objectToPromise( obj ) {
+    var _this = this;
+
     var results = new obj.constructor();
     var promises = [];
 
-    for( var _iterator = Object.keys( obj ), _isArray = Array.isArray( _iterator ), _i = 0, _iterator = _isArray ?
-                                                                                                        _iterator :
-                                                                                                        _iterator[Symbol.iterator](); ; ) {
-        var _ref;
-
+    var _loop = function() {
         if( _isArray ) {
             if( _i >= _iterator.length ) {
-                break;
+                return 'break';
             }
             _ref = _iterator[_i++];
         } else {
             _i = _iterator.next();
             if( _i.done ) {
-                break;
+                return 'break';
             }
             _ref = _i.value;
         }
 
         var key = _ref;
 
-        var promise = toPromise.call( this, obj[key] );
+        var promise = toPromise.call( _this, obj[key] );
 
         if( promise && isThenable( promise ) ) {
-            defer( promise, key );
+            results[key] = void 0;
+
+            promises.push( promise.then( function( res ) {
+                results[key] = res;
+            } ) );
         } else {
             results[key] = obj[key];
         }
+    };
+
+    for( var _iterator = Object.keys( obj ), _isArray = Array.isArray( _iterator ), _i = 0, _iterator = _isArray ?
+                                                                                                        _iterator :
+                                                                                                        _iterator[Symbol.iterator](); ; ) {
+        var _ref;
+
+        var _ret = _loop();
+
+        if( _ret === 'break' ) {
+            break;
+        }
     }
 
-    return _bluebird2.default.all( promises ).then( function() {
-        return results;
-    } );
-
-    function defer( promise, key ) {
-        // predefine the key in the result
-        results[key] = void 0;
-
-        promises.push( promise.then( function( res ) {
-            return results[key] = res;
-        } ) );
-    }
+    return _bluebird2.default.all( promises ).return( results );
 }
 
 function resolveGenerator( gen ) {
-    var _this = this;
+    var _this2 = this;
 
     return new _bluebird2.default( function( resolve, reject ) {
 
@@ -141,14 +185,15 @@ function resolveGenerator( gen ) {
                     if( ret.done ) {
                         return resolve( ret.value );
                     } else {
-                        var value = toPromise.call( _this, ret.value );
+                        var value = toPromise.call( _this2, ret.value );
 
                         if( isThenable( value ) ) {
                             return value.then( onFulfilled ).catch( onRejected );
                         } else {
-                            return onRejected( new TypeError( 'You may only yield a function, promise, generator, array, or object, '
-                                                              + 'but the following object was passed: "'
-                                                              + String( ret.value ) + '"' ) );
+                            var err = new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
+                                                     + ret.value + '"' );
+
+                            return onRejected( err );
                         }
                     }
                 };
@@ -159,14 +204,16 @@ function resolveGenerator( gen ) {
     } );
 }
 
-function toPromise( value ) {
-    var _this2 = this;
+function toPromise( value, strict ) {
+    var _this3 = this;
 
     if( isThenable( value ) ) {
         return value;
     } else if( Array.isArray( value ) ) {
-        return _bluebird2.default.all( value.map( toPromise, this ) );
-    } else if( typeof value === 'object' ) {
+        return _bluebird2.default.all( value.map( function( val ) {
+            return toPromise.call( _this3, val );
+        } ) );
+    } else if( typeof value === 'object' && value !== null ) {
         if( isGenerator( value ) ) {
             return resolveGenerator.call( this, value );
         } else {
@@ -179,7 +226,7 @@ function toPromise( value ) {
             //Thunks
             return new _bluebird2.default( function( resolve, reject ) {
                 try {
-                    value.call( _this2, function( err, res ) {
+                    value.call( _this3, function( err, res ) {
                         if( err ) {
                             reject( err );
                         } else {
@@ -191,23 +238,69 @@ function toPromise( value ) {
                 }
             } );
         }
+    } else if( yieldHandlers.length > 0 ) {
+        for( var _iterator2 = yieldHandlers, _isArray2 = Array.isArray( _iterator2 ), _i2 = 0, _iterator2 = _isArray2 ?
+                                                                                                            _iterator2 :
+                                                                                                            _iterator2[Symbol.iterator](); ; ) {
+            var _ref2;
+
+            if( _isArray2 ) {
+                if( _i2 >= _iterator2.length ) {
+                    break;
+                }
+                _ref2 = _iterator2[_i2++];
+            } else {
+                _i2 = _iterator2.next();
+                if( _i2.done ) {
+                    break;
+                }
+                _ref2 = _i2.value;
+            }
+
+            var handler = _ref2;
+
+            var res = handler.call( this, value );
+
+            if( isThenable( res ) ) {
+                return res;
+            }
+        }
+    } else if( strict ) {
+        throw new YieldException( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
+                                  + value + '"' );
     } else {
         return _bluebird2.default.resolve( value );
     }
 }
 
+function addYieldHandler( handler ) {
+    _assert2.default.strictEqual( typeof handler, 'function', 'handler must be a function' );
+
+    yieldHandlers.push( handler );
+}
+
 var addedYieldHandler = false;
 
-function addYieldHandler() {
-    if( !addedYieldHandler ) {
-        _bluebird2.default.coroutine.addYieldHandler( function( value ) {
-            try {
-                return toPromise.call( this, value );
-            } catch( err ) {
+if( !addedYieldHandler ) {
+    _bluebird2.default.coroutine.addYieldHandler( function( value ) {
+        try {
+            return toPromise.call( this, value, true );
+        } catch( err ) {
+            if( err instanceof YieldException ) {
+                return void 0;
+            } else {
                 return _bluebird2.default.reject( err );
             }
-        } );
+        }
+    } );
 
-        addedYieldHandler = true;
-    }
+    addedYieldHandler = true;
 }
+
+exports.default = {
+    addYieldHandler:     addYieldHandler,
+    isThenable:          isThenable,
+    isPromise:           isThenable,
+    isGenerator:         isGenerator,
+    isGeneratorFunction: isGeneratorFunction
+};
