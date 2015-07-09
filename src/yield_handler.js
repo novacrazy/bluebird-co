@@ -2,13 +2,10 @@
  * Created by Aaron on 7/3/2015.
  */
 
+import assert from 'assert';
 import Promise from 'bluebird';
 
-let strictPromises = false;
-
-export function strict( enable = true ) {
-    strictPromises = !!enable;
-}
+let yieldHandlers = [];
 
 export function isThenable( obj ) {
     return obj !== void 0 && obj !== null && (obj instanceof Promise || typeof obj.then === 'function');
@@ -110,6 +107,20 @@ function resolveGenerator( gen ) {
 }
 
 function toPromise( value ) {
+    try {
+        return toPromiseTop( value );
+
+    } catch( err ) {
+        if( err instanceof YieldException ) {
+            return Promise.resolve( value );
+
+        } else {
+            return Promise.reject( err );
+        }
+    }
+}
+
+function toPromiseTop( value ) {
     if( isThenable( value ) ) {
         return value;
 
@@ -147,12 +158,24 @@ function toPromise( value ) {
             } );
         }
 
-    } else if( strictPromises ) {
-        throw new YieldException( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${value}"` );
+    } else if( yieldHandlers.length > 0 ) {
+        for( let handler of yieldHandlers ) {
+            let res = handler.call( this, value );
+
+            if( isThenable( res ) ) {
+                return res;
+            }
+        }
 
     } else {
-        return Promise.resolve( value );
+        throw new YieldException( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${value}"` );
     }
+}
+
+export function addYieldHandler( handler ) {
+    assert.strictEqual( typeof handler, 'function', 'handler must be a function' );
+
+    yieldHandlers.push( handler );
 }
 
 let addedYieldHandler = false;
@@ -160,7 +183,7 @@ let addedYieldHandler = false;
 if( !addedYieldHandler ) {
     Promise.coroutine.addYieldHandler( function( value ) {
         try {
-            return toPromise.call( this, value );
+            return toPromiseTop.call( this, value );
 
         } catch( err ) {
             if( err instanceof YieldException ) {
@@ -174,3 +197,10 @@ if( !addedYieldHandler ) {
 
     addedYieldHandler = true;
 }
+
+export default {
+    addYieldHandler,
+    isThenable,
+    isGenerator,
+    isGeneratorFunction
+};
