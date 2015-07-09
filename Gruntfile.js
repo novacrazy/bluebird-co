@@ -33,8 +33,7 @@ module.exports = function( grunt ) {
                     optional:  [
                         'spec.undefinedToVoid',
                         'minification.constantFolding',
-                        'minification.propertyLiterals',
-                        'bluebirdCoroutines'
+                        'minification.propertyLiterals'
                     ]
                 },
                 files:   [{
@@ -57,7 +56,8 @@ module.exports = function( grunt ) {
                         'runtime',
                         'spec.undefinedToVoid',
                         'minification.constantFolding',
-                        'minification.propertyLiterals'
+                        'minification.propertyLiterals',
+                        'bluebirdCoroutines'
                     ]
                 },
                 files:   [{
