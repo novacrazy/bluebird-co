@@ -4,6 +4,12 @@
 
 import Promise from 'bluebird';
 
+let strictPromises = false;
+
+export function strict( enable = true ) {
+    strictPromises = !!enable;
+}
+
 export function isThenable( obj ) {
     return obj !== void 0 && obj !== null && (obj instanceof Promise || typeof obj.then === 'function');
 }
@@ -33,28 +39,21 @@ function objectToPromise( obj ) {
     var promises = [];
 
     for( let key of Object.keys( obj ) ) {
-        var promise = toPromise.call( this, obj[key] );
+        let promise = toPromise.call( this, obj[key] );
 
         if( promise && isThenable( promise ) ) {
-            defer( promise, key );
+            results[key] = void 0;
+
+            promises.push( promise.then( function( res ) {
+                results[key] = res;
+            } ) );
 
         } else {
             results[key] = obj[key];
         }
     }
 
-    return Promise.all( promises ).then( () => {
-        return results;
-    } );
-
-    function defer( promise, key ) {
-        // predefine the key in the result
-        results[key] = void 0;
-
-        promises.push( promise.then( function( res ) {
-            return results[key] = res;
-        } ) );
-    }
+    return Promise.all( promises ).return( results );
 }
 
 function resolveGenerator( gen ) {
@@ -148,8 +147,11 @@ function toPromise( value ) {
             } );
         }
 
-    } else {
+    } else if( strictPromises ) {
         throw new YieldException( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${value}"` );
+
+    } else {
+        return Promise.resolve( value );
     }
 }
 
