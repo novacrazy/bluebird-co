@@ -233,7 +233,7 @@ function toPromise( value, strict ) {
         }
     } else if( typeof value === 'function' ) {
         if( isGeneratorFunction( value ) ) {
-            return _bluebird2.default.coroutine( value )();
+            return _bluebird2.default.coroutine( value ).call( this );
         } else {
             //Thunks
             return new _bluebird2.default( function( resolve, reject ) {

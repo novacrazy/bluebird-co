@@ -133,7 +133,7 @@ function toPromise( value, strict ) {
 
     } else if( typeof value === 'function' ) {
         if( isGeneratorFunction( value ) ) {
-            return Promise.coroutine( value )();
+            return Promise.coroutine( value ).call( this );
 
         } else {
             //Thunks
