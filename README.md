@@ -87,6 +87,63 @@ co.wrap = function(fn) {
 
 I've been using this method with Koa and a few other libraries for a while now and it seems to work. However, if a library invokes `co` directly, it will fail to replace that. 
 
+## Extra API
+
+#####`BluebirdCo.addYieldHandler(handler : Function)`
+Although this library comes with enough handlers for most occasions, you might need more specific handling of some types that the library cannot handle by default. `BluebirdCo.addYieldHandler` works basically the same as the normal `Bluebird.addYieldHandler` function but interoperates fully with the rest of BluebirdCo's handlers. 
+
+Example:
+```javascript
+import Promise from 'bluebird';
+import BluebirdCo from 'bluebird-co'; //Automatically adds most yield handlers
+
+class MyModel {
+    async function fetch() {
+        //some async work...
+    }
+}
+
+BluebirdCo.addYieldHandler(value => {
+    if(value instanceof MyModel) {
+        return value.fetch();
+    }
+});
+
+async function getData() {
+    let data = await {
+        model1: new MyModel('something'),
+        model2: [new MyModel(1), new MyModel(2)]
+    };
+    
+    console.log(data); //{model1: 'something result', model2: ['result 1', 'result 2']}
+}
+
+getData().then(...);
+```
+
+you get the idea.
+
+The normal behavior when yielding unknown values is either to throw an error if it's on the top level (the object in the above example), or to silently ignore it and return it unchanged if it was within an array or object, etc. 
+
+Adding a custom yield handler would allow you to define new behavior for handling unknown types, like automatically fetching data from models in the above example.
+
+-----
+#####`BluebirdCo.isThenable(value : any)` -> `boolean`
+Alias: `isPromise`
+
+Return true if the value has a `.then` function or is an instance of `Promise`
+
+-----
+#####`BluebirdCo.isGenerator(value : any)` -> `boolean`
+
+Returns true if the value is an instance of a generator.
+
+-----
+#####`BluebirdCo.isGeneratorFunction(value : any)` -> `boolean`
+
+Returns true if the value is a generator function that when called will create a new generator instance.
+
+-----
 ## License
 
 The MIT License (MIT)
