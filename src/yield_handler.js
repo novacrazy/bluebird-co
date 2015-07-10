@@ -10,6 +10,8 @@ export function isThenable( obj ) {
     return obj !== void 0 && obj !== null && (obj instanceof Promise || typeof obj.then === 'function');
 }
 
+export let isPromise = isThenable;
+
 export function isGenerator( obj ) {
     return 'function' === typeof obj.next && 'function' === typeof obj.throw;
 }
@@ -205,9 +207,9 @@ if( !addedYieldHandler ) {
 }
 
 export default {
-               addYieldHandler,
-               isThenable,
-    isPromise: isThenable,
-               isGenerator,
-               isGeneratorFunction
+    addYieldHandler,
+    isThenable,
+    isPromise,
+    isGenerator,
+    isGeneratorFunction
 };
