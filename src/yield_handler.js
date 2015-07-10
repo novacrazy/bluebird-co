@@ -165,8 +165,9 @@ function toPromise( value, strict ) {
                 return res;
             }
         }
+    }
 
-    } else if( strict ) {
+    if( strict ) {
         throw new YieldException( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${value}"` );
 
     } else {
