@@ -34,13 +34,15 @@ function objectToPromise( obj ) {
     var results = new obj.constructor();
     var promises = [];
 
-    for( let key of Object.keys( obj ) ) {
-        let promise = toPromise.call( this, obj[key] );
+    let toPromiseThis = toPromise.bind( this );
 
-        if( promise && isThenable( promise ) ) {
+    for( let key of Object.keys( obj ) ) {
+        let promise = toPromiseThis( obj[key] );
+
+        if( isThenable( promise ) ) {
             results[key] = void 0;
 
-            promises.push( promise.then( function( res ) {
+            promises.push( promise.then( res => {
                 results[key] = res;
             } ) );
 
@@ -64,13 +66,15 @@ function resolveGenerator( gen ) {
             return Promise.resolve( gen );
 
         } else {
+            let toPromiseThis = toPromise.bind( this );
+
             let next = ret => {
                 if( ret.done ) {
                     return resolve( ret.value );
 
                 } else {
                     try {
-                        var value = toPromise.call( this, ret.value, true );
+                        var value = toPromiseThis( ret.value, true );
 
                         if( isThenable( value ) ) {
                             return value.then( onFulfilled ).catch( onRejected );
@@ -115,9 +119,9 @@ function toPromise( value, strict ) {
         return value;
 
     } else if( Array.isArray( value ) ) {
-        return Promise.all( value.map( val => {
-            return toPromise.call( this, val );
-        } ) );
+        let toPromiseThis = toPromise.bind( this );
+
+        return Promise.all( value.map( val => toPromiseThis( val ) ) );
 
     } else if( typeof value === 'object' && value !== null ) {
         if( isGenerator( value ) ) {

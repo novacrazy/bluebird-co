@@ -98,10 +98,10 @@ var YieldException = (function( _TypeError ) {
 })( TypeError );
 
 function objectToPromise( obj ) {
-    var _this = this;
-
     var results = new obj.constructor();
     var promises = [];
+
+    var toPromiseThis = toPromise.bind( this );
 
     var _loop = function() {
         if( _isArray ) {
@@ -119,9 +119,9 @@ function objectToPromise( obj ) {
 
         var key = _ref;
 
-        var promise = toPromise.call( _this, obj[key] );
+        var promise = toPromiseThis( obj[key] );
 
-        if( promise && isThenable( promise ) ) {
+        if( isThenable( promise ) ) {
             results[key] = void 0;
 
             promises.push( promise.then( function( res ) {
@@ -148,7 +148,7 @@ function objectToPromise( obj ) {
 }
 
 function resolveGenerator( gen ) {
-    var _this2 = this;
+    var _this = this;
 
     return new _bluebird2.default( function( resolve, reject ) {
 
@@ -177,12 +177,14 @@ function resolveGenerator( gen ) {
                     }
                 };
 
+                var toPromiseThis = toPromise.bind( _this );
+
                 var next = function next( ret ) {
                     if( ret.done ) {
                         return resolve( ret.value );
                     } else {
                         try {
-                            var value = toPromise.call( _this2, ret.value, true );
+                            var value = toPromiseThis( ret.value, true );
 
                             if( isThenable( value ) ) {
                                 return value.then( onFulfilled ).catch( onRejected );
@@ -205,14 +207,24 @@ function resolveGenerator( gen ) {
 }
 
 function toPromise( value, strict ) {
-    var _this3 = this;
+    var _this2 = this;
 
     if( isThenable( value ) ) {
         return value;
     } else if( Array.isArray( value ) ) {
-        return _bluebird2.default.all( value.map( function( val ) {
-            return toPromise.call( _this3, val );
-        } ) );
+        var _ret3 = (function() {
+            var toPromiseThis = toPromise.bind( _this2 );
+
+            return {
+                v: _bluebird2.default.all( value.map( function( val ) {
+                    return toPromiseThis( val );
+                } ) )
+            };
+        })();
+
+        if( typeof _ret3 === 'object' ) {
+            return _ret3.v;
+        }
     } else if( typeof value === 'object' && value !== null ) {
         if( isGenerator( value ) ) {
             return resolveGenerator.call( this, value );
@@ -226,7 +238,7 @@ function toPromise( value, strict ) {
             //Thunks
             return new _bluebird2.default( function( resolve, reject ) {
                 try {
-                    value.call( _this3, function( err ) {
+                    value.call( _this2, function( err ) {
                         for( var _len = arguments.length, res = Array( _len > 1 ? _len - 1 : 0 ), _key = 1; _key < _len;
                              _key++ ) {
                             res[_key - 1] = arguments[_key];
@@ -307,9 +319,9 @@ if( !addedYieldHandler ) {
 }
 
 exports.default = {
-    addYieldHandler:     addYieldHandler,
-    isThenable:          isThenable,
-    isPromise:           isThenable,
-    isGenerator:         isGenerator,
+    addYieldHandler: addYieldHandler,
+    isThenable:      isThenable,
+    isPromise:       isThenable,
+    isGenerator:     isGenerator,
     isGeneratorFunction: isGeneratorFunction
 };
