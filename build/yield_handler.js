@@ -32,7 +32,6 @@ exports.__esModule = true;
 exports.isThenable = isThenable;
 exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
-exports.isNativeObject = isNativeObject;
 exports.addYieldHandler = addYieldHandler;
 
 function _interopRequireDefault( obj ) {
@@ -369,6 +368,5 @@ exports.default = {
     isThenable:          isThenable,
     isPromise:           isPromise,
     isGenerator:         isGenerator,
-    isGeneratorFunction: isGeneratorFunction,
-    isNativeObject:      isNativeObject
+    isGeneratorFunction: isGeneratorFunction
 };

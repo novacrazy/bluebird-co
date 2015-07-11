@@ -29,7 +29,7 @@ export function isGeneratorFunction( obj ) {
     }
 }
 
-export function isNativeObject( obj ) {
+function isNativeObject( obj ) {
     if( !obj.constructor ) {
         return true;
 
@@ -235,6 +235,5 @@ export default {
     isThenable,
     isPromise,
     isGenerator,
-    isGeneratorFunction,
-    isNativeObject
+    isGeneratorFunction
 };
