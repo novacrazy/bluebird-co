@@ -40,7 +40,7 @@ function isNativeObject( obj ) {
     } else {
         let p = obj.constructor.prototype;
 
-        return !!(!p.constructor || 'Object' === p.constructor.name);
+        return p && !!(!p.constructor || 'Object' === p.constructor.name);
     }
 }
 
