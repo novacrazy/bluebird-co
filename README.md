@@ -144,14 +144,10 @@ Returns true if the value is an instance of a generator.
 Returns true if the value is a generator function that when called will create a new generator instance.
 
 -----
-#####`BluebirdCo.isNativeObject(value : any)` -> `boolean`
-
-Returns true if the value is an Object created by `{}`, `Object.create(...)` and so forth, but returns false if the object is an instance of a class.
-
-It does NOT work if the value overwrites the `constructor` property.
-
------
 ## Changelog
+#####1.1.1
+* Don't export `isNativeObject`, because it isn't generic enough to use in most places, only internally under the right circumstances.
+
 #####1.1.0
 * Differentiate between native objects and class instances. Fixes `addYieldHandler` functionality when used with class instances, but does not accept class instances as objects when there is not a handler for them.
 
