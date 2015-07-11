@@ -145,6 +145,9 @@ Returns true if the value is a generator function that when called will create a
 
 -----
 ## Changelog
+#####1.1.2 - 1.1.3
+* Optimizations and bugfixes
+
 #####1.1.1
 * Don't export `isNativeObject`, because it isn't generic enough to use in most places, only internally under the right circumstances.
 
