@@ -170,7 +170,7 @@ function resolveGenerator( gen ) {
     return new _bluebird2.default( function( resolve, reject ) {
         var toPromiseThis = toPromise.bind( _this );
 
-        var next = function next( ret ) {
+        function next( ret ) {
             if( ret.done ) {
                 return resolve( ret.value );
             } else {
@@ -178,7 +178,7 @@ function resolveGenerator( gen ) {
                     var value = toPromiseThis( ret.value, true );
 
                     if( isThenable( value ) ) {
-                        return value.then( onFulfilled ).catch( onRejected );
+                        return value.then( onFulfilled, onRejected );
                     } else {
                         var err = new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
                                                  + ret.value + '"' );
@@ -189,7 +189,7 @@ function resolveGenerator( gen ) {
                     return onRejected( err );
                 }
             }
-        };
+        }
 
         function onFulfilled( res ) {
             try {

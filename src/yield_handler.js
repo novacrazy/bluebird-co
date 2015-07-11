@@ -75,7 +75,7 @@ function resolveGenerator( gen ) {
     return new Promise( ( resolve, reject ) => {
         let toPromiseThis = toPromise.bind( this );
 
-        let next = ret => {
+        function next( ret ) {
             if( ret.done ) {
                 return resolve( ret.value );
 
@@ -84,7 +84,7 @@ function resolveGenerator( gen ) {
                     let value = toPromiseThis( ret.value, true );
 
                     if( isThenable( value ) ) {
-                        return value.then( onFulfilled ).catch( onRejected );
+                        return value.then( onFulfilled, onRejected );
 
                     } else {
                         let err = new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` );
@@ -96,7 +96,7 @@ function resolveGenerator( gen ) {
                     return onRejected( err );
                 }
             }
-        };
+        }
 
         function onFulfilled( res ) {
             try {
