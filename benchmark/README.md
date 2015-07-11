@@ -10,7 +10,7 @@ Pull requests for new benchmarks are always welcome.
 Tested with io.js 2.3.0 on Windows 8, Intel i5-4690K at 3.9GHz with 32GB of memory.
 
 | Description                                        | Library     | Milliseconds | Iterations | op/s       |
-|----------------------------------------------------|-------------|--------------|------------|------------|
+|----------------------------------------------------|-------------|-------------:|-----------:|-----------:|
 | very short arrays (2 elements)                     | co          | 669.7        | 35,894     | 53,595.19  |
 |                                                    | bluebird-co | 648.9        | 109,088    | 168,119.04 |
 | short arrays (10 elements)                         | co          | 940.1        | 19,152     | 20,371.31  |
