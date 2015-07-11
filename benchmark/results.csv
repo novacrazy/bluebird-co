@@ -1,0 +1,24 @@
+2015-07-11 16:06:03,"very short arrays (2 elements)","co.wrap",669.724231,35894
+2015-07-11 16:06:03,"very short arrays (2 elements)","bluebird-co",648.873557,109088
+2015-07-11 16:06:03,"short arrays (10 elements)","co.wrap",940.145777,19152
+2015-07-11 16:06:03,"short arrays (10 elements)","bluebird-co",816.315001,98754
+2015-07-11 16:06:03,"long arrays (2000 elements)","co.wrap",1036.588959,100
+2015-07-11 16:06:03,"long arrays (2000 elements)","bluebird-co",534.888389,954
+2015-07-11 16:06:03,"small object (10 keys)","co.wrap",845.643512,13603
+2015-07-11 16:06:03,"small object (10 keys)","bluebird-co",703.553951,40586
+2015-07-11 16:06:03,"large objects (2000 keys)","co.wrap",1218.570608,100
+2015-07-11 16:06:03,"large objects (2000 keys)","bluebird-co",659.579616,390
+2015-07-11 16:06:03,"simple generators (10 iterations)","co.wrap",746.566896,59949
+2015-07-11 16:06:03,"simple generators (10 iterations)","bluebird-co",651.345784,68594
+2015-07-11 16:06:03,"long-running generators (1000 iterations)","co.wrap",523.004145,1397
+2015-07-11 16:06:03,"long-running generators (1000 iterations)","bluebird-co",557.176758,872
+2015-07-11 16:06:03,"complex generators (150 iterations * three layers)","co.wrap",17558.679111,200
+2015-07-11 16:06:03,"complex generators (150 iterations * three layers)","bluebird-co",1426.106014,200
+2015-07-11 16:06:03,"simple thunks (1 argument)","co.wrap",766.783569,167255
+2015-07-11 16:06:03,"simple thunks (1 argument)","bluebird-co",635.417035,325905
+2015-07-11 16:06:03,"thunks with many arguments (30 arguments)","co.wrap",973.097197,82966
+2015-07-11 16:06:03,"thunks with many arguments (30 arguments)","bluebird-co",718.110833,271882
+2015-07-11 16:06:03,"top level error handling","co.wrap",762.214191,98326
+2015-07-11 16:06:03,"top level error handling","bluebird-co",782.141217,45677
+2015-07-11 16:06:03,"nested error handling","co.wrap",611.297755,23280
+2015-07-11 16:06:03,"nested error handling","bluebird-co",610.977975,38541
