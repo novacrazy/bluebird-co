@@ -38,7 +38,7 @@ suite( 'top level error handling', function() {
         }
     } );
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 
@@ -65,7 +65,7 @@ suite( 'nested error handling', function() {
         }
     } );
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 

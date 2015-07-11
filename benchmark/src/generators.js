@@ -45,7 +45,7 @@ suite( 'simple generators (10 iterations)', function() {
         return await gen( 10 );
     };
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 
@@ -65,7 +65,7 @@ suite( 'long-running generators (1000 iterations)', function() {
         return await gen( 1000 );
     };
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 
@@ -86,7 +86,7 @@ suite( 'complex generators (150 iterations * three layers)', function() {
         return await gen_complex( 150 );
     };
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 

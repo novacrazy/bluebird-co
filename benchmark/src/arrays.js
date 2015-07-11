@@ -28,7 +28,7 @@ suite( 'very short arrays (2 elements)', function() {
         return await makeArray( 2 );
     };
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 
@@ -49,7 +49,7 @@ suite( 'short arrays (10 elements)', function() {
         return await makeArray( 10 );
     };
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 
@@ -69,7 +69,7 @@ suite( 'long arrays (2000 elements)', function() {
         return await makeArray( 2000 );
     };
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 

@@ -38,7 +38,7 @@ suite( 'simple thunks (1 argument)', function() {
         };
     } );
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 
@@ -63,7 +63,7 @@ suite( 'thunks with many arguments (30 arguments)', function() {
         };
     } );
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 

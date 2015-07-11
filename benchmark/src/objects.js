@@ -27,7 +27,7 @@ suite( 'small object (10 keys)', function() {
         return await makeObject( 10 );
     };
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 
@@ -47,7 +47,7 @@ suite( 'large objects (2000 keys)', function() {
         return await makeObject( 2000 );
     };
 
-    bench( 'co.wrap', function( next ) {
+    bench( 'co', function( next ) {
         co_version().then( next, console.error );
     } );
 
