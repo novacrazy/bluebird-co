@@ -14,7 +14,7 @@ module.exports = function( grunt ) {
 
     grunt.initConfig( {
         babel:     {
-            options: {
+            options:   {
                 ast:          false,
                 sourceMaps:   false,
                 nonStandard:  false,
@@ -22,7 +22,7 @@ module.exports = function( grunt ) {
                 modules:      "common",
                 experimental: true
             },
-            build:   {
+            build:     {
                 options: {
                     loose:     "all",
                     blacklist: [
@@ -43,7 +43,7 @@ module.exports = function( grunt ) {
                     dest:   './build/'
                 }]
             },
-            tests:   {
+            tests:     {
                 loose:   "all",
                 options: {
                     blacklist: [
@@ -66,6 +66,30 @@ module.exports = function( grunt ) {
                     src:    './**/*.js',
                     dest:   './test/build/'
                 }]
+            },
+            benchmark: {
+                loose:   "all",
+                options: {
+                    blacklist: [
+                        'es3.memberExpressionLiterals',
+                        'es3.propertyLiterals',
+                        'regenerator', //es6.generators
+                        'es6.properties.shorthand'
+                    ],
+                    optional:  [
+                        'runtime',
+                        'spec.undefinedToVoid',
+                        'minification.constantFolding',
+                        'minification.propertyLiterals',
+                        'bluebirdCoroutines'
+                    ]
+                },
+                files:   [{
+                    expand: true,
+                    cwd:    './benchmark/src/',
+                    src:    './**/*.js',
+                    dest:   './benchmark/build/'
+                }]
             }
         },
         usebanner: {
@@ -81,11 +105,14 @@ module.exports = function( grunt ) {
             }
         },
         clean:     {
-            build: {
+            build:     {
                 src: ['./build']
             },
-            tests: {
+            tests:     {
                 src: ['./test/build']
+            },
+            benchmark: {
+                src: ['./benchmark/build']
             }
         }
     } );
@@ -94,5 +121,7 @@ module.exports = function( grunt ) {
 
     grunt.registerTask( 'build-tests', ['clean:tests', 'babel:tests'] );
 
-    grunt.registerTask( 'default', ['build', 'build-tests'] );
+    grunt.registerTask( 'build-benchmark', ['clean:benchmark', 'babel:benchmark'] );
+
+    grunt.registerTask( 'default', ['build', 'build-benchmark', 'build-tests'] );
 };
