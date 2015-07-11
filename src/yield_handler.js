@@ -91,7 +91,7 @@ function resolveGenerator( gen ) {
 
                 } else {
                     try {
-                        var value = toPromiseThis( ret.value, true );
+                        let value = toPromiseThis( ret.value, true );
 
                         if( isThenable( value ) ) {
                             return value.then( onFulfilled ).catch( onRejected );
