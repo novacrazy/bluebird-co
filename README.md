@@ -150,7 +150,7 @@ Returns true if the value is a generator function that when called will create a
 
 -----
 ## Changelog
-#####1.1.2 - 1.1.3
+#####1.1.2 - 1.1.4
 * Optimizations and bugfixes
 
 #####1.1.1
