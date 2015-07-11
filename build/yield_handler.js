@@ -32,6 +32,7 @@ exports.__esModule = true;
 exports.isThenable = isThenable;
 exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
+exports.isNativeObject = isNativeObject;
 exports.addYieldHandler = addYieldHandler;
 
 function _interopRequireDefault( obj ) {
@@ -86,6 +87,18 @@ function isGeneratorFunction( obj ) {
         return true;
     } else {
         return isGenerator( obj.constructor.prototype );
+    }
+}
+
+function isNativeObject( obj ) {
+    if( !obj.constructor ) {
+        return true;
+    } else if( 'Object' === obj.constructor.name || 'Object' === obj.constructor.displayName ) {
+        return true;
+    } else {
+        var p = obj.constructor.prototype;
+
+        return !!(!p.constructor || 'Object' === p.constructor.name);
     }
 }
 
@@ -232,8 +245,35 @@ function toPromise( value, strict ) {
     } else if( typeof value === 'object' && value !== null ) {
         if( isGenerator( value ) ) {
             return resolveGenerator.call( this, value );
-        } else {
+        } else if( isNativeObject( value ) ) {
             return objectToPromise.call( this, value );
+        } else {
+            for( var _iterator2 = yieldHandlers, _isArray2 = Array.isArray( _iterator2 ), _i2 = 0, _iterator2 = _isArray2 ?
+                                                                                                                _iterator2 :
+                                                                                                                _iterator2[Symbol.iterator](); ; ) {
+                var _ref2;
+
+                if( _isArray2 ) {
+                    if( _i2 >= _iterator2.length ) {
+                        break;
+                    }
+                    _ref2 = _iterator2[_i2++];
+                } else {
+                    _i2 = _iterator2.next();
+                    if( _i2.done ) {
+                        break;
+                    }
+                    _ref2 = _i2.value;
+                }
+
+                var handler = _ref2;
+
+                var res = handler.call( this, value );
+
+                if( isThenable( res ) ) {
+                    return res;
+                }
+            }
         }
     } else if( typeof value === 'function' ) {
         if( isGeneratorFunction( value ) ) {
@@ -262,25 +302,25 @@ function toPromise( value, strict ) {
             } );
         }
     } else if( yieldHandlers.length > 0 ) {
-        for( var _iterator2 = yieldHandlers, _isArray2 = Array.isArray( _iterator2 ), _i2 = 0, _iterator2 = _isArray2 ?
-                                                                                                            _iterator2 :
-                                                                                                            _iterator2[Symbol.iterator](); ; ) {
-            var _ref2;
+        for( var _iterator3 = yieldHandlers, _isArray3 = Array.isArray( _iterator3 ), _i3 = 0, _iterator3 = _isArray3 ?
+                                                                                                            _iterator3 :
+                                                                                                            _iterator3[Symbol.iterator](); ; ) {
+            var _ref3;
 
-            if( _isArray2 ) {
-                if( _i2 >= _iterator2.length ) {
+            if( _isArray3 ) {
+                if( _i3 >= _iterator3.length ) {
                     break;
                 }
-                _ref2 = _iterator2[_i2++];
+                _ref3 = _iterator3[_i3++];
             } else {
-                _i2 = _iterator2.next();
-                if( _i2.done ) {
+                _i3 = _iterator3.next();
+                if( _i3.done ) {
                     break;
                 }
-                _ref2 = _i2.value;
+                _ref3 = _i3.value;
             }
 
-            var handler = _ref2;
+            var handler = _ref3;
 
             var res = handler.call( this, value );
 
@@ -325,9 +365,10 @@ if( !addedYieldHandler ) {
 }
 
 exports.default = {
-    addYieldHandler: addYieldHandler,
-    isThenable:      isThenable,
-    isPromise:       isPromise,
-    isGenerator:     isGenerator,
-    isGeneratorFunction: isGeneratorFunction
+    addYieldHandler:     addYieldHandler,
+    isThenable:          isThenable,
+    isPromise:           isPromise,
+    isGenerator:         isGenerator,
+    isGeneratorFunction: isGeneratorFunction,
+    isNativeObject:      isNativeObject
 };

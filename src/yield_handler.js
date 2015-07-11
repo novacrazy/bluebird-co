@@ -29,6 +29,21 @@ export function isGeneratorFunction( obj ) {
     }
 }
 
+export function isNativeObject( obj ) {
+    if( !obj.constructor ) {
+        return true;
+
+    } else if( 'Object' === obj.constructor.name ||
+               'Object' === obj.constructor.displayName ) {
+        return true;
+
+    } else {
+        let p = obj.constructor.prototype;
+
+        return !!(!p.constructor || 'Object' === p.constructor.name);
+    }
+}
+
 class YieldException extends TypeError {
 }
 
@@ -129,8 +144,17 @@ function toPromise( value, strict ) {
         if( isGenerator( value ) ) {
             return resolveGenerator.call( this, value );
 
-        } else {
+        } else if( isNativeObject( value ) ) {
             return objectToPromise.call( this, value );
+
+        } else {
+            for( let handler of yieldHandlers ) {
+                let res = handler.call( this, value );
+
+                if( isThenable( res ) ) {
+                    return res;
+                }
+            }
         }
 
     } else if( typeof value === 'function' ) {
@@ -211,5 +235,6 @@ export default {
     isThenable,
     isPromise,
     isGenerator,
-    isGeneratorFunction
+    isGeneratorFunction,
+    isNativeObject
 };
