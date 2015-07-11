@@ -73,61 +73,50 @@ function objectToPromise( obj ) {
 
 function resolveGenerator( gen ) {
     return new Promise( ( resolve, reject ) => {
+        let toPromiseThis = toPromise.bind( this );
 
-        //Just in case
-        if( typeof gen === 'function' ) {
-            gen = gen();
-        }
+        let next = ret => {
+            if( ret.done ) {
+                return resolve( ret.value );
 
-        if( !gen || !isGenerator( gen ) ) {
-            return Promise.resolve( gen );
+            } else {
+                try {
+                    let value = toPromiseThis( ret.value, true );
 
-        } else {
-            let toPromiseThis = toPromise.bind( this );
+                    if( isThenable( value ) ) {
+                        return value.then( onFulfilled ).catch( onRejected );
 
-            let next = ret => {
-                if( ret.done ) {
-                    return resolve( ret.value );
+                    } else {
+                        let err = new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` );
 
-                } else {
-                    try {
-                        let value = toPromiseThis( ret.value, true );
-
-                        if( isThenable( value ) ) {
-                            return value.then( onFulfilled ).catch( onRejected );
-
-                        } else {
-                            let err = new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` );
-
-                            return onRejected( err );
-                        }
-
-                    } catch( err ) {
                         return onRejected( err );
                     }
-                }
-            };
 
-            function onFulfilled( res ) {
-                try {
-                    next( gen.next( res ) );
-
-                } catch( e ) {
-                    return reject( e );
+                } catch( err ) {
+                    return onRejected( err );
                 }
             }
+        };
 
-            function onRejected( err ) {
-                try {
-                    next( gen.throw( err ) );
+        function onFulfilled( res ) {
+            try {
+                next( gen.next( res ) );
 
-                } catch( e ) {
-                    return reject( e );
-                }
+            } catch( e ) {
+                return reject( e );
             }
-
-            onFulfilled();
         }
+
+        function onRejected( err ) {
+            try {
+                next( gen.throw( err ) );
+
+            } catch( e ) {
+                return reject( e );
+            }
+        }
+
+        onFulfilled();
     } );
 }
 

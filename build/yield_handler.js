@@ -168,58 +168,46 @@ function resolveGenerator( gen ) {
     var _this = this;
 
     return new _bluebird2.default( function( resolve, reject ) {
+        var toPromiseThis = toPromise.bind( _this );
 
-        //Just in case
-        if( typeof gen === 'function' ) {
-            gen = gen();
-        }
+        var next = function next( ret ) {
+            if( ret.done ) {
+                return resolve( ret.value );
+            } else {
+                try {
+                    var value = toPromiseThis( ret.value, true );
 
-        if( !gen || !isGenerator( gen ) ) {
-            return _bluebird2.default.resolve( gen );
-        } else {
-            (function() {
-                var onFulfilled = function onFulfilled( res ) {
-                    try {
-                        next( gen.next( res ) );
-                    } catch( e ) {
-                        return reject( e );
-                    }
-                };
-
-                var onRejected = function onRejected( err ) {
-                    try {
-                        next( gen.throw( err ) );
-                    } catch( e ) {
-                        return reject( e );
-                    }
-                };
-
-                var toPromiseThis = toPromise.bind( _this );
-
-                var next = function next( ret ) {
-                    if( ret.done ) {
-                        return resolve( ret.value );
+                    if( isThenable( value ) ) {
+                        return value.then( onFulfilled ).catch( onRejected );
                     } else {
-                        try {
-                            var value = toPromiseThis( ret.value, true );
+                        var err = new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
+                                                 + ret.value + '"' );
 
-                            if( isThenable( value ) ) {
-                                return value.then( onFulfilled ).catch( onRejected );
-                            } else {
-                                var err = new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
-                                                         + ret.value + '"' );
-
-                                return onRejected( err );
-                            }
-                        } catch( err ) {
-                            return onRejected( err );
-                        }
+                        return onRejected( err );
                     }
-                };
+                } catch( err ) {
+                    return onRejected( err );
+                }
+            }
+        };
 
-                onFulfilled();
-            })();
+        function onFulfilled( res ) {
+            try {
+                next( gen.next( res ) );
+            } catch( e ) {
+                return reject( e );
+            }
         }
+
+        function onRejected( err ) {
+            try {
+                next( gen.throw( err ) );
+            } catch( e ) {
+                return reject( e );
+            }
+        }
+
+        onFulfilled();
     } );
 }
 
@@ -229,7 +217,7 @@ function toPromise( value, strict ) {
     if( isThenable( value ) ) {
         return value;
     } else if( Array.isArray( value ) ) {
-        var _ret3 = (function() {
+        var _ret2 = (function() {
             var toPromiseThis = toPromise.bind( _this2 );
 
             return {
@@ -239,8 +227,8 @@ function toPromise( value, strict ) {
             };
         })();
 
-        if( typeof _ret3 === 'object' ) {
-            return _ret3.v;
+        if( typeof _ret2 === 'object' ) {
+            return _ret2.v;
         }
     } else if( typeof value === 'object' && value !== null ) {
         if( isGenerator( value ) ) {
