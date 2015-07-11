@@ -48,20 +48,20 @@ class YieldException extends TypeError {
 }
 
 function objectToPromise( obj ) {
-    var results = new obj.constructor();
-    var promises = [];
+    let results = new obj.constructor();
+    let keys = Object.keys( obj );
+    let promises = new Array( keys.length );
+    let current = 0;
 
     let toPromiseThis = toPromise.bind( this );
 
-    for( let key of Object.keys( obj ) ) {
+    for( let key of keys ) {
         let promise = toPromiseThis( obj[key] );
 
         if( isThenable( promise ) ) {
             results[key] = void 0;
 
-            promises.push( promise.then( res => {
-                results[key] = res;
-            } ) );
+            promises[current++] = promise.then( res => results[key] = res );
 
         } else {
             results[key] = obj[key];

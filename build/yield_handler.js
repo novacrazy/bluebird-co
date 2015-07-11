@@ -115,7 +115,9 @@ var YieldException = (function( _TypeError ) {
 
 function objectToPromise( obj ) {
     var results = new obj.constructor();
-    var promises = [];
+    var keys = Object.keys( obj );
+    var promises = new Array( keys.length );
+    var current = 0;
 
     var toPromiseThis = toPromise.bind( this );
 
@@ -140,17 +142,16 @@ function objectToPromise( obj ) {
         if( isThenable( promise ) ) {
             results[key] = void 0;
 
-            promises.push( promise.then( function( res ) {
-                results[key] = res;
-            } ) );
+            promises[current++] = promise.then( function( res ) {
+                return results[key] = res;
+            } );
         } else {
             results[key] = obj[key];
         }
     };
 
-    for( var _iterator = Object.keys( obj ), _isArray = Array.isArray( _iterator ), _i = 0, _iterator = _isArray ?
-                                                                                                        _iterator :
-                                                                                                        _iterator[Symbol.iterator](); ; ) {
+    for( var _iterator = keys, _isArray = Array.isArray( _iterator ), _i = 0, _iterator = _isArray ? _iterator :
+                                                                                          _iterator[Symbol.iterator](); ; ) {
         var _ref;
 
         var _ret = _loop();
