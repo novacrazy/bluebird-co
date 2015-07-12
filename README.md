@@ -9,7 +9,9 @@ This is a port of [tj/co](https://github.com/tj/co) generator coroutines to [blu
 Combined with [Babel's `bluebirdCoroutines`](http://babeljs.io/docs/advanced/transformers/other/bluebird-coroutines/) transformer, you can write easy and comprehensive `async/await` functions.
 
 ## Performance
-Given Bluebird's fame for high performance promises, it should come as no surprise that bluebird-co can achieve up to a couple orders of magnitude better performance on some particular tasks than tj/co, with most coroutines being about two to eight times faster with bluebird-co. Excluding time spent waiting on values to resolve, of course.
+Given Bluebird's fame for high performance promises, it should come as no surprise that bluebird-co can achieve up to a couple orders of magnitude better performance on some particular tasks than tj/co, with most coroutines being about two to eight times faster with bluebird-co.
+
+Granted, when co is using bluebird Promises instead of native promises, the performance is about the same.
 
 [See here detailed benchmarks](https://github.com/novacrazy/bluebird-co/tree/master/benchmark)
 
