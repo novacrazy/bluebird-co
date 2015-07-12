@@ -16,7 +16,7 @@ However, it should be kept in mind that bluebird-co is also extensible, and of c
 Tested with io.js 2.3.0 on Windows 8, Intel i5-4690K at 3.9GHz with 32GB of memory.
 
 | Description                                        | Library                   | Milliseconds | Runs   | Op/s      | %    |
-|----------------------------------------------------|---------------------------|-------------:|-------:|----------:|------|
+|----------------------------------------------------|---------------------------|-------------:|-------:|----------:|-----:|
 | very short arrays (2 elements)                     | co                        | 682          | 40129  | 58800.23  | 12%  |
 |                                                    | co with bluebird promises | 614          | 193935 | 315835.81 | 64%  |
 |                                                    | bluebird-co               | 650          | 322729 | 496432.90 | 100% |
