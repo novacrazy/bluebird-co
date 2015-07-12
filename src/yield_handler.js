@@ -2,7 +2,9 @@
  * Created by Aaron on 7/3/2015.
  */
 
-import Promise from 'bluebird';
+import Bluebird from 'bluebird';
+
+let Promise = Bluebird;
 
 let yieldHandlers = [];
 
@@ -29,6 +31,13 @@ export function isGeneratorFunction( obj ) {
     }
 }
 
+/*
+ * This is a deviation from tj/co because bluebird supports more.
+ *
+ * Basically, bluebird's Promise.all can take an array of BOTH values and promises, so I said screw the closure that
+ * required binding local variables every iteration of this loop, and went with a pure array approach.
+ *
+ * */
 function objectToPromise( obj ) {
     let keys = Object.keys( obj );
     let length = keys.length;
@@ -41,21 +50,20 @@ function objectToPromise( obj ) {
     while( ++i < length ) {
         let key = keys[i];
 
-        let value = obj[key];
+        results[key] = void 0;
 
-        let promise = toPromise.call( this, value );
-
-        if( isThenable( promise ) ) {
-            results[key] = void 0;
-
-            promises[i] = promise.then( res => results[key] = res );
-
-        } else {
-            results[key] = value;
-        }
+        promises[i] = toPromise.call( this, obj[key] );
     }
 
-    return Promise.all( promises ).return( results );
+    return Promise.all( promises ).then( res => {
+        let i = -1;
+
+        while( ++i < length ) {
+            results[keys[i]] = res[i];
+        }
+
+        return results;
+    } );
 }
 
 function resolveGenerator( gen ) {
@@ -111,21 +119,66 @@ function arrayToPromise( value ) {
     return Promise.all( results );
 }
 
+function thunkToPromise( value ) {
+    return new Promise( ( resolve, reject ) => {
+        try {
+            value.call( this, function( err ) {
+                if( err ) {
+                    reject( err );
+
+                } else if( arguments.length > 2 ) {
+                    let length = arguments.length - 1;
+                    let res = new Array( length );
+                    let i = -1;
+
+                    while( ++i < length ) {
+                        res[i] = arguments[i + 1];
+                    }
+
+                    resolve( res );
+
+                } else {
+                    resolve( arguments[1] );
+                }
+            } );
+
+        } catch( err ) {
+            reject( err );
+        }
+    } );
+}
+
 function toPromise( value ) {
-    if( isThenable( value ) ) {
-        return value;
+    switch( typeof value ) {
+        case 'function':
+        {
+            if( isGeneratorFunction( value ) ) {
+                return Promise.coroutine( value ).call( this );
 
-    } else if( Array.isArray( value ) ) {
-        return arrayToPromise.call( this, value );
+            } else {
+                return thunkToPromise.call( this, value );
+            }
+        }
+        case 'object':
+        {
+            if( isThenable( value ) ) {
+                return value;
 
-    } else if( !!value && typeof value === 'object' ) {
-        if( isGenerator( value ) ) {
-            return resolveGenerator.call( this, value );
+            } else if( !value ) {
+                return value;
 
-        } else if( Object === value.constructor || !value.constructor ) {
-            return objectToPromise.call( this, value );
+            } else if( Array.isArray( value ) ) {
+                return arrayToPromise.call( this, value );
 
-        } else {
+            } else if( isGenerator( value ) ) {
+                return resolveGenerator.call( this, value );
+
+            } else if( Object === value.constructor ) {
+                return objectToPromise.call( this, value );
+            }
+        }
+        default:
+        {
             let i = -1;
             let length = yieldHandlers.length;
 
@@ -139,49 +192,11 @@ function toPromise( value ) {
                 }
             }
         }
-
-    } else if( typeof value === 'function' ) {
-        if( isGeneratorFunction( value ) ) {
-            return Promise.coroutine( value ).call( this );
-
-        } else {
-            //Thunks
-            return new Promise( ( resolve, reject ) => {
-                try {
-                    value.call( this, ( err, ...res ) => {
-                        if( err ) {
-                            reject( err );
-
-                        } else if( res.length > 1 ) {
-                            resolve( res );
-
-                        } else {
-                            resolve( res[0] );
-                        }
-                    } );
-
-                } catch( err ) {
-                    reject( err );
-                }
-            } );
-        }
-
-    } else {
-        let i = -1;
-        let length = yieldHandlers.length;
-
-        while( ++i < length ) {
-            let handler = yieldHandlers[i];
-
-            let res = handler.call( this, value );
-
-            if( isThenable( res ) ) {
-                return res;
-            }
+        case 'undefined':
+        {
+            return value;
         }
     }
-
-    return value;
 }
 
 export function addYieldHandler( handler ) {
