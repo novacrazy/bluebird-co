@@ -49,14 +49,16 @@ function objectToPromise( obj ) {
     let length = keys.length;
 
     let results = new obj.constructor();
-
     let promises = new Array( length );
+
     let i = -1;
 
     while( ++i < length ) {
         let key = keys[i];
 
-        let promise = toPromise.call( this, obj[key] );
+        let value = obj[key];
+
+        let promise = toPromise.call( this, value );
 
         if( isThenable( promise ) ) {
             results[key] = void 0;
@@ -64,7 +66,7 @@ function objectToPromise( obj ) {
             promises[i] = promise.then( res => results[key] = res );
 
         } else {
-            results[key] = obj[key];
+            results[key] = value;
         }
     }
 
