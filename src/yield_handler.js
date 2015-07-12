@@ -29,21 +29,6 @@ export function isGeneratorFunction( obj ) {
     }
 }
 
-function isNativeObject( obj ) {
-    if( !obj.constructor ) {
-        return true;
-
-    } else if( 'Object' === obj.constructor.name ||
-               'Object' === obj.constructor.displayName ) {
-        return true;
-
-    } else {
-        let p = obj.constructor.prototype;
-
-        return p && !!(!p.constructor || 'Object' === p.constructor.name);
-    }
-}
-
 function objectToPromise( obj ) {
     let keys = Object.keys( obj );
     let length = keys.length;
@@ -133,11 +118,11 @@ function toPromise( value ) {
     } else if( Array.isArray( value ) ) {
         return arrayToPromise.call( this, value );
 
-    } else if( value && typeof value === 'object' ) {
+    } else if( !!value && typeof value === 'object' ) {
         if( isGenerator( value ) ) {
             return resolveGenerator.call( this, value );
 
-        } else if( isNativeObject( value ) ) {
+        } else if( Object === value.constructor || !value.constructor ) {
             return objectToPromise.call( this, value );
 
         } else {
