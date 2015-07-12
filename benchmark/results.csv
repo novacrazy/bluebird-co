@@ -1,39 +1,39 @@
-2015-07-12 07:41:38,"very short arrays (2 elements)","co",682.463368,40129
-2015-07-12 07:41:38,"very short arrays (2 elements)","co with bluebird promises",614.037393,193935
-2015-07-12 07:41:38,"very short arrays (2 elements)","bluebird-co",650.095920,322729
-2015-07-12 07:41:38,"short arrays (10 elements)","co",969.048889,20860
-2015-07-12 07:41:38,"short arrays (10 elements)","co with bluebird promises",805.295305,208808
-2015-07-12 07:41:38,"short arrays (10 elements)","bluebird-co",636.167481,230782
-2015-07-12 07:41:38,"long arrays (2000 elements)","co",1016.831038,100
-2015-07-12 07:41:38,"long arrays (2000 elements)","co with bluebird promises",905.566489,4796
-2015-07-12 07:41:38,"long arrays (2000 elements)","bluebird-co",930.974253,4889
-2015-07-12 07:41:38,"very small objects (2 keys)","co",748.665509,33828
-2015-07-12 07:41:38,"very small objects (2 keys)","co with bluebird promises",619.952598,90990
-2015-07-12 07:41:38,"very small objects (2 keys)","bluebird-co",605.028246,113964
-2015-07-12 07:41:38,"small objects (10 keys)","co",884.968305,14866
-2015-07-12 07:41:38,"small objects (10 keys)","co with bluebird promises",772.643185,48334
-2015-07-12 07:41:38,"small objects (10 keys)","bluebird-co",734.070301,54416
-2015-07-12 07:41:38,"large objects (2000 keys)","co",1181.937763,100
-2015-07-12 07:41:38,"large objects (2000 keys)","co with bluebird promises",627.456464,493
-2015-07-12 07:41:38,"large objects (2000 keys)","bluebird-co",623.678200,486
-2015-07-12 07:41:38,"simple generators (10 iterations)","co",734.682359,61605
-2015-07-12 07:41:38,"simple generators (10 iterations)","co with bluebird promises",721.169079,102236
-2015-07-12 07:41:38,"simple generators (10 iterations)","bluebird-co",645.168727,113624
-2015-07-12 07:41:38,"long-running generators (1000 iterations)","co",514.092133,1372
-2015-07-12 07:41:38,"long-running generators (1000 iterations)","co with bluebird promises",524.927508,1446
-2015-07-12 07:41:38,"long-running generators (1000 iterations)","bluebird-co",521.940356,1422
-2015-07-12 07:41:38,"complex generators (150 iterations * three layers)","co",17148.548949,200
-2015-07-12 07:41:38,"complex generators (150 iterations * three layers)","co with bluebird promises",869.029901,467
-2015-07-12 07:41:38,"complex generators (150 iterations * three layers)","bluebird-co",866.339416,465
-2015-07-12 07:41:38,"simple thunks (1 argument)","co",759.523999,187069
-2015-07-12 07:41:38,"simple thunks (1 argument)","co with bluebird promises",678.757075,252647
-2015-07-12 07:41:38,"simple thunks (1 argument)","bluebird-co",618.315369,316738
-2015-07-12 07:41:38,"thunks with many arguments (30 arguments)","co",961.530100,85488
-2015-07-12 07:41:38,"thunks with many arguments (30 arguments)","co with bluebird promises",897.983628,93302
-2015-07-12 07:41:38,"thunks with many arguments (30 arguments)","bluebird-co",693.457317,267119
-2015-07-12 07:41:38,"top level error handling","co",747.374393,100358
-2015-07-12 07:41:38,"top level error handling","co with bluebird promises",835.030491,97813
-2015-07-12 07:41:38,"top level error handling","bluebird-co",756.015776,68953
-2015-07-12 07:41:38,"nested error handling","co",532.877546,23311
-2015-07-12 07:41:38,"nested error handling","co with bluebird promises",878.477904,37714
-2015-07-12 07:41:38,"nested error handling","bluebird-co",814.983802,54587
+2015-07-12 14:44:16,"very short arrays (2 elements)","co",687.927136,37567
+2015-07-12 14:44:16,"very short arrays (2 elements)","co with bluebird promises",617.052339,191489
+2015-07-12 14:44:16,"very short arrays (2 elements)","bluebird-co",625.980443,310676
+2015-07-12 14:44:16,"short arrays (10 elements)","co",965.222350,20236
+2015-07-12 14:44:16,"short arrays (10 elements)","co with bluebird promises",805.387465,205993
+2015-07-12 14:44:16,"short arrays (10 elements)","bluebird-co",672.259946,239646
+2015-07-12 14:44:16,"long arrays (2000 elements)","co",1004.347608,100
+2015-07-12 14:44:16,"long arrays (2000 elements)","co with bluebird promises",893.452285,4646
+2015-07-12 14:44:16,"long arrays (2000 elements)","bluebird-co",930.333230,4883
+2015-07-12 14:44:16,"very small objects (2 keys)","co",748.226945,32138
+2015-07-12 14:44:16,"very small objects (2 keys)","co with bluebird promises",595.472577,86061
+2015-07-12 14:44:16,"very small objects (2 keys)","bluebird-co",585.983614,123680
+2015-07-12 14:44:16,"small objects (10 keys)","co",936.120289,15334
+2015-07-12 14:44:16,"small objects (10 keys)","co with bluebird promises",764.511460,47922
+2015-07-12 14:44:16,"small objects (10 keys)","bluebird-co",730.508831,69645
+2015-07-12 14:44:16,"large objects (2000 keys)","co",1185.068276,100
+2015-07-12 14:44:16,"large objects (2000 keys)","co with bluebird promises",632.445682,495
+2015-07-12 14:44:16,"large objects (2000 keys)","bluebird-co",556.996241,869
+2015-07-12 14:44:16,"simple generators (10 iterations)","co",765.440666,61783
+2015-07-12 14:44:16,"simple generators (10 iterations)","co with bluebird promises",692.234370,96698
+2015-07-12 14:44:16,"simple generators (10 iterations)","bluebird-co",616.056719,109098
+2015-07-12 14:44:16,"long-running generators (1000 iterations)","co",524.400587,1428
+2015-07-12 14:44:16,"long-running generators (1000 iterations)","co with bluebird promises",526.935717,1451
+2015-07-12 14:44:16,"long-running generators (1000 iterations)","bluebird-co",519.734661,1448
+2015-07-12 14:44:16,"complex generators (150 iterations * three layers)","co",17207.588654,200
+2015-07-12 14:44:16,"complex generators (150 iterations * three layers)","co with bluebird promises",860.482725,470
+2015-07-12 14:44:16,"complex generators (150 iterations * three layers)","bluebird-co",788.554964,536
+2015-07-12 14:44:16,"simple thunks (1 argument)","co",738.887779,178122
+2015-07-12 14:44:16,"simple thunks (1 argument)","co with bluebird promises",697.949163,267753
+2015-07-12 14:44:16,"simple thunks (1 argument)","bluebird-co",626.900287,353107
+2015-07-12 14:44:16,"thunks with many arguments (30 arguments)","co",954.795403,83535
+2015-07-12 14:44:16,"thunks with many arguments (30 arguments)","co with bluebird promises",879.105762,92448
+2015-07-12 14:44:16,"thunks with many arguments (30 arguments)","bluebird-co",693.864869,274146
+2015-07-12 14:44:16,"top level error handling","co",728.218876,93283
+2015-07-12 14:44:16,"top level error handling","co with bluebird promises",831.349944,99299
+2015-07-12 14:44:16,"top level error handling","bluebird-co",754.987974,70131
+2015-07-12 14:44:16,"nested error handling","co",510.634526,22884
+2015-07-12 14:44:16,"nested error handling","co with bluebird promises",890.640383,36159
+2015-07-12 14:44:16,"nested error handling","bluebird-co",892.924194,58749

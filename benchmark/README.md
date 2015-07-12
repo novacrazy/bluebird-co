@@ -15,47 +15,48 @@ However, it should be kept in mind that bluebird-co is also extensible, and of c
 
 Tested with io.js 2.3.0 on Windows 8, Intel i5-4690K at 3.9GHz with 32GB of memory.
 
-| Description                               | Library                   | Milliseconds | Runs    | Op/s       | %    |
-|-------------------------------------------|---------------------------|-------------:|--------:|-----------:|-----:|
-| very short arrays (2 elements)            | co                        | 682          | 40,129  | 58,800.23  | 12%  |
-|                                           | co with bluebird promises | 614          | 193,935 | 315,835.81 | 64%  |
-|                                           | bluebird-co               | 650          | 322,729 | 496,432.90 | 100% |
-| short arrays (10 elements)                | co                        | 969          | 20,860  | 21,526.26  | 6%   |
-|                                           | co with bluebird promises | 805          | 208,808 | 259,293.70 | 71%  |
-|                                           | bluebird-co               | 636          | 230,782 | 362,769.25 | 100% |
-| long arrays (2000 elements)               | co                        | 1,017        | 100     | 98.34      | 2%   |
-|                                           | co with bluebird promises | 906          | 4,796   | 5,296.13   | 100% |
-|                                           | bluebird-co               | 931          | 4,889   | 5,251.49   | 99%  |
-| very small objects (2 keys)               | co                        | 749          | 33,828  | 45,184.40  | 24%  |
-|                                           | co with bluebird promises | 620          | 90,990  | 146,769.29 | 78%  |
-|                                           | bluebird-co               | 605          | 113,964 | 188,361.45 | 100% |
-| small objects (10 keys)                   | co                        | 885          | 14,866  | 16,798.34  | 23%  |
-|                                           | co with bluebird promises | 773          | 48,334  | 62,556.69  | 84%  |
-|                                           | bluebird-co               | 734          | 54,416  | 74,129.14  | 100% |
-| large objects (2000 keys)                 | co                        | 1,182        | 100     | 84.61      | 11%  |
-|                                           | co with bluebird promises | 627          | 493     | 785.71     | 100% |
-|                                           | bluebird-co               | 624          | 486     | 779.25     | 99%  |
-| simple generators (10 iterations)         | co                        | 735          | 61,605  | 83,852.56  | 48%  |
-|                                           | co with bluebird promises | 721          | 102,236 | 141,764.26 | 80%  |
-|                                           | bluebird-co               | 645          | 113,624 | 176,115.17 | 100% |
-| long-running generators (1000 iterations) | co                        | 514          | 1,372   | 2,668.78   | 97%  |
-|                                           | co with bluebird promises | 525          | 1,446   | 2,754.67   | 100% |
-|                                           | bluebird-co               | 522          | 1,422   | 2,724.45   | 99%  |
-| complex generators                        | co                        | 17,149       | 200     | 11.66      | 2%   |
-|                                           | co with bluebird promises | 869          | 467     | 537.38     | 100% |
-|                                           | bluebird-co               | 866          | 465     | 536.74     | 100% |
-| simple thunks (1 argument)                | co                        | 760          | 187,069 | 246,297.68 | 48%  |
-|                                           | co with bluebird promises | 679          | 252,647 | 372,220.06 | 73%  |
-|                                           | bluebird-co               | 618          | 316,738 | 512,259.63 | 100% |
-| thunks with many arguments (30 arguments) | co                        | 962          | 85,488  | 88,908.29  | 23%  |
-|                                           | co with bluebird promises | 898          | 93,302  | 103,901.67 | 27%  |
-|                                           | bluebird-co               | 693          | 267,119 | 385,198.91 | 100% |
-| top level error handling                  | co                        | 747          | 100,358 | 134,280.76 | 100% |
-|                                           | co with bluebird promises | 835          | 97,813  | 117,137.04 | 87%  |
-|                                           | bluebird-co               | 756          | 68,953  | 91,205.77  | 68%  |
-| nested error handling                     | co                        | 533          | 23,311  | 43,745.51  | 65%  |
-|                                           | co with bluebird promises | 878          | 37,714  | 42,931.07  | 64%  |
-|                                           | bluebird-co               | 815          | 54,587  | 66,979.25  | 100% |
+| Description                               | Library                   | Op/s       | %    |
+|-------------------------------------------|---------------------------|-----------:|-----:|
+| very short arrays (2 elements)            | co                        | 54,608.98  | 11%  |
+|                                           | co with bluebird promises | 310,328.62 | 63%  |
+|                                           | bluebird-co               | 496,303.05 | 100% |
+| short arrays (10 elements)                | co                        | 20,965.12  | 6%   |
+|                                           | co with bluebird promises | 255,768.82 | 72%  |
+|                                           | bluebird-co               | 356,478.18 | 100% |
+| long arrays (2000 elements)               | co                        | 99.57      | 2%   |
+|                                           | co with bluebird promises | 5,200.05   | 99%  |
+|                                           | bluebird-co               | 5,248.66   | 100% |
+| very small objects (2 keys)               | co                        | 42,952.21  | 20%  |
+|                                           | co with bluebird promises | 144,525.55 | 68%  |
+|                                           | bluebird-co               | 211,063.92 | 100% |
+| small objects (10 keys)                   | co                        | 16,380.37  | 17%  |
+|                                           | co with bluebird promises | 62,683.17  | 66%  |
+|                                           | bluebird-co               | 95,337.66  | 100% |
+| large objects (2000 keys)                 | co                        | 84.38      | 5%   |
+|                                           | co with bluebird promises | 782.68     | 50%  |
+|                                           | bluebird-co               | 1,560.15   | 100% |
+| simple generators (10 iterations)         | co                        | 80,715.60  | 46%  |
+|                                           | co with bluebird promises | 139,689.68 | 79%  |
+|                                           | bluebird-co               | 177,090.84 | 100% |
+| long-running generators (1000 iterations) | co                        | 2,723.11   | 98%  |
+|                                           | co with bluebird promises | 2,753.66   | 99%  |
+|                                           | bluebird-co               | 2,786.04   | 100% |
+| complex generators (150 iterations)       | co                        | 11.62      | 2%   |
+|                                           | co with bluebird promises | 546.21     | 80%  |
+|                                           | bluebird-co               | 679.72     | 100% |
+| simple thunks (1 argument)                | co                        | 241,067.73 | 43%  |
+|                                           | co with bluebird promises | 383,628.23 | 68%  |
+|                                           | bluebird-co               | 563,258.64 | 100% |
+| thunks with many arguments (30 arguments) | co                        | 87,489.95  | 22%  |
+|                                           | co with bluebird promises | 105,161.41 | 27%  |
+|                                           | bluebird-co               | 395,099.99 | 100% |
+| top level error handling                  | co                        | 128,097.48 | 100% |
+|                                           | co with bluebird promises | 119,443.08 | 93%  |
+|                                           | bluebird-co               | 92,890.22  | 73%  |
+| nested error handling                     | co                        | 44,814.83  | 68%  |
+|                                           | co with bluebird promises | 40,598.88  | 62%  |
+|                                           | bluebird-co               | 65,793.94  | 100% |
+
 
 
 
