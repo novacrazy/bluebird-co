@@ -7,7 +7,7 @@ import Promise from 'bluebird';
 let yieldHandlers = [];
 
 export function isThenable( obj ) {
-    return obj !== void 0 && obj !== null && (obj instanceof Promise || typeof obj.then === 'function');
+    return obj && typeof obj.then === 'function';
 }
 
 export let isPromise = isThenable;
@@ -44,19 +44,14 @@ function isNativeObject( obj ) {
     }
 }
 
-class YieldException extends TypeError {
-}
-
 function objectToPromise( obj ) {
     let results = new obj.constructor();
     let keys = Object.keys( obj );
     let promises = new Array( keys.length );
     let current = 0;
 
-    let toPromiseThis = toPromise.bind( this );
-
     for( let key of keys ) {
-        let promise = toPromiseThis( obj[key] );
+        let promise = toPromise.call( this, obj[key] );
 
         if( isThenable( promise ) ) {
             results[key] = void 0;
@@ -73,27 +68,18 @@ function objectToPromise( obj ) {
 
 function resolveGenerator( gen ) {
     return new Promise( ( resolve, reject ) => {
-        let toPromiseThis = toPromise.bind( this );
-
         function next( ret ) {
             if( ret.done ) {
                 return resolve( ret.value );
 
             } else {
-                try {
-                    let value = toPromiseThis( ret.value, true );
+                let value = toPromise.call( this, ret.value );
 
-                    if( isThenable( value ) ) {
-                        return value.then( onFulfilled, onRejected );
+                if( isThenable( value ) ) {
+                    return value.then( onFulfilled, onRejected );
 
-                    } else {
-                        let err = new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` );
-
-                        return onRejected( err );
-                    }
-
-                } catch( err ) {
-                    return onRejected( err );
+                } else {
+                    return onRejected( new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` ) );
                 }
             }
         }
@@ -120,16 +106,14 @@ function resolveGenerator( gen ) {
     } );
 }
 
-function toPromise( value, strict ) {
+function toPromise( value ) {
     if( isThenable( value ) ) {
         return value;
 
     } else if( Array.isArray( value ) ) {
-        let toPromiseThis = toPromise.bind( this );
+        return Promise.all( value.map( toPromise, this ) );
 
-        return Promise.all( value.map( val => toPromiseThis( val ) ) );
-
-    } else if( typeof value === 'object' && value !== null ) {
+    } else if( value && typeof value === 'object' ) {
         if( isGenerator( value ) ) {
             return resolveGenerator.call( this, value );
 
@@ -182,12 +166,7 @@ function toPromise( value, strict ) {
         }
     }
 
-    if( strict ) {
-        throw new YieldException( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${value}"` );
-
-    } else {
-        return Promise.resolve( value );
-    }
+    return value;
 }
 
 export function addYieldHandler( handler ) {
@@ -204,15 +183,16 @@ let addedYieldHandler = false;
 if( !addedYieldHandler ) {
     Promise.coroutine.addYieldHandler( function( value ) {
         try {
-            return toPromise.call( this, value, true );
+            let res = toPromise.call( this, value );
+
+            if( !isThenable( res ) ) {
+                throw new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${value}"` );
+            }
+
+            return res;
 
         } catch( err ) {
-            if( err instanceof YieldException ) {
-                return void 0;
-
-            } else {
-                return Promise.reject( err );
-            }
+            return Promise.reject( err );
         }
     } );
 
