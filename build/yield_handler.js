@@ -45,7 +45,7 @@ var _bluebird2 = _interopRequireDefault( _bluebird );
 var yieldHandlers = [];
 
 function isThenable( obj ) {
-    return !(!obj || typeof obj.then !== 'function');
+    return obj && typeof obj.then === 'function';
 }
 
 var isPromise = isThenable;
