@@ -28,7 +28,35 @@ function makeObject( size ) {
     return result;
 }
 
-suite( 'small object (10 keys)', function() {
+suite( 'very small objects (2 keys)', function() {
+    set( 'delay', 0 );
+
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield makeObject( 2 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
+        return yield makeObject( 2 );
+    } );
+
+    var bluebird_version = _bluebird.coroutine( function* () {
+        return yield makeObject( 2 );
+    } );
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
+suite( 'small objects (10 keys)', function() {
     set( 'delay', 0 );
 
     var co_version = (0, _co2.wrap)( function* () {

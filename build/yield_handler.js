@@ -66,64 +66,37 @@ function isGeneratorFunction( obj ) {
     }
 }
 
-function isNativeObject( obj ) {
-    if( !obj.constructor ) {
-        return true;
-    } else if( 'Object' === obj.constructor.name || 'Object' === obj.constructor.displayName ) {
-        return true;
-    } else {
-        var p = obj.constructor.prototype;
-
-        return p && !!(!p.constructor || 'Object' === p.constructor.name);
-    }
-}
-
 function objectToPromise( obj ) {
     var _this = this;
 
-    var results = new obj.constructor();
     var keys = Object.keys( obj );
-    var promises = new Array( keys.length );
-    var current = 0;
+    var length = keys.length;
+
+    var results = new obj.constructor();
+    var promises = new Array( length );
+
+    var i = -1;
 
     var _loop = function() {
-        if( _isArray ) {
-            if( _i >= _iterator.length ) {
-                return 'break';
-            }
-            _ref = _iterator[_i++];
-        } else {
-            _i = _iterator.next();
-            if( _i.done ) {
-                return 'break';
-            }
-            _ref = _i.value;
-        }
+        var key = keys[i];
 
-        var key = _ref;
+        var value = obj[key];
 
-        var promise = toPromise.call( _this, obj[key] );
+        var promise = toPromise.call( _this, value );
 
         if( isThenable( promise ) ) {
             results[key] = void 0;
 
-            promises[current++] = promise.then( function( res ) {
+            promises[i] = promise.then( function( res ) {
                 return results[key] = res;
             } );
         } else {
-            results[key] = obj[key];
+            results[key] = value;
         }
     };
 
-    for( var _iterator = keys, _isArray = Array.isArray( _iterator ), _i = 0, _iterator = _isArray ? _iterator :
-                                                                                          _iterator[Symbol.iterator](); ; ) {
-        var _ref;
-
-        var _ret = _loop();
-
-        if( _ret === 'break' ) {
-            break;
-        }
+    while( ++i < length ) {
+        _loop();
     }
 
     return _bluebird2.default.all( promises ).return( results );
@@ -166,38 +139,37 @@ function resolveGenerator( gen ) {
     } );
 }
 
+function arrayToPromise( value ) {
+    var length = value.length;
+
+    var results = new Array( length );
+    var i = -1;
+
+    while( ++i < length ) {
+        results[i] = toPromise.call( this, value[i] );
+    }
+
+    return _bluebird2.default.all( results );
+}
+
 function toPromise( value ) {
     var _this2 = this;
 
     if( isThenable( value ) ) {
         return value;
     } else if( Array.isArray( value ) ) {
-        return _bluebird2.default.all( value.map( toPromise, this ) );
-    } else if( value && typeof value === 'object' ) {
+        return arrayToPromise.call( this, value );
+    } else if( !!value && typeof value === 'object' ) {
         if( isGenerator( value ) ) {
             return resolveGenerator.call( this, value );
-        } else if( isNativeObject( value ) ) {
+        } else if( Object === value.constructor || !value.constructor ) {
             return objectToPromise.call( this, value );
         } else {
-            for( var _iterator2 = yieldHandlers, _isArray2 = Array.isArray( _iterator2 ), _i2 = 0, _iterator2 = _isArray2 ?
-                                                                                                                _iterator2 :
-                                                                                                                _iterator2[Symbol.iterator](); ; ) {
-                var _ref2;
+            var i = -1;
+            var _length = yieldHandlers.length;
 
-                if( _isArray2 ) {
-                    if( _i2 >= _iterator2.length ) {
-                        break;
-                    }
-                    _ref2 = _iterator2[_i2++];
-                } else {
-                    _i2 = _iterator2.next();
-                    if( _i2.done ) {
-                        break;
-                    }
-                    _ref2 = _i2.value;
-                }
-
-                var handler = _ref2;
+            while( ++i < _length ) {
+                var handler = yieldHandlers[i];
 
                 var res = handler.call( this, value );
 
@@ -232,26 +204,12 @@ function toPromise( value ) {
                 }
             } );
         }
-    } else if( yieldHandlers.length > 0 ) {
-        for( var _iterator3 = yieldHandlers, _isArray3 = Array.isArray( _iterator3 ), _i3 = 0, _iterator3 = _isArray3 ?
-                                                                                                            _iterator3 :
-                                                                                                            _iterator3[Symbol.iterator](); ; ) {
-            var _ref3;
+    } else {
+        var i = -1;
+        var _length2 = yieldHandlers.length;
 
-            if( _isArray3 ) {
-                if( _i3 >= _iterator3.length ) {
-                    break;
-                }
-                _ref3 = _iterator3[_i3++];
-            } else {
-                _i3 = _iterator3.next();
-                if( _i3.done ) {
-                    break;
-                }
-                _ref3 = _i3.value;
-            }
-
-            var handler = _ref3;
+        while( ++i < _length2 ) {
+            var handler = yieldHandlers[i];
 
             var res = handler.call( this, value );
 
@@ -275,19 +233,7 @@ function addYieldHandler( handler ) {
 var addedYieldHandler = false;
 
 if( !addedYieldHandler ) {
-    _bluebird2.default.coroutine.addYieldHandler( function( value ) {
-        try {
-            var res = toPromise.call( this, value );
-
-            if( !isThenable( res ) ) {
-                return void 0;
-            }
-
-            return res;
-        } catch( err ) {
-            return _bluebird2.default.reject( err );
-        }
-    } );
+    _bluebird2.default.coroutine.addYieldHandler( toPromise );
 
     addedYieldHandler = true;
 }
