@@ -42,6 +42,8 @@ var _bluebird = require( 'bluebird' );
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
+var Promise = _bluebird2.default;
+
 var yieldHandlers = [];
 
 function isThenable( obj ) {
@@ -66,9 +68,14 @@ function isGeneratorFunction( obj ) {
     }
 }
 
+/*
+ * This is a deviation from tj/co because bluebird supports more.
+ *
+ * Basically, bluebird's Promise.all can take an array of BOTH values and promises, so I said screw the closure that
+ * required binding local variables every iteration of this loop, and went with a pure array approach.
+ *
+ * */
 function objectToPromise( obj ) {
-    var _this = this;
-
     var keys = Object.keys( obj );
     var length = keys.length;
 
@@ -77,33 +84,27 @@ function objectToPromise( obj ) {
 
     var i = -1;
 
-    var _loop = function() {
+    while( ++i < length ) {
         var key = keys[i];
 
-        var value = obj[key];
+        results[key] = void 0;
 
-        var promise = toPromise.call( _this, value );
-
-        if( isThenable( promise ) ) {
-            results[key] = void 0;
-
-            promises[i] = promise.then( function( res ) {
-                return results[key] = res;
-            } );
-        } else {
-            results[key] = value;
-        }
-    };
-
-    while( ++i < length ) {
-        _loop();
+        promises[i] = toPromise.call( this, obj[key] );
     }
 
-    return _bluebird2.default.all( promises ).return( results );
+    return Promise.all( promises ).then( function( res ) {
+        var i = -1;
+
+        while( ++i < length ) {
+            results[keys[i]] = res[i];
+        }
+
+        return results;
+    } );
 }
 
 function resolveGenerator( gen ) {
-    return new _bluebird2.default( function( resolve, reject ) {
+    return new Promise( function( resolve, reject ) {
         function next( ret ) {
             if( ret.done ) {
                 return resolve( ret.value );
@@ -149,26 +150,67 @@ function arrayToPromise( value ) {
         results[i] = toPromise.call( this, value[i] );
     }
 
-    return _bluebird2.default.all( results );
+    return Promise.all( results );
+}
+
+function thunkToPromise( value ) {
+    var _this = this;
+
+    return new Promise( function( resolve, reject ) {
+        try {
+            value.call( _this, function( err ) {
+                if( err ) {
+                    reject( err );
+                } else if( arguments.length > 2 ) {
+                    var _length = arguments.length - 1;
+                    var res = new Array( _length );
+                    var i = -1;
+
+                    while( ++i < _length ) {
+                        res[i] = arguments[i + 1];
+                    }
+
+                    resolve( res );
+                } else {
+                    resolve( arguments[1] );
+                }
+            } );
+        } catch( err ) {
+            reject( err );
+        }
+    } );
 }
 
 function toPromise( value ) {
-    var _this2 = this;
-
-    if( isThenable( value ) ) {
-        return value;
-    } else if( Array.isArray( value ) ) {
-        return arrayToPromise.call( this, value );
-    } else if( !!value && typeof value === 'object' ) {
-        if( isGenerator( value ) ) {
-            return resolveGenerator.call( this, value );
-        } else if( Object === value.constructor || !value.constructor ) {
-            return objectToPromise.call( this, value );
-        } else {
+    switch( typeof value ) {
+        case 'function':
+        {
+            if( isGeneratorFunction( value ) ) {
+                return Promise.coroutine( value ).call( this );
+            } else {
+                return thunkToPromise.call( this, value );
+            }
+        }
+        case 'object':
+        {
+            if( isThenable( value ) ) {
+                return value;
+            } else if( !value ) {
+                return value;
+            } else if( Array.isArray( value ) ) {
+                return arrayToPromise.call( this, value );
+            } else if( isGenerator( value ) ) {
+                return resolveGenerator.call( this, value );
+            } else if( Object === value.constructor ) {
+                return objectToPromise.call( this, value );
+            }
+        }
+        default:
+        {
             var i = -1;
-            var _length = yieldHandlers.length;
+            var _length2 = yieldHandlers.length;
 
-            while( ++i < _length ) {
+            while( ++i < _length2 ) {
                 var handler = yieldHandlers[i];
 
                 var res = handler.call( this, value );
@@ -178,48 +220,11 @@ function toPromise( value ) {
                 }
             }
         }
-    } else if( typeof value === 'function' ) {
-        if( isGeneratorFunction( value ) ) {
-            return _bluebird2.default.coroutine( value ).call( this );
-        } else {
-            //Thunks
-            return new _bluebird2.default( function( resolve, reject ) {
-                try {
-                    value.call( _this2, function( err ) {
-                        for( var _len = arguments.length, res = Array( _len > 1 ? _len - 1 : 0 ), _key = 1; _key < _len;
-                             _key++ ) {
-                            res[_key - 1] = arguments[_key];
-                        }
-
-                        if( err ) {
-                            reject( err );
-                        } else if( res.length > 1 ) {
-                            resolve( res );
-                        } else {
-                            resolve( res[0] );
-                        }
-                    } );
-                } catch( err ) {
-                    reject( err );
-                }
-            } );
-        }
-    } else {
-        var i = -1;
-        var _length2 = yieldHandlers.length;
-
-        while( ++i < _length2 ) {
-            var handler = yieldHandlers[i];
-
-            var res = handler.call( this, value );
-
-            if( isThenable( res ) ) {
-                return res;
-            }
+        case 'undefined':
+        {
+            return value;
         }
     }
-
-    return value;
 }
 
 function addYieldHandler( handler ) {
@@ -233,7 +238,7 @@ function addYieldHandler( handler ) {
 var addedYieldHandler = false;
 
 if( !addedYieldHandler ) {
-    _bluebird2.default.coroutine.addYieldHandler( toPromise );
+    Promise.coroutine.addYieldHandler( toPromise );
 
     addedYieldHandler = true;
 }
