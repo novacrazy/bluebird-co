@@ -38,29 +38,6 @@ function _interopRequireDefault( obj ) {
     return obj && obj.__esModule ? obj : {'default': obj};
 }
 
-function _classCallCheck( instance, Constructor ) {
-    if( !(instance instanceof Constructor) ) {
-        throw new TypeError( 'Cannot call a class as a function' );
-    }
-}
-
-function _inherits( subClass, superClass ) {
-    if( typeof superClass !== 'function' && superClass !== null ) {
-        throw new TypeError( 'Super expression must either be null or a function, not ' + typeof superClass );
-    }
-    subClass.prototype = Object.create( superClass && superClass.prototype, {
-        constructor: {
-            value:        subClass,
-            enumerable:   false,
-            writable:     true,
-            configurable: true
-        }
-    } );
-    if( superClass ) {
-        subClass.__proto__ = superClass;
-    }
-}
-
 var _bluebird = require( 'bluebird' );
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
@@ -68,7 +45,7 @@ var _bluebird2 = _interopRequireDefault( _bluebird );
 var yieldHandlers = [];
 
 function isThenable( obj ) {
-    return obj !== void 0 && obj !== null && (obj instanceof _bluebird2.default || typeof obj.then === 'function');
+    return !(!obj || typeof obj.then !== 'function');
 }
 
 var isPromise = isThenable;
@@ -101,25 +78,13 @@ function isNativeObject( obj ) {
     }
 }
 
-var YieldException = (function( _TypeError ) {
-    function YieldException() {
-        _classCallCheck( this, YieldException );
-
-        _TypeError.apply( this, arguments );
-    }
-
-    _inherits( YieldException, _TypeError );
-
-    return YieldException;
-})( TypeError );
-
 function objectToPromise( obj ) {
+    var _this = this;
+
     var results = new obj.constructor();
     var keys = Object.keys( obj );
     var promises = new Array( keys.length );
     var current = 0;
-
-    var toPromiseThis = toPromise.bind( this );
 
     var _loop = function() {
         if( _isArray ) {
@@ -137,7 +102,7 @@ function objectToPromise( obj ) {
 
         var key = _ref;
 
-        var promise = toPromiseThis( obj[key] );
+        var promise = toPromise.call( _this, obj[key] );
 
         if( isThenable( promise ) ) {
             results[key] = void 0;
@@ -165,28 +130,18 @@ function objectToPromise( obj ) {
 }
 
 function resolveGenerator( gen ) {
-    var _this = this;
-
     return new _bluebird2.default( function( resolve, reject ) {
-        var toPromiseThis = toPromise.bind( _this );
-
         function next( ret ) {
             if( ret.done ) {
                 return resolve( ret.value );
             } else {
-                try {
-                    var value = toPromiseThis( ret.value, true );
+                var value = toPromise.call( this, ret.value );
 
-                    if( isThenable( value ) ) {
-                        return value.then( onFulfilled, onRejected );
-                    } else {
-                        var err = new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
-                                                 + ret.value + '"' );
-
-                        return onRejected( err );
-                    }
-                } catch( err ) {
-                    return onRejected( err );
+                if( isThenable( value ) ) {
+                    return value.then( onFulfilled, onRejected );
+                } else {
+                    return onRejected( new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
+                                                      + ret.value + '"' ) );
                 }
             }
         }
@@ -211,26 +166,14 @@ function resolveGenerator( gen ) {
     } );
 }
 
-function toPromise( value, strict ) {
+function toPromise( value ) {
     var _this2 = this;
 
     if( isThenable( value ) ) {
         return value;
     } else if( Array.isArray( value ) ) {
-        var _ret2 = (function() {
-            var toPromiseThis = toPromise.bind( _this2 );
-
-            return {
-                v: _bluebird2.default.all( value.map( function( val ) {
-                    return toPromiseThis( val );
-                } ) )
-            };
-        })();
-
-        if( typeof _ret2 === 'object' ) {
-            return _ret2.v;
-        }
-    } else if( typeof value === 'object' && value !== null ) {
+        return _bluebird2.default.all( value.map( toPromise, this ) );
+    } else if( value && typeof value === 'object' ) {
         if( isGenerator( value ) ) {
             return resolveGenerator.call( this, value );
         } else if( isNativeObject( value ) ) {
@@ -318,12 +261,7 @@ function toPromise( value, strict ) {
         }
     }
 
-    if( strict ) {
-        throw new YieldException( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
-                                  + value + '"' );
-    } else {
-        return _bluebird2.default.resolve( value );
-    }
+    return value;
 }
 
 function addYieldHandler( handler ) {
@@ -339,13 +277,15 @@ var addedYieldHandler = false;
 if( !addedYieldHandler ) {
     _bluebird2.default.coroutine.addYieldHandler( function( value ) {
         try {
-            return toPromise.call( this, value, true );
-        } catch( err ) {
-            if( err instanceof YieldException ) {
+            var res = toPromise.call( this, value );
+
+            if( !isThenable( res ) ) {
                 return void 0;
-            } else {
-                return _bluebird2.default.reject( err );
             }
+
+            return res;
+        } catch( err ) {
+            return _bluebird2.default.reject( err );
         }
     } );
 
