@@ -50,13 +50,13 @@ var MyModel = (function() {
 })();
 
 var MyOtherModel = (function( _Object ) {
+    _inherits( MyOtherModel, _Object );
+
     function MyOtherModel() {
         _classCallCheck( this, MyOtherModel );
 
         _get( Object.getPrototypeOf( MyOtherModel.prototype ), 'constructor', this ).apply( this, arguments );
     }
-
-    _inherits( MyOtherModel, _Object );
 
     return MyOtherModel;
 })( Object );
