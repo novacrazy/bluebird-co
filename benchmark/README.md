@@ -5,12 +5,6 @@ I thought it could be useful to some people to compare the performance of bluebi
 
 Pull requests for new benchmarks are always welcome.
 
-## Preface
-
-As this is effectively a port of tj/co, the performance is about the same when using the same promises, except in situations where I have manually optimized things.
-
-However, it should be kept in mind that bluebird-co is also extensible, and of course works with bluebird.
-
 ## Results
 
 Tested with io.js 2.3.0 on Windows 8, Intel i5-4690K at 3.9GHz with 32GB of memory.
