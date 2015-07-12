@@ -186,7 +186,7 @@ if( !addedYieldHandler ) {
             let res = toPromise.call( this, value );
 
             if( !isThenable( res ) ) {
-                throw new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${value}"` );
+                return void 0;
             }
 
             return res;
