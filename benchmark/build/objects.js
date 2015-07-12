@@ -14,7 +14,9 @@ var _ = require( '../../' );
 
 var _2 = _interopRequireDefault( _ );
 
-var _co = require( 'co' );
+var _co = require( '../co' );
+
+var _co2 = require( 'co' );
 
 function makeObject( size ) {
     var result = {};
@@ -29,7 +31,11 @@ function makeObject( size ) {
 suite( 'small object (10 keys)', function() {
     set( 'delay', 0 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield makeObject( 10 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield makeObject( 10 );
     } );
 
@@ -39,6 +45,10 @@ suite( 'small object (10 keys)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
@@ -49,7 +59,11 @@ suite( 'small object (10 keys)', function() {
 suite( 'large objects (2000 keys)', function() {
     set( 'delay', 0 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield makeObject( 2000 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield makeObject( 2000 );
     } );
 
@@ -59,6 +73,10 @@ suite( 'large objects (2000 keys)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {

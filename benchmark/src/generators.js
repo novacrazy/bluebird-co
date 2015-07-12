@@ -8,6 +8,7 @@
 
 import Promise from 'bluebird';
 import BluebirdCo from '../../';
+import {wrap as coWrapBluebird} from '../co'
 import {wrap} from 'co';
 
 function* gen( iterations ) {
@@ -41,12 +42,20 @@ suite( 'simple generators (10 iterations)', function() {
         return yield gen( 10 );
     } );
 
+    let cob_version = coWrapBluebird( function*() {
+        return yield gen( 10 );
+    } );
+
     let bluebird_version = async function() {
         return await gen( 10 );
     };
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
@@ -61,12 +70,20 @@ suite( 'long-running generators (1000 iterations)', function() {
         return yield gen( 1000 );
     } );
 
+    let cob_version = coWrapBluebird( function*() {
+        return yield gen( 1000 );
+    } );
+
     let bluebird_version = async function() {
         return await gen( 1000 );
     };
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
@@ -82,12 +99,20 @@ suite( 'complex generators (150 iterations * three layers)', function() {
         return yield gen_complex( 150 );
     } );
 
+    let cob_version = coWrapBluebird( function*() {
+        return yield gen_complex( 150 );
+    } );
+
     let bluebird_version = async function() {
         return await gen_complex( 150 );
     };
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {

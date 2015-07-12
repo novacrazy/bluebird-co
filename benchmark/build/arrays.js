@@ -14,7 +14,9 @@ var _ = require( '../../' );
 
 var _2 = _interopRequireDefault( _ );
 
-var _co = require( 'co' );
+var _co = require( '../co' );
+
+var _co2 = require( 'co' );
 
 function makeArray( length ) {
     var res = [];
@@ -30,7 +32,11 @@ suite( 'very short arrays (2 elements)', function() {
     set( 'delay', 0 );
     set( 'iterations', 1000 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield makeArray( 2 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield makeArray( 2 );
     } );
 
@@ -40,6 +46,10 @@ suite( 'very short arrays (2 elements)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
@@ -51,7 +61,11 @@ suite( 'short arrays (10 elements)', function() {
     set( 'delay', 0 );
     set( 'iterations', 500 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield makeArray( 10 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield makeArray( 10 );
     } );
 
@@ -61,6 +75,10 @@ suite( 'short arrays (10 elements)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
@@ -71,7 +89,11 @@ suite( 'short arrays (10 elements)', function() {
 suite( 'long arrays (2000 elements)', function() {
     set( 'delay', 0 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield makeArray( 2000 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield makeArray( 2000 );
     } );
 
@@ -81,6 +103,10 @@ suite( 'long arrays (2000 elements)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {

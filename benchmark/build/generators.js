@@ -18,7 +18,9 @@ var _ = require( '../../' );
 
 var _2 = _interopRequireDefault( _ );
 
-var _co = require( 'co' );
+var _co = require( '../co' );
+
+var _co2 = require( 'co' );
 
 function* gen( iterations ) {
     for( var i = 0; i < iterations; i++ ) {
@@ -47,7 +49,11 @@ suite( 'simple generators (10 iterations)', function() {
     set( 'delay', 0 );
     set( 'iterations', 200 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield gen( 10 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield gen( 10 );
     } );
 
@@ -57,6 +63,10 @@ suite( 'simple generators (10 iterations)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
@@ -67,7 +77,11 @@ suite( 'simple generators (10 iterations)', function() {
 suite( 'long-running generators (1000 iterations)', function() {
     set( 'delay', 0 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield gen( 1000 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield gen( 1000 );
     } );
 
@@ -77,6 +91,10 @@ suite( 'long-running generators (1000 iterations)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
@@ -88,7 +106,11 @@ suite( 'complex generators (150 iterations * three layers)', function() {
     set( 'delay', 0 );
     set( 'iterations', 200 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield gen_complex( 150 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield gen_complex( 150 );
     } );
 
@@ -98,6 +120,10 @@ suite( 'complex generators (150 iterations * three layers)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {

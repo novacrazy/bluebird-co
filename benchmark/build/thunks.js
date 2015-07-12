@@ -14,7 +14,9 @@ var _ = require( '../../' );
 
 var _2 = _interopRequireDefault( _ );
 
-var _co = require( 'co' );
+var _co = require( '../co' );
+
+var _co2 = require( 'co' );
 
 function get( val ) {
     return function( done ) {
@@ -26,7 +28,13 @@ suite( 'simple thunks (1 argument)', function() {
     set( 'delay', 0 );
     set( 'iterations', 500 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield function( done ) {
+            done( null, 10 );
+        };
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield function( done ) {
             done( null, 10 );
         };
@@ -40,6 +48,10 @@ suite( 'simple thunks (1 argument)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
@@ -51,7 +63,13 @@ suite( 'thunks with many arguments (30 arguments)', function() {
     set( 'delay', 0 );
     set( 'iterations', 500 );
 
-    var co_version = (0, _co.wrap)( function* () {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield function( done ) {
+            done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+        };
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
         return yield function( done ) {
             done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
         };
@@ -65,6 +83,10 @@ suite( 'thunks with many arguments (30 arguments)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {

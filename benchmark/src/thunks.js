@@ -4,6 +4,7 @@
 
 import Promise from 'bluebird';
 import BluebirdCo from '../../';
+import {wrap as coWrapBluebird} from '../co'
 import {wrap} from 'co';
 
 function get( val ) {
@@ -22,6 +23,12 @@ suite( 'simple thunks (1 argument)', function() {
         };
     } );
 
+    let cob_version = coWrapBluebird( function*() {
+        return yield function( done ) {
+            done( null, 10 );
+        };
+    } );
+
     let bluebird_version = async function() {
         return await function( done ) {
             done( null, 10 );
@@ -30,6 +37,10 @@ suite( 'simple thunks (1 argument)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
@@ -47,6 +58,12 @@ suite( 'thunks with many arguments (30 arguments)', function() {
         };
     } );
 
+    let cob_version = coWrapBluebird( function*() {
+        return yield function( done ) {
+            done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+        };
+    } );
+
     let bluebird_version = async function() {
         return await function( done ) {
             done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
@@ -55,6 +72,10 @@ suite( 'thunks with many arguments (30 arguments)', function() {
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
     } );
 
     bench( 'bluebird-co', function( next ) {
