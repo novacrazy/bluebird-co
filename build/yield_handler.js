@@ -193,16 +193,16 @@ function toPromise( value ) {
         }
         case 'object':
         {
-            if( isThenable( value ) ) {
-                return value;
-            } else if( !value ) {
-                return value;
-            } else if( Array.isArray( value ) ) {
-                return arrayToPromise.call( this, value );
-            } else if( isGenerator( value ) ) {
-                return resolveGenerator.call( this, value );
-            } else if( Object === value.constructor ) {
-                return objectToPromise.call( this, value );
+            if( value ) {
+                if( typeof value.then === 'function' ) {
+                    return value;
+                } else if( Array.isArray( value ) ) {
+                    return arrayToPromise.call( this, value );
+                } else if( isGenerator( value ) ) {
+                    return resolveGenerator.call( this, value );
+                } else if( Object === value.constructor ) {
+                    return objectToPromise.call( this, value );
+                }
             }
         }
         default:
