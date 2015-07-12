@@ -45,18 +45,23 @@ function isNativeObject( obj ) {
 }
 
 function objectToPromise( obj ) {
-    let results = new obj.constructor();
     let keys = Object.keys( obj );
-    let promises = new Array( keys.length );
-    let current = 0;
+    let length = keys.length;
 
-    for( let key of keys ) {
+    let results = new obj.constructor();
+
+    let promises = new Array( length );
+    let i = -1;
+
+    while( ++i < length ) {
+        let key = keys[i];
+
         let promise = toPromise.call( this, obj[key] );
 
         if( isThenable( promise ) ) {
             results[key] = void 0;
 
-            promises[current++] = promise.then( res => results[key] = res );
+            promises[i] = promise.then( res => results[key] = res );
 
         } else {
             results[key] = obj[key];
@@ -106,12 +111,25 @@ function resolveGenerator( gen ) {
     } );
 }
 
+function arrayToPromise( value ) {
+    let length = value.length;
+
+    let results = new Array( length );
+    let i = -1;
+
+    while( ++i < length ) {
+        results[i] = toPromise.call( this, value[i] );
+    }
+
+    return Promise.all( results );
+}
+
 function toPromise( value ) {
     if( isThenable( value ) ) {
         return value;
 
     } else if( Array.isArray( value ) ) {
-        return Promise.all( value.map( toPromise, this ) );
+        return arrayToPromise.call( this, value );
 
     } else if( value && typeof value === 'object' ) {
         if( isGenerator( value ) ) {
@@ -121,7 +139,12 @@ function toPromise( value ) {
             return objectToPromise.call( this, value );
 
         } else {
-            for( let handler of yieldHandlers ) {
+            let i = -1;
+            let length = yieldHandlers.length;
+
+            while( ++i < length ) {
+                let handler = yieldHandlers[i];
+
                 let res = handler.call( this, value );
 
                 if( isThenable( res ) ) {
@@ -156,8 +179,13 @@ function toPromise( value ) {
             } );
         }
 
-    } else if( yieldHandlers.length > 0 ) {
-        for( let handler of yieldHandlers ) {
+    } else {
+        let i = -1;
+        let length = yieldHandlers.length;
+
+        while( ++i < length ) {
+            let handler = yieldHandlers[i];
+
             let res = handler.call( this, value );
 
             if( isThenable( res ) ) {
@@ -181,20 +209,7 @@ export function addYieldHandler( handler ) {
 let addedYieldHandler = false;
 
 if( !addedYieldHandler ) {
-    Promise.coroutine.addYieldHandler( function( value ) {
-        try {
-            let res = toPromise.call( this, value );
-
-            if( !isThenable( res ) ) {
-                return void 0;
-            }
-
-            return res;
-
-        } catch( err ) {
-            return Promise.reject( err );
-        }
-    } );
+    Promise.coroutine.addYieldHandler( toPromise );
 
     addedYieldHandler = true;
 }
