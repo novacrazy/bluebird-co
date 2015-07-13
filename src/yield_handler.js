@@ -159,15 +159,7 @@ function thunkToPromise( value ) {
 }
 
 function toPromise( value ) {
-    if( typeof value === 'function' ) {
-        if( isGeneratorFunction( value ) ) {
-            return Promise.coroutine( value ).call( this );
-
-        } else {
-            return thunkToPromise.call( this, value );
-        }
-
-    } else if( value && typeof value === 'object' ) {
+    if( value && typeof value === 'object' ) {
         if( typeof value.then === 'function' ) {
             return value;
 
@@ -179,6 +171,14 @@ function toPromise( value ) {
 
         } else if( Object === value.constructor ) {
             return objectToPromise.call( this, value );
+        }
+
+    } else if( typeof value === 'function' ) {
+        if( isGeneratorFunction( value ) ) {
+            return Promise.coroutine( value ).call( this );
+
+        } else {
+            return thunkToPromise.call( this, value );
         }
     }
 
