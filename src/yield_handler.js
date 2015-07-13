@@ -19,15 +19,20 @@ export function isGenerator( obj ) {
 }
 
 export function isGeneratorFunction( obj ) {
-    if( !obj.constructor ) {
+    let constructor = obj.constructor;
+
+    if( !constructor ) {
         return false;
 
-    } else if( 'GeneratorFunction' === obj.constructor.name ||
-               'GeneratorFunction' === obj.constructor.displayName ) {
+    } else if( 'GeneratorFunction' === constructor.name ||
+               'GeneratorFunction' === constructor.displayName ) {
         return true;
 
     } else {
-        return isGenerator( obj.constructor.prototype );
+        let prototype = constructor.prototype;
+
+        return 'function' === typeof prototype.next &&
+               'function' === typeof prototype.throw;
     }
 }
 
@@ -72,17 +77,21 @@ function resolveGenerator( gen ) {
             if( ret.done ) {
                 resolve( ret.value );
 
-            } else if( isThenable( ret.value ) ) {
-                ret.value.then( onFulfilled, onRejected );
-
             } else {
-                let value = toPromise.call( this, ret.value );
+                let value = ret.value;
 
-                if( isThenable( value ) ) {
+                if( value && typeof value.then === 'function' ) {
                     value.then( onFulfilled, onRejected );
 
                 } else {
-                    onRejected( new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` ) );
+                    value = toPromise.call( this, value );
+
+                    if( value && typeof value.then === 'function' ) {
+                        value.then( onFulfilled, onRejected );
+
+                    } else {
+                        onRejected( new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` ) );
+                    }
                 }
             }
         }
@@ -171,7 +180,7 @@ function toPromise( value ) {
                 } else if( Array.isArray( value ) ) {
                     return arrayToPromise.call( this, value );
 
-                } else if( isGenerator( value ) ) {
+                } else if( 'function' === typeof value.next && 'function' === typeof value.throw ) {
                     return resolveGenerator.call( this, value );
 
                 } else if( Object === value.constructor ) {
@@ -189,7 +198,7 @@ function toPromise( value ) {
 
                 let res = handler.call( this, value );
 
-                if( isThenable( res ) ) {
+                if( res && typeof res.then === 'function' ) {
                     return res;
                 }
             }
