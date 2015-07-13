@@ -142,6 +142,8 @@ async function() {
 
 ### Error handling
 
+Note: This one is here for full disclosure that bluebird-co is indeed slower when it comes to error handling. This is partly because errors have to go through the `Bluebird.coroutine` circuitry instead of being passed/thrown directly back like co does. However, unless you plan on throwing fifty thousand errors per second, it shouldn't ever be an issue.
+
 Example:
 ```javascript
 //Top level error
@@ -179,13 +181,3 @@ async function() {
 | deep error handling (after 2000 iterations) | co                        | 1,190.83   | 87%  |
 |                                             | co with bluebird promises | 1,318.86   | 96%  |
 |                                             | bluebird-co               | 1,375.38   | 100% |
-
-
-
-
-
-
-
-
-
-
