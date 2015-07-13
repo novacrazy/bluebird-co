@@ -70,16 +70,19 @@ function resolveGenerator( gen ) {
     return new Promise( ( resolve, reject ) => {
         function next( ret ) {
             if( ret.done ) {
-                return resolve( ret.value );
+                resolve( ret.value );
+
+            } else if( isThenable( ret.value ) ) {
+                ret.value.then( onFulfilled, onRejected );
 
             } else {
                 let value = toPromise.call( this, ret.value );
 
                 if( isThenable( value ) ) {
-                    return value.then( onFulfilled, onRejected );
+                    value.then( onFulfilled, onRejected );
 
                 } else {
-                    return onRejected( new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` ) );
+                    onRejected( new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` ) );
                 }
             }
         }
@@ -89,7 +92,7 @@ function resolveGenerator( gen ) {
                 next( gen.next( res ) );
 
             } catch( e ) {
-                return reject( e );
+                reject( e );
             }
         }
 
@@ -98,7 +101,7 @@ function resolveGenerator( gen ) {
                 next( gen.throw( err ) );
 
             } catch( e ) {
-                return reject( e );
+                reject( e );
             }
         }
 
