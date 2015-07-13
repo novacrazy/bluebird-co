@@ -59,13 +59,13 @@ describe( 'simple coroutines', function() {
         it( 'should return an array', function() {
             function exec( cmd ) {
                 return function( done ) {
-                    done( null, 'stdout', 'stderr' );
+                    done( null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
                 }
             }
 
             let test4 = async function() {
                 var out = await exec( 'something' );
-                assert.deepEqual( ['stdout', 'stderr'], out );
+                assert.deepEqual( [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], out );
             };
 
 

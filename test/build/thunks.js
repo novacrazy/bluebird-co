@@ -68,13 +68,13 @@ describe( 'simple coroutines', function() {
         it( 'should return an array', function() {
             function exec( cmd ) {
                 return function( done ) {
-                    done( null, 'stdout', 'stderr' );
+                    done( null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
                 };
             }
 
             var test4 = _bluebird.coroutine( function* () {
                 var out = yield exec( 'something' );
-                _assert2.default.deepEqual( ['stdout', 'stderr'], out );
+                _assert2.default.deepEqual( [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], out );
             } );
 
             return test4();
