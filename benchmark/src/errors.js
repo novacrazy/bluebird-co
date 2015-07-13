@@ -25,6 +25,9 @@ function* e() {
 }
 
 suite( 'top level error handling', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         try {
             return yield null;
@@ -66,6 +69,8 @@ suite( 'top level error handling', function() {
 } );
 
 suite( 'nested error handling', function() {
+    set( 'delay', 0 );
+
     let co_version = wrap( function*() {
         try {
             return yield gen();
@@ -107,6 +112,9 @@ suite( 'nested error handling', function() {
 } );
 
 suite( 'deep error handling (after 2000 iterations)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         try {
             return yield e();

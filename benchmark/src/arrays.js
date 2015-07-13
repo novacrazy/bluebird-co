@@ -19,6 +19,9 @@ function makeArray( length ) {
 }
 
 suite( 'very short arrays (2 elements)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         return yield makeArray( 2 );
     } );
@@ -45,6 +48,9 @@ suite( 'very short arrays (2 elements)', function() {
 } );
 
 suite( 'short arrays (10 elements)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         return yield makeArray( 10 );
     } );
@@ -71,6 +77,9 @@ suite( 'short arrays (10 elements)', function() {
 } );
 
 suite( 'long arrays (2000 elements)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         return yield makeArray( 2000 );
     } );
@@ -97,6 +106,9 @@ suite( 'long arrays (2000 elements)', function() {
 } );
 
 suite( 'huge arrays (10000 elements)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         return yield makeArray( 10000 );
     } );

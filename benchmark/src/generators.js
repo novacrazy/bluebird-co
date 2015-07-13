@@ -35,6 +35,9 @@ function* gen_complex( iterations ) {
 }
 
 suite( 'simple generators (10 iterations)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         return yield gen( 10 );
     } );
@@ -61,6 +64,9 @@ suite( 'simple generators (10 iterations)', function() {
 } );
 
 suite( 'long-running generators (1000 iterations)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         return yield gen( 1000 );
     } );
@@ -87,6 +93,9 @@ suite( 'long-running generators (1000 iterations)', function() {
 } );
 
 suite( 'very long-running generators (10000 iterations)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         return yield gen( 10000 );
     } );
@@ -113,6 +122,9 @@ suite( 'very long-running generators (10000 iterations)', function() {
 } );
 
 suite( 'complex generators (150 iterations)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     let co_version = wrap( function*() {
         return yield gen_complex( 150 );
     } );

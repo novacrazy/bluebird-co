@@ -31,6 +31,9 @@ function makeObject( size ) {
 }
 
 suite( 'very small objects (2 keys)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeObject( 2 );
     } );
@@ -57,6 +60,9 @@ suite( 'very small objects (2 keys)', function() {
 } );
 
 suite( 'small objects (10 keys)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeObject( 10 );
     } );
@@ -83,6 +89,9 @@ suite( 'small objects (10 keys)', function() {
 } );
 
 suite( 'large objects (2000 keys)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeObject( 2000 );
     } );
@@ -109,6 +118,9 @@ suite( 'large objects (2000 keys)', function() {
 } );
 
 suite( 'huge objects (10000 keys)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeObject( 10000 );
     } );

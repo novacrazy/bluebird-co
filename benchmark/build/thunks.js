@@ -35,6 +35,9 @@ while( ++i < 3000 ) {
 args[0] = null;
 
 suite( 'simple thunks (1 argument)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     var co_version = (0, _co2.wrap)( function* () {
         return yield function( done ) {
             done( null, 10 );
@@ -67,6 +70,9 @@ suite( 'simple thunks (1 argument)', function() {
 } );
 
 suite( 'thunks with many arguments (30 arguments)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     var co_version = (0, _co2.wrap)( function* () {
         return yield function( done ) {
             done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
@@ -99,6 +105,9 @@ suite( 'thunks with many arguments (30 arguments)', function() {
 } );
 
 suite( 'thunks with stupidly many arguments (3000 arguments)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
     var co_version = (0, _co2.wrap)( function* () {
         return yield function( done ) {
             done.apply( null, args );
