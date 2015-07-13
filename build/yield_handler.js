@@ -59,12 +59,16 @@ function isGenerator( obj ) {
 }
 
 function isGeneratorFunction( obj ) {
-    if( !obj.constructor ) {
+    var constructor = obj.constructor;
+
+    if( !constructor ) {
         return false;
-    } else if( 'GeneratorFunction' === obj.constructor.name || 'GeneratorFunction' === obj.constructor.displayName ) {
+    } else if( 'GeneratorFunction' === constructor.name || 'GeneratorFunction' === constructor.displayName ) {
         return true;
     } else {
-        return isGenerator( obj.constructor.prototype );
+        var prototype = constructor.prototype;
+
+        return 'function' === typeof prototype.next && 'function' === typeof prototype.throw;
     }
 }
 
@@ -107,15 +111,21 @@ function resolveGenerator( gen ) {
     return new Promise( function( resolve, reject ) {
         function next( ret ) {
             if( ret.done ) {
-                return resolve( ret.value );
+                resolve( ret.value );
             } else {
-                var value = toPromise.call( this, ret.value );
+                var value = ret.value;
 
-                if( isThenable( value ) ) {
-                    return value.then( onFulfilled, onRejected );
+                if( value && typeof value.then === 'function' ) {
+                    value.then( onFulfilled, onRejected );
                 } else {
-                    return onRejected( new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
-                                                      + ret.value + '"' ) );
+                    value = toPromise.call( this, value );
+
+                    if( value && typeof value.then === 'function' ) {
+                        value.then( onFulfilled, onRejected );
+                    } else {
+                        onRejected( new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
+                                                   + ret.value + '"' ) );
+                    }
                 }
             }
         }
@@ -124,7 +134,7 @@ function resolveGenerator( gen ) {
             try {
                 next( gen.next( res ) );
             } catch( e ) {
-                return reject( e );
+                reject( e );
             }
         }
 
@@ -132,7 +142,7 @@ function resolveGenerator( gen ) {
             try {
                 next( gen.throw( err ) );
             } catch( e ) {
-                return reject( e );
+                reject( e );
             }
         }
 
@@ -198,7 +208,7 @@ function toPromise( value ) {
                     return value;
                 } else if( Array.isArray( value ) ) {
                     return arrayToPromise.call( this, value );
-                } else if( isGenerator( value ) ) {
+                } else if( 'function' === typeof value.next && 'function' === typeof value.throw ) {
                     return resolveGenerator.call( this, value );
                 } else if( Object === value.constructor ) {
                     return objectToPromise.call( this, value );
@@ -215,7 +225,7 @@ function toPromise( value ) {
 
                 var res = handler.call( this, value );
 
-                if( isThenable( res ) ) {
+                if( res && typeof res.then === 'function' ) {
                     return res;
                 }
             }
