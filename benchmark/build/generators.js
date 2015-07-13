@@ -30,10 +30,10 @@ function* gen( iterations ) {
 
 //what even is this
 function* gen_complex( iterations ) {
-    var test3 = [];
+    var test3 = new Array( iterations );
 
     for( var i = 0; i < iterations; i++ ) {
-        test3.push( _bluebird2.default.resolve( i ) );
+        test3[i] = _bluebird2.default.resolve( i );
     }
 
     for( var i = 0; i < iterations; i++ ) {

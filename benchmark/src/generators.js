@@ -19,10 +19,10 @@ function* gen( iterations ) {
 
 //what even is this
 function* gen_complex( iterations ) {
-    let test3 = [];
+    let test3 = new Array( iterations );
 
     for( let i = 0; i < iterations; i++ ) {
-        test3.push( Promise.resolve( i ) )
+        test3[i] = Promise.resolve( i );
     }
 
     for( let i = 0; i < iterations; i++ ) {
