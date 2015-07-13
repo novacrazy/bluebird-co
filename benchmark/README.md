@@ -146,7 +146,7 @@ async function() {
     await function*() {
         if(i++ > 2000) throw new Error();
 
-        yield i;
+        yield Promise.resolve(i);
     }
 }
 ```
