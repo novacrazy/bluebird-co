@@ -105,7 +105,7 @@ function get(value) {
 }
 
 async function() {
-    let value = get(10);
+    let value = await get(10);
 
     console.log(value); //10
 }
