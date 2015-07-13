@@ -70,7 +70,7 @@ function* test(limit){
     let i = 0;
 
     while(i++ < limit) {
-        yield i;
+        yield Promise.resolve(i);
     }
 }
 
