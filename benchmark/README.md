@@ -66,10 +66,10 @@ async function() {
 
 Example:
 ```javascript
-function* test(limit){
+function* test(iterations){
     let i = 0;
 
-    while(i++ < limit) {
+    while(i++ < iterations) {
         yield Promise.resolve(i);
     }
 }
