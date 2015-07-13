@@ -161,53 +161,41 @@ function thunkToPromise( value ) {
 }
 
 function toPromise( value ) {
-    switch( typeof value ) {
-        case 'function':
-        {
-            if( isGeneratorFunction( value ) ) {
-                return Promise.coroutine( value ).call( this );
+    if( typeof value === 'function' ) {
+        if( isGeneratorFunction( value ) ) {
+            return Promise.coroutine( value ).call( this );
 
-            } else {
-                return thunkToPromise.call( this, value );
-            }
+        } else {
+            return thunkToPromise.call( this, value );
         }
-        case 'object':
-        {
-            if( value ) {
-                if( typeof value.then === 'function' ) {
-                    return value;
 
-                } else if( Array.isArray( value ) ) {
-                    return arrayToPromise.call( this, value );
-
-                } else if( 'function' === typeof value.next && 'function' === typeof value.throw ) {
-                    return resolveGenerator.call( this, value );
-
-                } else if( Object === value.constructor ) {
-                    return objectToPromise.call( this, value );
-                }
-            }
-        }
-        default:
-        {
-            let i = -1;
-            let length = yieldHandlers.length;
-
-            while( ++i < length ) {
-                let handler = yieldHandlers[i];
-
-                let res = handler.call( this, value );
-
-                if( res && typeof res.then === 'function' ) {
-                    return res;
-                }
-            }
-        }
-        case 'undefined':
-        {
+    } else if( value && typeof value === 'object' ) {
+        if( typeof value.then === 'function' ) {
             return value;
+
+        } else if( Array.isArray( value ) ) {
+            return arrayToPromise.call( this, value );
+
+        } else if( 'function' === typeof value.next && 'function' === typeof value.throw ) {
+            return resolveGenerator.call( this, value );
+
+        } else if( Object === value.constructor ) {
+            return objectToPromise.call( this, value );
         }
     }
+
+    let i = -1;
+    let length = yieldHandlers.length;
+
+    while( ++i < length ) {
+        let res = yieldHandlers[i].call( this, value );
+
+        if( res && typeof res.then === 'function' ) {
+            return res;
+        }
+    }
+
+    return value;
 }
 
 export function addYieldHandler( handler ) {
