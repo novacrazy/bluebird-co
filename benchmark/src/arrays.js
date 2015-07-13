@@ -8,19 +8,17 @@ import {wrap as coWrapBluebird} from '../co'
 import {wrap} from 'co';
 
 function makeArray( length ) {
-    let res = [];
+    let res = new Array( length );
+    let i = -1;
 
-    for( let i = 0; i < length; i++ ) {
-        res.push( Promise.resolve( i ) )
+    while( ++i < length ) {
+        res[i] = Promise.resolve( i );
     }
 
     return res;
 }
 
 suite( 'very short arrays (2 elements)', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 1000 );
-
     let co_version = wrap( function*() {
         return yield makeArray( 2 );
     } );
@@ -47,9 +45,6 @@ suite( 'very short arrays (2 elements)', function() {
 } );
 
 suite( 'short arrays (10 elements)', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 500 );
-
     let co_version = wrap( function*() {
         return yield makeArray( 10 );
     } );
@@ -76,8 +71,6 @@ suite( 'short arrays (10 elements)', function() {
 } );
 
 suite( 'long arrays (2000 elements)', function() {
-    set( 'delay', 0 );
-
     let co_version = wrap( function*() {
         return yield makeArray( 2000 );
     } );
@@ -88,6 +81,32 @@ suite( 'long arrays (2000 elements)', function() {
 
     let bluebird_version = async function() {
         return await makeArray( 2000 );
+    };
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
+suite( 'huge arrays (10000 elements)', function() {
+    let co_version = wrap( function*() {
+        return yield makeArray( 10000 );
+    } );
+
+    let cob_version = coWrapBluebird( function*() {
+        return yield makeArray( 10000 );
+    } );
+
+    let bluebird_version = async function() {
+        return await makeArray( 10000 );
     };
 
     bench( 'co', function( next ) {

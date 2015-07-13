@@ -11,10 +11,20 @@ function* gen() {
     yield null;
 }
 
-suite( 'top level error handling', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 500 );
+function* e() {
+    let i = 0;
 
+    while( ++i ) {
+        if( i > 2000 ) {
+            throw new Error();
+
+        } else {
+            yield Promise.resolve( i );
+        }
+    }
+}
+
+suite( 'top level error handling', function() {
     let co_version = wrap( function*() {
         try {
             return yield null;
@@ -56,9 +66,6 @@ suite( 'top level error handling', function() {
 } );
 
 suite( 'nested error handling', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 500 );
-
     let co_version = wrap( function*() {
         try {
             return yield gen();
@@ -80,6 +87,47 @@ suite( 'nested error handling', function() {
     let bluebird_version = async function() {
         try {
             return await gen();
+
+        } catch( err ) {
+
+        }
+    };
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
+suite( 'deep error handling (after 2000 iterations)', function() {
+    let co_version = wrap( function*() {
+        try {
+            return yield e();
+
+        } catch( err ) {
+
+        }
+    } );
+
+    let cob_version = coWrapBluebird( function*() {
+        try {
+            return yield e();
+
+        } catch( err ) {
+
+        }
+    } );
+
+    let bluebird_version = async function() {
+        try {
+            return await e();
 
         } catch( err ) {
 

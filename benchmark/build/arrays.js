@@ -19,19 +19,17 @@ var _co = require( '../co' );
 var _co2 = require( 'co' );
 
 function makeArray( length ) {
-    var res = [];
+    var res = new Array( length );
+    var i = -1;
 
-    for( var i = 0; i < length; i++ ) {
-        res.push( _bluebird2.default.resolve( i ) );
+    while( ++i < length ) {
+        res[i] = _bluebird2.default.resolve( i );
     }
 
     return res;
 }
 
 suite( 'very short arrays (2 elements)', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 1000 );
-
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeArray( 2 );
     } );
@@ -58,9 +56,6 @@ suite( 'very short arrays (2 elements)', function() {
 } );
 
 suite( 'short arrays (10 elements)', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 500 );
-
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeArray( 10 );
     } );
@@ -87,8 +82,6 @@ suite( 'short arrays (10 elements)', function() {
 } );
 
 suite( 'long arrays (2000 elements)', function() {
-    set( 'delay', 0 );
-
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeArray( 2000 );
     } );
@@ -99,6 +92,32 @@ suite( 'long arrays (2000 elements)', function() {
 
     var bluebird_version = _bluebird.coroutine( function* () {
         return yield makeArray( 2000 );
+    } );
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
+suite( 'huge arrays (10000 elements)', function() {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield makeArray( 10000 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
+        return yield makeArray( 10000 );
+    } );
+
+    var bluebird_version = _bluebird.coroutine( function* () {
+        return yield makeArray( 10000 );
     } );
 
     bench( 'co', function( next ) {

@@ -22,10 +22,19 @@ function* gen() {
     yield null;
 }
 
-suite( 'top level error handling', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 500 );
+function* e() {
+    var i = 0;
 
+    while( ++i ) {
+        if( i > 2000 ) {
+            throw new Error();
+        } else {
+            yield _bluebird2.default.resolve( i );
+        }
+    }
+}
+
+suite( 'top level error handling', function() {
     var co_version = (0, _co2.wrap)( function* () {
         try {
             return yield null;
@@ -61,9 +70,6 @@ suite( 'top level error handling', function() {
 } );
 
 suite( 'nested error handling', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 500 );
-
     var co_version = (0, _co2.wrap)( function* () {
         try {
             return yield gen();
@@ -81,6 +87,41 @@ suite( 'nested error handling', function() {
     var bluebird_version = _bluebird.coroutine( function* () {
         try {
             return yield gen();
+        } catch( err ) {
+        }
+    } );
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
+suite( 'deep error handling (after 2000 iterations)', function() {
+    var co_version = (0, _co2.wrap)( function* () {
+        try {
+            return yield e();
+        } catch( err ) {
+        }
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
+        try {
+            return yield e();
+        } catch( err ) {
+        }
+    } );
+
+    var bluebird_version = _bluebird.coroutine( function* () {
+        try {
+            return yield e();
         } catch( err ) {
         }
     } );

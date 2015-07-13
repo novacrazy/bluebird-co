@@ -24,10 +24,17 @@ function get( val ) {
     };
 }
 
-suite( 'simple thunks (1 argument)', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 500 );
+var args = new Array( 3000 );
 
+var i = 0;
+
+while( ++i < 3000 ) {
+    args[i] = i;
+}
+
+args[0] = null;
+
+suite( 'simple thunks (1 argument)', function() {
     var co_version = (0, _co2.wrap)( function* () {
         return yield function( done ) {
             done( null, 10 );
@@ -60,9 +67,6 @@ suite( 'simple thunks (1 argument)', function() {
 } );
 
 suite( 'thunks with many arguments (30 arguments)', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 500 );
-
     var co_version = (0, _co2.wrap)( function* () {
         return yield function( done ) {
             done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
@@ -78,6 +82,38 @@ suite( 'thunks with many arguments (30 arguments)', function() {
     var bluebird_version = _bluebird.coroutine( function* () {
         return yield function( done ) {
             done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+        };
+    } );
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
+suite( 'thunks with stupidly many arguments (3000 arguments)', function() {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield function( done ) {
+            done.apply( null, args );
+        };
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
+        return yield function( done ) {
+            done.apply( null, args );
+        };
+    } );
+
+    var bluebird_version = _bluebird.coroutine( function* () {
+        return yield function( done ) {
+            done.apply( null, args );
         };
     } );
 

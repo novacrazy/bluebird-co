@@ -46,9 +46,6 @@ function* gen_complex( iterations ) {
 }
 
 suite( 'simple generators (10 iterations)', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 200 );
-
     var co_version = (0, _co2.wrap)( function* () {
         return yield gen( 10 );
     } );
@@ -75,8 +72,6 @@ suite( 'simple generators (10 iterations)', function() {
 } );
 
 suite( 'long-running generators (1000 iterations)', function() {
-    set( 'delay', 0 );
-
     var co_version = (0, _co2.wrap)( function* () {
         return yield gen( 1000 );
     } );
@@ -102,10 +97,33 @@ suite( 'long-running generators (1000 iterations)', function() {
     } );
 } );
 
-suite( 'complex generators (150 iterations * three layers)', function() {
-    set( 'delay', 0 );
-    set( 'iterations', 200 );
+suite( 'very long-running generators (10000 iterations)', function() {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield gen( 10000 );
+    } );
 
+    var cob_version = (0, _co.wrap)( function* () {
+        return yield gen( 10000 );
+    } );
+
+    var bluebird_version = _bluebird.coroutine( function* () {
+        return yield gen( 10000 );
+    } );
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
+suite( 'complex generators (150 iterations)', function() {
     var co_version = (0, _co2.wrap)( function* () {
         return yield gen_complex( 150 );
     } );

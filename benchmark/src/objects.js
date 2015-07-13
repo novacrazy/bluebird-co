@@ -10,7 +10,9 @@ import {wrap} from 'co';
 function makeObject( size ) {
     let result = {};
 
-    for( let i = 0; i < size; i++ ) {
+    let i = -1;
+
+    while( ++i < size ) {
         result[i] = Promise.resolve( i );
     }
 
@@ -18,8 +20,6 @@ function makeObject( size ) {
 }
 
 suite( 'very small objects (2 keys)', function() {
-    set( 'delay', 0 );
-
     let co_version = wrap( function*() {
         return yield makeObject( 2 );
     } );
@@ -46,8 +46,6 @@ suite( 'very small objects (2 keys)', function() {
 } );
 
 suite( 'small objects (10 keys)', function() {
-    set( 'delay', 0 );
-
     let co_version = wrap( function*() {
         return yield makeObject( 10 );
     } );
@@ -74,8 +72,6 @@ suite( 'small objects (10 keys)', function() {
 } );
 
 suite( 'large objects (2000 keys)', function() {
-    set( 'delay', 0 );
-
     let co_version = wrap( function*() {
         return yield makeObject( 2000 );
     } );
@@ -86,6 +82,32 @@ suite( 'large objects (2000 keys)', function() {
 
     let bluebird_version = async function() {
         return await makeObject( 2000 );
+    };
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
+suite( 'huge objects (10000 keys)', function() {
+    let co_version = wrap( function*() {
+        return yield makeObject( 10000 );
+    } );
+
+    let cob_version = coWrapBluebird( function*() {
+        return yield makeObject( 10000 );
+    } );
+
+    let bluebird_version = async function() {
+        return await makeObject( 10000 );
     };
 
     bench( 'co', function( next ) {

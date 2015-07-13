@@ -21,7 +21,9 @@ var _co2 = require( 'co' );
 function makeObject( size ) {
     var result = {};
 
-    for( var i = 0; i < size; i++ ) {
+    var i = -1;
+
+    while( ++i < size ) {
         result[i] = _bluebird2.default.resolve( i );
     }
 
@@ -29,8 +31,6 @@ function makeObject( size ) {
 }
 
 suite( 'very small objects (2 keys)', function() {
-    set( 'delay', 0 );
-
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeObject( 2 );
     } );
@@ -57,8 +57,6 @@ suite( 'very small objects (2 keys)', function() {
 } );
 
 suite( 'small objects (10 keys)', function() {
-    set( 'delay', 0 );
-
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeObject( 10 );
     } );
@@ -85,8 +83,6 @@ suite( 'small objects (10 keys)', function() {
 } );
 
 suite( 'large objects (2000 keys)', function() {
-    set( 'delay', 0 );
-
     var co_version = (0, _co2.wrap)( function* () {
         return yield makeObject( 2000 );
     } );
@@ -97,6 +93,32 @@ suite( 'large objects (2000 keys)', function() {
 
     var bluebird_version = _bluebird.coroutine( function* () {
         return yield makeObject( 2000 );
+    } );
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
+suite( 'huge objects (10000 keys)', function() {
+    var co_version = (0, _co2.wrap)( function* () {
+        return yield makeObject( 10000 );
+    } );
+
+    var cob_version = (0, _co.wrap)( function* () {
+        return yield makeObject( 10000 );
+    } );
+
+    var bluebird_version = _bluebird.coroutine( function* () {
+        return yield makeObject( 10000 );
     } );
 
     bench( 'co', function( next ) {
