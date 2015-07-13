@@ -1,12 +1,13 @@
 {
   "name":            "bluebird-co",
-  "version": "1.1.8",
+  "version":         "1.1.8",
   "description":     "A set of yield handlers for Bluebird coroutines",
   "main":            "index.js",
   "scripts":         {
-    "test":      "grunt build-tests && mocha -b test/build",
-    "build":     "grunt default",
-    "benchmark": "grunt build-benchmark && matcha benchmark/build/arrays.js benchmark/build/objects.js benchmark/build/generators.js benchmark/build/thunks.js benchmark/build/errors.js"
+    "test":         "grunt build-tests && mocha -b test/build",
+    "build":        "grunt default",
+    "benchmark":    "grunt build-benchmark && matcha benchmark/build/arrays.js benchmark/build/objects.js benchmark/build/generators.js benchmark/build/thunks.js benchmark/build/errors.js",
+    "benchmark-rt": "grunt build-benchmark && start /B /wait /Realtime matcha -R csv benchmark/build/arrays.js benchmark/build/objects.js benchmark/build/generators.js benchmark/build/thunks.js benchmark/build/errors.js >> benchmark/results.csv && pause"
   },
   "keywords":        [
     "bluebird",
