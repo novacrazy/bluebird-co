@@ -100,9 +100,7 @@ function objectToPromise( obj ) {
         var i = res.length | 0;
 
         while( --i >= 0 ) {
-            var key = keys[i];
-
-            results[key] = res[i];
+            results[keys[i]] = res[i];
         }
 
         return results;
