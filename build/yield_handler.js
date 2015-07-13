@@ -81,7 +81,7 @@ function isGeneratorFunction( obj ) {
  * */
 function objectToPromise( obj ) {
     var keys = Object.keys( obj );
-    var length = keys.length;
+    var length = keys.length | 0;
 
     var results = new obj.constructor();
     var promises = new Array( length );
@@ -97,10 +97,12 @@ function objectToPromise( obj ) {
     }
 
     return Promise.all( promises ).then( function( res ) {
-        var i = -1;
+        var i = res.length | 0;
 
-        while( ++i < length ) {
-            results[keys[i]] = res[i];
+        while( --i >= 0 ) {
+            var key = keys[i];
+
+            results[key] = res[i];
         }
 
         return results;
@@ -151,13 +153,12 @@ function resolveGenerator( gen ) {
 }
 
 function arrayToPromise( value ) {
-    var length = value.length;
+    var length = value.length | 0;
 
     var results = new Array( length );
-    var i = -1;
 
-    while( ++i < length ) {
-        results[i] = toPromise.call( this, value[i] );
+    while( --length >= 0 ) {
+        results[length] = toPromise.call( this, value[length] );
     }
 
     return Promise.all( results );
@@ -168,21 +169,21 @@ function thunkToPromise( value ) {
 
     return new Promise( function( resolve, reject ) {
         try {
-            value.call( _this, function( err ) {
+            value.call( _this, function( err, res ) {
                 if( err ) {
                     reject( err );
-                } else if( arguments.length > 2 ) {
-                    var _length = arguments.length - 1;
-                    var res = new Array( _length );
-                    var i = -1;
+                } else {
+                    var _length = arguments.length | 0;
 
-                    while( ++i < _length ) {
-                        res[i] = arguments[i + 1];
+                    if( _length > 2 ) {
+                        res = new Array( --_length );
+
+                        for( var i = 0; i < _length; ) {
+                            res[i] = arguments[++i]; //It's a good thing this isn't undefined behavior in JavaScript
+                        }
                     }
 
                     resolve( res );
-                } else {
-                    resolve( arguments[1] );
                 }
             } );
         } catch( err ) {
@@ -210,10 +211,7 @@ function toPromise( value ) {
         }
     }
 
-    var i = -1;
-    var length = yieldHandlers.length;
-
-    while( ++i < length ) {
+    for( var i = 0, _length2 = yieldHandlers.length | 0; i < _length2; ++i ) {
         var res = yieldHandlers[i].call( this, value );
 
         if( res && typeof res.then === 'function' ) {

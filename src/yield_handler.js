@@ -45,7 +45,7 @@ export function isGeneratorFunction( obj ) {
  * */
 function objectToPromise( obj ) {
     let keys = Object.keys( obj );
-    let length = keys.length;
+    let length = keys.length | 0;
 
     let results = new obj.constructor();
     let promises = new Array( length );
@@ -61,9 +61,9 @@ function objectToPromise( obj ) {
     }
 
     return Promise.all( promises ).then( res => {
-        let i = -1;
+        let i = res.length | 0;
 
-        while( ++i < length ) {
+        while( --i >= 0 ) {
             results[keys[i]] = res[i];
         }
 
@@ -119,13 +119,12 @@ function resolveGenerator( gen ) {
 }
 
 function arrayToPromise( value ) {
-    let length = value.length;
+    let length = value.length | 0;
 
     let results = new Array( length );
-    let i = -1;
 
-    while( ++i < length ) {
-        results[i] = toPromise.call( this, value[i] );
+    while( --length >= 0 ) {
+        results[length] = toPromise.call( this, value[length] );
     }
 
     return Promise.all( results );
@@ -134,23 +133,22 @@ function arrayToPromise( value ) {
 function thunkToPromise( value ) {
     return new Promise( ( resolve, reject ) => {
         try {
-            value.call( this, function( err ) {
+            value.call( this, function( err, res ) {
                 if( err ) {
                     reject( err );
 
-                } else if( arguments.length > 2 ) {
-                    let length = arguments.length - 1;
-                    let res = new Array( length );
-                    let i = -1;
+                } else {
+                    let length = arguments.length | 0;
 
-                    while( ++i < length ) {
-                        res[i] = arguments[i + 1];
+                    if( length > 2 ) {
+                        res = new Array( --length );
+
+                        for( let i = 0; i < length; ) {
+                            res[i] = arguments[++i]; //It's a good thing this isn't undefined behavior in JavaScript
+                        }
                     }
 
                     resolve( res );
-
-                } else {
-                    resolve( arguments[1] );
                 }
             } );
 
@@ -184,10 +182,7 @@ function toPromise( value ) {
         }
     }
 
-    let i = -1;
-    let length = yieldHandlers.length;
-
-    while( ++i < length ) {
+    for( let i = 0, length = yieldHandlers.length | 0; i < length; ++i ) {
         let res = yieldHandlers[i].call( this, value );
 
         if( res && typeof res.then === 'function' ) {
