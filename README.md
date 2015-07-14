@@ -11,7 +11,7 @@ Combined with [Babel's `bluebirdCoroutines`](http://babeljs.io/docs/advanced/tra
 ## Performance
 Given Bluebird's fame for high performance promises, it should come as no surprise that bluebird-co can achieve up to a couple orders of magnitude better performance on some particular tasks than tj/co, with most coroutines being about two to eight times faster with bluebird-co.
 
-[See here detailed benchmarks](https://github.com/novacrazy/bluebird-co/tree/master/benchmark)
+[See here for detailed benchmarks](https://github.com/novacrazy/bluebird-co/tree/master/benchmark)
 
 ## Usage
 `require('bluebird-co')` and done.
