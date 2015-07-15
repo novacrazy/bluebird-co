@@ -30,12 +30,12 @@
     "url": "https://github.com/novacrazy/bluebird-co/issues"
   },
   "dependencies":    {
-    "bluebird": "^2.9.33"
+    "bluebird": "^2.9.34"
   },
   "devDependencies": {
-    "babel":               "^5.6.14",
-    "babel-core":    "^5.6.19",
-    "babel-runtime": "^5.6.19",
+    "babel":         "^5.6.23",
+    "babel-core":    "^5.7.0",
+    "babel-runtime": "^5.7.0",
     "co":            "^4.6.0",
     "grunt":               "^0.4.5",
     "grunt-babel":         "^5.0.1",
