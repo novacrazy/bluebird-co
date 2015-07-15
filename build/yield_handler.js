@@ -32,6 +32,7 @@ exports.__esModule = true;
 exports.isThenable = isThenable;
 exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
+exports.toPromise = toPromise;
 exports.addYieldHandler = addYieldHandler;
 
 function _interopRequireDefault( obj ) {
@@ -191,7 +192,7 @@ function thunkToPromise( value ) {
 }
 
 function toPromise( value ) {
-    if( value && typeof value === 'object' ) {
+    if( typeof value === 'object' && !!value ) {
         if( typeof value.then === 'function' ) {
             return value;
         } else if( Array.isArray( value ) ) {
@@ -228,18 +229,11 @@ function addYieldHandler( handler ) {
     }
 }
 
-var addedYieldHandler = false;
-
-if( !addedYieldHandler ) {
-    Promise.coroutine.addYieldHandler( toPromise );
-
-    addedYieldHandler = true;
-}
-
 exports.default = {
     addYieldHandler:     addYieldHandler,
     isThenable:          isThenable,
     isPromise:           isPromise,
     isGenerator:         isGenerator,
-    isGeneratorFunction: isGeneratorFunction
+    isGeneratorFunction: isGeneratorFunction,
+    toPromise:           toPromise
 };

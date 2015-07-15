@@ -158,8 +158,8 @@ function thunkToPromise( value ) {
     } );
 }
 
-function toPromise( value ) {
-    if( value && typeof value === 'object' ) {
+export function toPromise( value ) {
+    if( typeof value === 'object' && !!value ) {
         if( typeof value.then === 'function' ) {
             return value;
 
@@ -202,18 +202,11 @@ export function addYieldHandler( handler ) {
     }
 }
 
-let addedYieldHandler = false;
-
-if( !addedYieldHandler ) {
-    Promise.coroutine.addYieldHandler( toPromise );
-
-    addedYieldHandler = true;
-}
-
 export default {
     addYieldHandler,
     isThenable,
     isPromise,
     isGenerator,
-    isGeneratorFunction
+    isGeneratorFunction,
+    toPromise
 };
