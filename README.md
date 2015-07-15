@@ -173,6 +173,10 @@ Returns true if the value is a generator function that when called will create a
 
 -----
 ## Changelog
+#####1.2.0
+* Allow manual addition of the yield handler via requiring `bluebird-co/manual`
+* Exposed `toPromise` function in extra API
+
 #####1.1.2 - 1.1.12
 * Optimizations and bugfixes
 
