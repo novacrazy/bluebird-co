@@ -16,6 +16,15 @@ Given Bluebird's fame for high performance promises, it should come as no surpri
 ## Usage
 `require('bluebird-co')` and done.
 
+or
+
+```javascript
+var Promise = require('bluebird');
+var BluebirdCo = require('bluebird-co/manual');
+
+Promise.coroutine.addYieldHandler(BluebirdCo.toPromise);
+```
+
 ##### Usage in detail (to ensure everything works)
 
 `bluebird-co` works by requiring `bluebird` and calling `Bluebird.coroutine.addYieldHandler` to add the appropriate functionality. 
@@ -93,6 +102,20 @@ co.wrap = function(fn) {
 I've been using this method with Koa and a few other libraries for a while now and it seems to work. However, if a library invokes `co` directly, it will fail to replace that. 
 
 ## Extra API
+
+#####`BluebirdCo.toPromise(value : any)` -> `Promise | falsey`
+This is the actual yield handler that is used to convert all the supported types into promises which can be resolved by Bluebird's coroutine system. You give it an array, object, thunk, generator or whatever that contains promises and it will try to convert it to a promise that will resolve to be a fully resolved structure.
+
+If you pass in `undefined`, `null`, an instance of a class that doesn't have a yield handler, or an object created with `Object.create(null)`, it will fail and return that value unchanged. Normally this would trigger an error in `Bluebird.coroutine` that can be caught, but `toPromise` by itself will let it silently pass through.
+
+If you require bluebird-co as `require('bluebird-co/manual')`, you can add `toPromise` to your instance of Bluebird or even something else by yourself like this:
+
+```javascript
+var Promise = require('bluebird');
+var BluebirdCo = require('bluebird-co/manual');
+
+Promise.coroutine.addYieldHandler(BluebirdCo.toPromise);
+```
 
 #####`BluebirdCo.addYieldHandler(handler : Function)`
 Although this library comes with enough handlers for most occasions, you might need more specific handling of some types that the library cannot handle by default. `BluebirdCo.addYieldHandler` works basically the same as the normal `Bluebird.addYieldHandler` function but interoperates fully with the rest of BluebirdCo's handlers. 
