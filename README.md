@@ -103,7 +103,7 @@ I've been using this method with Koa and a few other libraries for a while now a
 
 ## Extra API
 
-#####`BluebirdCo.toPromise(value : any)` -> `Promise | falsey`
+#####`BluebirdCo.toPromise(value : any)` -> `Promise | any`
 This is the actual yield handler that is used to convert all the supported types into promises which can be resolved by Bluebird's coroutine system. You give it an array, object, thunk, generator or whatever that contains promises and it will try to convert it to a promise that will resolve to be a fully resolved structure.
 
 If you pass in `undefined`, `null`, an instance of a class that doesn't have a yield handler, or an object created with `Object.create(null)`, it will fail and return that value unchanged. Normally this would trigger an error in `Bluebird.coroutine` that can be caught, but `toPromise` by itself will let it silently pass through.
