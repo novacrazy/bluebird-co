@@ -58,6 +58,41 @@ suite( 'simple thunks (1 argument)', function() {
     } );
 } );
 
+suite( 'simple thunks (3 arguments)', function() {
+    set( 'delay', 0 );
+    set( 'mintime', 1750 );
+
+    let co_version = wrap( function*() {
+        return yield function( done ) {
+            done( null, 1, 2, 3 );
+        };
+    } );
+
+    let cob_version = coWrapBluebird( function*() {
+        return yield function( done ) {
+            done( null, 1, 2, 3 );
+        };
+    } );
+
+    let bluebird_version = async function() {
+        return await function( done ) {
+            done( null, 1, 2, 3 );
+        };
+    };
+
+    bench( 'co', function( next ) {
+        co_version().then( next, console.error );
+    } );
+
+    bench( 'co with bluebird promises', function( next ) {
+        cob_version().then( next, console.error );
+    } );
+
+    bench( 'bluebird-co', function( next ) {
+        bluebird_version().then( next, console.error );
+    } );
+} );
+
 suite( 'thunks with many arguments (30 arguments)', function() {
     set( 'delay', 0 );
     set( 'mintime', 1750 );
