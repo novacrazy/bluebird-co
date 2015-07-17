@@ -87,6 +87,17 @@ myAsyncFunction().then(...);
 
 ##### For more examples, see the [tj/co README](https://github.com/tj/co/blob/master/Readme.md#examples) and the [Bluebird Coroutines API](https://github.com/petkaantonov/bluebird/blob/master/API.md#generators).
 
+## Yieldable types
+
+* Promises
+* Arrays
+* Objects
+* Generators (and Generator instances)
+* Iterables (like `new Set([1, 2, 3]).values()`)
+* Functions (as Thunks)
+* Custom data types via `BluebirdCo.addYieldHandler`
+* Any combination or nesting of the above.
+
 ## Overriding `co.wrap`
 In my own experience, mixing bluebird coroutines and co/co.wrap can result in less than savory stack traces and other things. Here is a simple way to override almost all common usages of the co library.
 
@@ -173,6 +184,9 @@ Returns true if the value is a generator function that when called will create a
 
 -----
 ## Changelog
+#####1.3.0
+* Basic support for Iterables
+
 #####1.2.0
 * Allow manual addition of the yield handler via requiring `bluebird-co/manual`
 * Exposed `toPromise` function in extra API
