@@ -151,9 +151,6 @@ function resolveGenerator( gen ) {
     } );
 }
 
-function push_array( arr, value ) {
-}
-
 function resolveIterable( iter ) {
     var _this = this;
 
