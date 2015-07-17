@@ -118,6 +118,29 @@ function resolveGenerator( gen ) {
     } );
 }
 
+function resolveIterable( iter ) {
+    return new Promise( ( resolve, reject ) => {
+        let results = [];
+        let ret = iter.next();
+
+        while( !ret.done ) {
+            let value = ret.value;
+
+            value = toPromise.call( this, value );
+
+            if( value && typeof value.then === 'function' ) {
+                value = value.then( res => toPromise.call( this, res ) );
+            }
+
+            results.push( value );
+
+            ret = iter.next();
+        }
+
+        Promise.all( results ).then( resolve, reject );
+    } );
+}
+
 function arrayToPromise( value ) {
     let length = value.length | 0;
 
@@ -166,8 +189,13 @@ export function toPromise( value ) {
         } else if( Array.isArray( value ) ) {
             return arrayToPromise.call( this, value );
 
-        } else if( 'function' === typeof value.next && 'function' === typeof value.throw ) {
-            return resolveGenerator.call( this, value );
+        } else if( 'function' === typeof value.next ) {
+            if( 'function' === typeof value.throw ) {
+                return resolveGenerator.call( this, value );
+
+            } else {
+                return resolveIterable.call( this, value );
+            }
 
         } else if( Object === value.constructor ) {
             return objectToPromise.call( this, value );

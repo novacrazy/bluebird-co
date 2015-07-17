@@ -151,6 +151,36 @@ function resolveGenerator( gen ) {
     } );
 }
 
+function push_array( arr, value ) {
+}
+
+function resolveIterable( iter ) {
+    var _this = this;
+
+    return new Promise( function( resolve, reject ) {
+        var results = [];
+        var ret = iter.next();
+
+        while( !ret.done ) {
+            var value = ret.value;
+
+            value = toPromise.call( _this, value );
+
+            if( value && typeof value.then === 'function' ) {
+                value = value.then( function( res ) {
+                    return toPromise.call( _this, res );
+                } );
+            }
+
+            results.push( value );
+
+            ret = iter.next();
+        }
+
+        Promise.all( results ).then( resolve, reject );
+    } );
+}
+
 function arrayToPromise( value ) {
     var length = value.length | 0;
 
@@ -164,11 +194,11 @@ function arrayToPromise( value ) {
 }
 
 function thunkToPromise( value ) {
-    var _this = this;
+    var _this2 = this;
 
     return new Promise( function( resolve, reject ) {
         try {
-            value.call( _this, function( err, res ) {
+            value.call( _this2, function( err, res ) {
                 if( err ) {
                     reject( err );
                 } else {
@@ -197,8 +227,12 @@ function toPromise( value ) {
             return value;
         } else if( Array.isArray( value ) ) {
             return arrayToPromise.call( this, value );
-        } else if( 'function' === typeof value.next && 'function' === typeof value.throw ) {
-            return resolveGenerator.call( this, value );
+        } else if( 'function' === typeof value.next ) {
+            if( 'function' === typeof value.throw ) {
+                return resolveGenerator.call( this, value );
+            } else {
+                return resolveIterable.call( this, value );
+            }
         } else if( Object === value.constructor ) {
             return objectToPromise.call( this, value );
         }

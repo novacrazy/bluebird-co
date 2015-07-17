@@ -6,8 +6,8 @@
   "scripts":         {
     "test":           "grunt build-tests && mocha -b test/build",
     "build":          "grunt default",
-    "benchmark":      "grunt build-benchmark && matcha benchmark/build/arrays.js benchmark/build/objects.js benchmark/build/generators.js benchmark/build/thunks.js benchmark/build/errors.js",
-    "benchmark-save": "grunt build-benchmark && matcha -R csv benchmark/build/arrays.js benchmark/build/objects.js benchmark/build/generators.js benchmark/build/thunks.js benchmark/build/errors.js > benchmark/results.csv"
+    "benchmark":      "grunt build-benchmark && matcha benchmark/build/arrays.js benchmark/build/iterables.js benchmark/build/objects.js benchmark/build/generators.js benchmark/build/thunks.js benchmark/build/errors.js",
+    "benchmark-save": "grunt build-benchmark && matcha -R csv benchmark/build/arrays.js benchmark/build/iterables.js benchmark/build/objects.js benchmark/build/generators.js benchmark/build/thunks.js benchmark/build/errors.js > benchmark/results.csv"
   },
   "keywords":        [
     "bluebird",
