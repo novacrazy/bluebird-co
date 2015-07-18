@@ -184,6 +184,9 @@ Returns true if the value is a generator function that when called will create a
 
 -----
 ## Changelog
+#####1.3.1
+* Significantly improve performance of iterables.
+
 #####1.3.0
 * Basic support for Iterables
 
