@@ -5,6 +5,15 @@ I thought it could be useful to some people to compare the performance of bluebi
 
 Pull requests for new benchmarks are always welcome.
 
+## Index
+- [Results](#results)
+    - [Arrays](#arrays)
+    - [Objects](#objects)
+    - [Generators](#generators)
+    - [Iterables](#iterables)
+    - [Thunks](#thunks)
+    - [Error handling](#error-handling)
+
 ## Results
 
 Tested with io.js 2.3.0 on Windows 8, Intel i5-4690K at 3.9GHz with 32GB of memory.
