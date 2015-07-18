@@ -84,27 +84,27 @@ function objectToPromise( obj ) {
     var keys = Object.keys( obj );
     var length = keys.length | 0;
 
-    var results = new obj.constructor();
-    var promises = new Array( length );
+    var result = new obj.constructor();
+    var values = new Array( length );
 
     var i = -1;
 
     while( ++i < length ) {
         var key = keys[i];
 
-        results[key] = void 0;
+        result[key] = void 0;
 
-        promises[i] = toPromise.call( this, obj[key] );
+        values[i] = toPromise.call( this, obj[key] );
     }
 
-    return Promise.all( promises ).then( function( res ) {
+    return Promise.all( values ).then( function( res ) {
         var i = res.length | 0;
 
         while( --i >= 0 ) {
-            results[keys[i]] = res[i];
+            result[keys[i]] = res[i];
         }
 
-        return results;
+        return result;
     } );
 }
 

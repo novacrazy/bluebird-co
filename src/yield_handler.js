@@ -47,27 +47,27 @@ function objectToPromise( obj ) {
     let keys = Object.keys( obj );
     let length = keys.length | 0;
 
-    let results = new obj.constructor();
-    let promises = new Array( length );
+    let result = new obj.constructor();
+    let values = new Array( length );
 
     let i = -1;
 
     while( ++i < length ) {
         let key = keys[i];
 
-        results[key] = void 0;
+        result[key] = void 0;
 
-        promises[i] = toPromise.call( this, obj[key] );
+        values[i] = toPromise.call( this, obj[key] );
     }
 
-    return Promise.all( promises ).then( res => {
+    return Promise.all( values ).then( res => {
         let i = res.length | 0;
 
         while( --i >= 0 ) {
-            results[keys[i]] = res[i];
+            result[keys[i]] = res[i];
         }
 
-        return results;
+        return result;
     } );
 }
 
