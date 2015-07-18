@@ -118,26 +118,24 @@ function resolveGenerator( gen ) {
     } );
 }
 
+let arrayFrom = typeof Array.from === 'function' ? Array.from : function( iter ) {
+    let results = [];
+    let ret = iter.next();
+
+    while( !ret.done ) {
+        results.push( ret.value );
+
+        ret = iter.next();
+    }
+
+    return results;
+};
+
 function resolveIterable( iter ) {
     return new Promise( ( resolve, reject ) => {
-        let results = [];
-        let ret = iter.next();
+        let results = arrayFrom( iter );
 
-        while( !ret.done ) {
-            let value = ret.value;
-
-            value = toPromise.call( this, value );
-
-            if( value && typeof value.then === 'function' ) {
-                value = value.then( res => toPromise.call( this, res ) );
-            }
-
-            results.push( value );
-
-            ret = iter.next();
-        }
-
-        Promise.all( results ).then( resolve, reject );
+        arrayToPromise.call( this, results ).then( resolve, reject );
     } );
 }
 

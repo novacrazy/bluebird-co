@@ -151,30 +151,26 @@ function resolveGenerator( gen ) {
     } );
 }
 
+var arrayFrom = typeof Array.from === 'function' ? Array.from : function( iter ) {
+    var results = [];
+    var ret = iter.next();
+
+    while( !ret.done ) {
+        results.push( ret.value );
+
+        ret = iter.next();
+    }
+
+    return results;
+};
+
 function resolveIterable( iter ) {
     var _this = this;
 
     return new Promise( function( resolve, reject ) {
-        var results = [];
-        var ret = iter.next();
+        var results = arrayFrom( iter );
 
-        while( !ret.done ) {
-            var value = ret.value;
-
-            value = toPromise.call( _this, value );
-
-            if( value && typeof value.then === 'function' ) {
-                value = value.then( function( res ) {
-                    return toPromise.call( _this, res );
-                } );
-            }
-
-            results.push( value );
-
-            ret = iter.next();
-        }
-
-        Promise.all( results ).then( resolve, reject );
+        arrayToPromise.call( _this, results ).then( resolve, reject );
     } );
 }
 
