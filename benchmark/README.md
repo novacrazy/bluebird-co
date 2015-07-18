@@ -113,7 +113,7 @@ function* complex_generator( iterations ) {
 
 ### Iterables
 
-Iterables are a generalization of generators for sequences instead of functions. The ES6 `Set`, `Map`, 'TypedArray' and others use iterables to lazily traverse their contents.
+Iterables are a generalization of generators for sequences instead of functions. The ES6 `Set`, `Map`, `TypedArray` and others use iterables to lazily traverse their contents.
 
 Example:
 ```javascript
