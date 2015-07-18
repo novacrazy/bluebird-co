@@ -157,7 +157,7 @@ async function() {
 
 The ES6 `Map` also uses iterables/iterators for `.keys()`, `.entries()` and `.values()`
 
-*NOTE*: If you're using Babel or a version of Node/io.js that natively supports `for..of` loops, they can support iterating through iterables natively instead of having to convert them to an array first.
+*NOTE*: If you're using Babel or a version of Node/io.js that natively supports `for..of` loops, they can support iterating through iterables natively instead of having to convert them to an array first, but they will not automatically resolve asynchronous values in those iterables.
 
 ### Thunks
 
