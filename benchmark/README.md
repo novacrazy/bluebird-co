@@ -111,6 +111,54 @@ function* complex_generator( iterations ) {
 |                                                 | co with bluebird promises | 379.30     | 52%  |
 |                                                 | bluebird-co               | 732.85     | 100% |
 
+### Iterables
+
+Iterables are a generalization of generators for sequences instead of functions. The ES6 `Set`, `Map`, 'TypedArray' and others use iterables to lazily traverse their contents.
+
+Example:
+```javascript
+let mySet = new Set([1, 2, 3, 4]);
+
+let values = mySet.values();
+
+let cur = values.next();
+
+//Prints out 1 2 3 4
+while(!cur.done) {
+    console.log(cur.value);
+
+    cur = values.next();
+}
+```
+
+bluebird-co allows automatic traversal of these iterables in a similar way to [`Array.from`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from), but will also automatically resolve any asynchronous values along the way.
+
+Example:
+```javascript
+let mySet = new Set( [Promise.resolve( 1 ), 2, [Promise.resolve( 3 ), 4], 5] );
+
+async function() {
+    let values = await mySet.values();
+
+    console.log(values); //[1, 2, [3, 4], 5]
+}
+```
+
+| Description                              | Library     | Op/s       |
+|------------------------------------------|-------------|-----------:|
+| very short iterables (Set of 2 elements) | co          | N/A        |
+|                                          | bluebird-co | 274,875.09 |
+| short iterables (Set of 10 elements)     | co          | N/A        |
+|                                          | bluebird-co | 174,398.26 |
+| long iterables (Set of 2000 elements)    | co          | N/A        |
+|                                          | bluebird-co | 2,096.86   |
+| huge iterables (Set of 10000 elements)   | co          | N/A        |
+|                                          | bluebird-co | 414.82     |
+
+The ES6 `Map` also uses iterables/iterators for `.keys()`, `.entries()` and `.values()`
+
+*NOTE*: If you're using Babel or a version of Node/io.js that natively supports `for..of` loops, they can support iterating through iterables natively instead of having to convert them to an array first.
+
 ### Thunks
 
 Example:
