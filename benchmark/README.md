@@ -7,6 +7,7 @@ Pull requests for new benchmarks are always welcome.
 
 ## Index
 - [Results](#results)
+    - [Promises](#promises)
     - [Arrays](#arrays)
     - [Objects](#objects)
     - [Generators](#generators)
@@ -17,6 +18,26 @@ Pull requests for new benchmarks are always welcome.
 ## Results
 
 Tested with io.js 2.3.0 on Windows 8, Intel i5-4690K at 3.9GHz with 32GB of memory.
+
+### Promises
+
+The most simple yieldable type.
+
+Example:
+```javascript
+async function() {
+    let res = await Promise.resolve(1);
+
+    console.log(res); //1
+}
+```
+
+| Description  | Library                   | Op/s       | %    |
+|--------------|---------------------------|-----------:|-----:|
+| raw promises | co                        | 167,830.19 | 19%  |
+|              | co with bluebird promises | 490,469.70 | 54%  |
+|              | bluebird-co               | 906,755.60 | 100% |
+
 
 ### Arrays
 
