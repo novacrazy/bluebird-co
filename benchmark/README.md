@@ -177,13 +177,14 @@ async function() {
 | Description                              | Library     | Op/s       |
 |------------------------------------------|-------------|-----------:|
 | very short iterables (Set of 2 elements) | co          | N/A        |
-|                                          | bluebird-co | 274,875.09 |
+|                                          | bluebird-co | 357,531.31 |
 | short iterables (Set of 10 elements)     | co          | N/A        |
-|                                          | bluebird-co | 174,398.26 |
+|                                          | bluebird-co | 207,247.85 |
 | long iterables (Set of 2000 elements)    | co          | N/A        |
-|                                          | bluebird-co | 2,096.86   |
+|                                          | bluebird-co | 2,182.16   |
 | huge iterables (Set of 10000 elements)   | co          | N/A        |
-|                                          | bluebird-co | 414.82     |
+|                                          | bluebird-co | 426.56     |
+
 
 The ES6 `Map` also uses iterables/iterators for `.keys()`, `.entries()` and `.values()`
 
