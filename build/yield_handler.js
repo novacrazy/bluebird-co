@@ -151,7 +151,7 @@ function resolveGenerator( gen ) {
     } );
 }
 
-var arrayFrom = typeof Array.from === 'function' ? Array.from : function( iter ) {
+function arrayFromIterable( iter ) {
     var results = [];
     var ret = iter.next();
 
@@ -162,17 +162,9 @@ var arrayFrom = typeof Array.from === 'function' ? Array.from : function( iter )
     }
 
     return results;
-};
-
-function resolveIterable( iter ) {
-    var _this = this;
-
-    return new Promise( function( resolve, reject ) {
-        var results = arrayFrom( iter );
-
-        arrayToPromise.call( _this, results ).then( resolve, reject );
-    } );
 }
+
+var arrayFrom = typeof Array.from === 'function' ? Array.from : arrayFromIterable;
 
 function arrayToPromise( value ) {
     var length = value.length | 0;
@@ -187,11 +179,11 @@ function arrayToPromise( value ) {
 }
 
 function thunkToPromise( value ) {
-    var _this2 = this;
+    var _this = this;
 
     return new Promise( function( resolve, reject ) {
         try {
-            value.call( _this2, function( err, res ) {
+            value.call( _this, function( err, res ) {
                 if( err ) {
                     reject( err );
                 } else {
@@ -224,7 +216,7 @@ function toPromise( value ) {
             if( 'function' === typeof value.throw ) {
                 return resolveGenerator.call( this, value );
             } else {
-                return resolveIterable.call( this, value );
+                return arrayToPromise.call( this, arrayFrom( value ) );
             }
         } else if( Object === value.constructor ) {
             return objectToPromise.call( this, value );
