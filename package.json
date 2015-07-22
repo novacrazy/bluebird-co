@@ -35,9 +35,9 @@
     "bluebird": "^2.9.34"
   },
   "devDependencies": {
-    "babel":         "^5.6.23",
-    "babel-core":    "^5.7.4",
-    "babel-runtime": "^5.7.0",
+    "babel":         "^5.8.3",
+    "babel-core":    "^5.8.3",
+    "babel-runtime": "^5.8.3",
     "co":            "^4.6.0",
     "grunt":               "^0.4.5",
     "grunt-babel":         "^5.0.1",
