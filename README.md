@@ -1,5 +1,9 @@
 bluebird-co
 =============
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][npm-url]
+[![MIT License][license-image]][npm-url]
+[![Build Status][build-image]][build-link]
 
 A set of yield handlers for Bluebird coroutines.
 
@@ -230,3 +234,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+[npm-image]: https://img.shields.io/npm/v/bluebird-co.svg?style=flat
+[npm-url]: https://npmjs.org/package/bluebird-co
+[downloads-image]: https://img.shields.io/npm/dm/bluebird-co.svg?style=flat
+[build-image]: https://travis-ci.org/novacrazy/bluebird-co.svg?branch=master
+[build-link]: https://travis-ci.org/novacrazy/bluebird-co
+[license-image]: https://img.shields.io/npm/l/bluebird-co.svg?style=flat
