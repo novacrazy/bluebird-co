@@ -183,7 +183,7 @@ function isWritableStream( stream ) {
 function streamToPromise( stream, readable, writable ) {
     let {encoding} = stream;
 
-    if( readable && !writable ) {
+    if( readable ) {
         let parts = [];
 
         //special behavior for Node streams.

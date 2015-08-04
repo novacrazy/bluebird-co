@@ -211,7 +211,7 @@ function isWritableStream( stream ) {
 function streamToPromise( stream, readable, writable ) {
     var encoding = stream.encoding;
 
-    if( readable && !writable ) {
+    if( readable ) {
         var _ret = (function() {
             var parts = [];
 
