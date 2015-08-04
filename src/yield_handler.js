@@ -167,8 +167,13 @@ function thunkToPromise( value ) {
 }
 
 function streamToPromise( stream ) {
-    if( stream.readable && !stream.writable ) {
+    let {readable, writable, encoding} = stream;
+
+    if( readable && !writable ) {
         let parts = [];
+
+        //special behavior for Node streams.
+        encoding = encoding || (stream._readableState && stream._readableState.encoding);
 
         return new Promise( ( resolve, reject ) => {
             function onData( data ) {
@@ -189,7 +194,12 @@ function streamToPromise( stream ) {
                     reject( err );
 
                 } else if( typeof Buffer === 'function' ) {
-                    resolve( Buffer.concat( parts ) );
+                    if( typeof encoding === 'string' ) {
+                        resolve( Buffer.concat( parts ).toString( encoding ) );
+
+                    } else {
+                        resolve( Buffer.concat( parts ) );
+                    }
 
                 } else {
                     resolve( parts.join( '' ) );
