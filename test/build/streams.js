@@ -26,7 +26,7 @@ describe( 'yielding streams', function() {
             var res = yield (0, _fs.createReadStream)( 'index.js' );
 
             (0, _assert2.default)( Buffer.isBuffer( res ) );
-            (0, _assert2.default)( ~res.indexOf( 'exports' ) );
+            (0, _assert2.default)( ~res.toString( 'utf-8' ).indexOf( 'exports' ) );
         } );
 
         return test1();
