@@ -169,6 +169,16 @@ function thunkToPromise( value ) {
 function streamToPromise( stream ) {
     let {readable, writable, encoding} = stream;
 
+    readable = readable
+               || typeof stream.read === 'function'
+               || typeof stream._read === 'function'
+               || typeof stream.pipe === 'function'
+               || typeof stream._transform === 'function';
+
+    writable = writable
+               || typeof stream.write === 'function'
+               || typeof stream._write === 'function';
+
     if( readable && !writable ) {
         let parts = [];
 

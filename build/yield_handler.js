@@ -204,6 +204,12 @@ function streamToPromise( stream ) {
     var writable = stream.writable;
     var encoding = stream.encoding;
 
+    readable = readable || typeof stream.read === 'function' || typeof stream._read === 'function' || typeof stream.pipe
+                                                                                                      === 'function'
+               || typeof stream._transform === 'function';
+
+    writable = writable || typeof stream.write === 'function' || typeof stream._write === 'function';
+
     if( readable && !writable ) {
         var _ret = (function() {
             var parts = [];
