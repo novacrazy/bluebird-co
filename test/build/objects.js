@@ -35,11 +35,13 @@ var Pet = (function() {
         this.name = name;
     }
 
-    _createClass( Pet, [{
-        key:   'something',
-        value: function something() {
+    _createClass( Pet, [
+        {
+            key:   'something',
+            value: function something() {
+            }
         }
-    }] );
+    ] );
 
     return Pet;
 })();

@@ -39,12 +39,14 @@ var MyModel = (function() {
         this._value = value;
     }
 
-    _createClass( MyModel, [{
-        key:   'fetch',
-        value: function fetch() {
-            return _bluebird2.default.resolve( this._value + ' result' );
+    _createClass( MyModel, [
+        {
+            key:   'fetch',
+            value: function fetch() {
+                return _bluebird2.default.resolve( this._value + ' result' );
+            }
         }
-    }] );
+    ] );
 
     return MyModel;
 })();

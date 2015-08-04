@@ -23,8 +23,9 @@ var _2 = _interopRequireDefault( _ );
 describe( 'yielding iterables', function() {
     it( 'should work', function() {
         var test1 = _bluebird.coroutine( function* () {
-            var a = yield new _Set( [_bluebird2.default.resolve( 1 ), 2, [_bluebird2.default.resolve( 3 ), 4],
-                                     5] ).values();
+            var a = yield new _Set( [
+                _bluebird2.default.resolve( 1 ), 2, [_bluebird2.default.resolve( 3 ), 4], 5
+            ] ).values();
 
             _assert2.default.deepEqual( a, [1, 2, [3, 4], 5] );
         } );

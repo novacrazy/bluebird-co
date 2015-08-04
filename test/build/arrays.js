@@ -50,9 +50,11 @@ describe( 'Promise.coroutine(* -> yield [])', function() {
 
     it( 'should support an array of generators', function() {
         var test3 = _bluebird.coroutine( function* () {
-            var val = yield [(function* () {
-                return 1;
-            })()];
+            var val = yield [
+                (function* () {
+                    return 1;
+                })()
+            ];
             _assert2.default.deepEqual( val, [1] );
         } );
 
