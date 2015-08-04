@@ -54,6 +54,7 @@ function isThenable( obj ) {
 var isPromise = isThenable;
 
 exports.isPromise = isPromise;
+var hasBuffer = typeof Buffer === 'function';
 
 function isGenerator( obj ) {
     return 'function' === typeof obj.next && 'function' === typeof obj.throw;
@@ -210,6 +211,7 @@ function isWritableStream( stream ) {
 
 function streamToPromise( stream, readable, writable ) {
     var encoding = stream.encoding;
+    var objectMode = stream.objectMode;
 
     if( readable ) {
         var _ret = (function() {
@@ -221,10 +223,10 @@ function streamToPromise( stream, readable, writable ) {
             return {
                 v: new Promise( function( resolve, reject ) {
                     function onData( data ) {
-                        if( typeof Buffer === 'function' ) {
-                            data = Buffer.isBuffer( data ) ? data : new Buffer( data );
-                        } else if( typeof data !== 'string' ) {
-                            return reject( new TypeError( 'Non-string type read from stream: ' + data ) );
+                        if( objectMode || typeof data !== 'string' && (hasBuffer && !Buffer.isBuffer( data )) ) {
+                            objectMode = true;
+
+                            data = toPromise.call( this, data );
                         }
 
                         parts.push( data );
@@ -235,14 +237,38 @@ function streamToPromise( stream, readable, writable ) {
 
                         if( err ) {
                             reject( err );
-                        } else if( typeof Buffer === 'function' ) {
-                            if( typeof encoding === 'string' ) {
-                                resolve( Buffer.concat( parts ).toString( encoding ) );
-                            } else {
-                                resolve( Buffer.concat( parts ) );
-                            }
                         } else {
-                            resolve( parts.join( '' ) );
+                            Promise.all( parts ).then( function( results ) {
+                                if( hasBuffer && !objectMode ) {
+                                    var _length2 = results.length | 0;
+
+                                    if( typeof encoding === 'string' ) {
+                                        while( --_length2 >= 0 ) {
+                                            var result = results[_length2];
+
+                                            if( Buffer.isBuffer( result ) ) {
+                                                results[_length2] = result.toString( encoding );
+                                            }
+                                        }
+
+                                        resolve( results.join( '' ) );
+                                    } else {
+                                        while( --_length2 >= 0 ) {
+                                            var result = results[_length2];
+
+                                            if( !Buffer.isBuffer( result ) ) {
+                                                results[_length2] = new Buffer( result );
+                                            }
+                                        }
+
+                                        resolve( Buffer.concat( results ) );
+                                    }
+                                } else if( objectMode ) {
+                                    resolve( results );
+                                } else {
+                                    resolve( results.join( '' ) );
+                                }
+                            } );
                         }
                     }
 
@@ -326,7 +352,7 @@ function toPromise( value ) {
         }
     }
 
-    for( var i = 0, _length2 = yieldHandlers.length | 0; i < _length2; ++i ) {
+    for( var i = 0, _length3 = yieldHandlers.length | 0; i < _length3; ++i ) {
         var res = yieldHandlers[i].call( this, value );
 
         if( res && typeof res.then === 'function' ) {

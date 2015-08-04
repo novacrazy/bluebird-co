@@ -14,6 +14,8 @@ export function isThenable( obj ) {
 
 export let isPromise = isThenable;
 
+let hasBuffer = typeof Buffer === 'function';
+
 export function isGenerator( obj ) {
     return 'function' === typeof obj.next && 'function' === typeof obj.throw;
 }
@@ -181,7 +183,7 @@ function isWritableStream( stream ) {
 }
 
 function streamToPromise( stream, readable, writable ) {
-    let {encoding} = stream;
+    let {encoding, objectMode} = stream;
 
     if( readable ) {
         let parts = [];
@@ -191,11 +193,10 @@ function streamToPromise( stream, readable, writable ) {
 
         return new Promise( ( resolve, reject ) => {
             function onData( data ) {
-                if( typeof Buffer === 'function' ) {
-                    data = Buffer.isBuffer( data ) ? data : new Buffer( data );
+                if( objectMode || (typeof data !== 'string' && (hasBuffer && !Buffer.isBuffer( data ))) ) {
+                    objectMode = true;
 
-                } else if( typeof data !== 'string' ) {
-                    return reject( new TypeError( `Non-string type read from stream: ${data}` ) );
+                    data = toPromise.call( this, data );
                 }
 
                 parts.push( data );
@@ -207,16 +208,41 @@ function streamToPromise( stream, readable, writable ) {
                 if( err ) {
                     reject( err );
 
-                } else if( typeof Buffer === 'function' ) {
-                    if( typeof encoding === 'string' ) {
-                        resolve( Buffer.concat( parts ).toString( encoding ) );
-
-                    } else {
-                        resolve( Buffer.concat( parts ) );
-                    }
-
                 } else {
-                    resolve( parts.join( '' ) );
+                    Promise.all( parts ).then( results => {
+                        if( hasBuffer && !objectMode ) {
+                            let length = results.length | 0;
+
+                            if( typeof encoding === 'string' ) {
+                                while( --length >= 0 ) {
+                                    let result = results[length];
+
+                                    if( Buffer.isBuffer( result ) ) {
+                                        results[length] = result.toString( encoding );
+                                    }
+                                }
+
+                                resolve( results.join( '' ) );
+
+                            } else {
+                                while( --length >= 0 ) {
+                                    let result = results[length];
+
+                                    if( !Buffer.isBuffer( result ) ) {
+                                        results[length] = new Buffer( result );
+                                    }
+                                }
+
+                                resolve( Buffer.concat( results ) );
+                            }
+
+                        } else if( objectMode ) {
+                            resolve( results );
+
+                        } else {
+                            resolve( results.join( '' ) );
+                        }
+                    } );
                 }
             }
 
