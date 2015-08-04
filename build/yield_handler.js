@@ -73,13 +73,6 @@ function isGeneratorFunction( obj ) {
     }
 }
 
-/*
- * This is a deviation from tj/co because bluebird supports more.
- *
- * Basically, bluebird's Promise.all can take an array of BOTH values and promises, so I said screw the closure that
- * required binding local variables every iteration of this loop, and went with a pure array approach.
- *
- * */
 function objectToPromise( obj ) {
     var keys = Object.keys( obj );
     var length = keys.length | 0;
@@ -206,6 +199,79 @@ function thunkToPromise( value ) {
     } );
 }
 
+function streamToPromise( stream ) {
+    if( stream.readable && !stream.writable ) {
+        var _ret = (function() {
+            var parts = [];
+
+            return {
+                v: new Promise( function( resolve, reject ) {
+                    function onData( data ) {
+                        if( typeof Buffer === 'function' ) {
+                            data = Buffer.isBuffer( data ) ? data : new Buffer( data );
+                        } else if( typeof data !== 'string' ) {
+                            return reject( new TypeError( 'Non-string type read from stream: ' + data ) );
+                        }
+
+                        parts.push( data );
+                    }
+
+                    function onEnd( err ) {
+                        cleanup();
+
+                        if( err ) {
+                            reject( err );
+                        } else if( typeof Buffer === 'function' ) {
+                            resolve( Buffer.concat( parts ) );
+                        } else {
+                            resolve( parts.join( '' ) );
+                        }
+                    }
+
+                    function onClose() {
+                        cleanup();
+                        resolve();
+                    }
+
+                    function cleanup() {
+                        stream.removeListener( 'data', onData );
+                        stream.removeListener( 'end', onEnd );
+                        stream.removeListener( 'error', onEnd );
+                        stream.removeListener( 'close', onClose );
+                    }
+
+                    stream.addListener( 'data', onData );
+                    stream.addListener( 'end', onEnd );
+                    stream.addListener( 'error', onEnd );
+                    stream.addListener( 'close', onClose );
+                } )
+            };
+        })();
+
+        if( typeof _ret === 'object' ) {
+            return _ret.v;
+        }
+    } else {
+        return new Promise( function( resolve, reject ) {
+            function onFinish() {
+                resolve.apply( undefined, arguments );
+            }
+
+            function onError( err ) {
+                reject( err );
+            }
+
+            function cleanup() {
+                stream.removeListener( 'finish', onFinish );
+                stream.removeListener( 'error', onError );
+            }
+
+            stream.addListener( 'finish', onFinish );
+            stream.addListener( 'error', onError );
+        } );
+    }
+}
+
 function toPromise( value ) {
     if( typeof value === 'object' && !!value ) {
         if( typeof value.then === 'function' ) {
@@ -218,6 +284,9 @@ function toPromise( value ) {
             } else {
                 return arrayToPromise.call( this, arrayFrom( value ) );
             }
+        } else if( (value.readable || value.writable) && typeof value.addListener === 'function'
+                   && typeof value.removeListener === 'function' ) {
+            return streamToPromise.call( this, value );
         } else if( Object === value.constructor ) {
             return objectToPromise.call( this, value );
         }
