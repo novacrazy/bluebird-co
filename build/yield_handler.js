@@ -271,10 +271,12 @@ function streamToPromise( stream ) {
     } else {
         return new Promise( function( resolve, reject ) {
             function onFinish() {
+                cleanup();
                 resolve.apply( undefined, arguments );
             }
 
             function onError( err ) {
+                cleanup();
                 reject( err );
             }
 
