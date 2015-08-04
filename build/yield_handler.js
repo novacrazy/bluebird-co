@@ -241,7 +241,7 @@ function streamToPromise( stream ) {
 
                     function onClose() {
                         cleanup();
-                        resolve();
+                        resolve( void 0 );
                     }
 
                     function cleanup() {
