@@ -34,7 +34,9 @@ describe( 'yielding streams', function() {
 
     it( 'should handle file readable file streams with encoding', function() {
         var test2 = _bluebird.coroutine( function* () {
-            var res = yield (0, _fs.createReadStream)( 'index.js', 'utf-8' );
+            var res = yield (0, _fs.createReadStream)( 'index.js', {
+                encoding: 'utf-8'
+            } );
 
             _assert2.default.strictEqual( typeof res, 'string' );
             (0, _assert2.default)( ~res.indexOf( 'exports' ) );
