@@ -98,6 +98,7 @@ myAsyncFunction().then(...);
 * Objects
 * Generators and GeneratorFunctions
 * Iterables (like `new Set([1, 2, 3]).values()`)
+* Streams (like `fs.createReadStream('index.js')`)
 * Functions (as Thunks)
 * Custom data types via `BluebirdCo.addYieldHandler`
 * Any combination or nesting of the above.
