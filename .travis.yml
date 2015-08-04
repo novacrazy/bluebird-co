@@ -9,3 +9,5 @@ matrix:
     - node_js: "iojs-v1.0.4" # earlier version of iojs
 
 script: "mocha -b $NODE_FLAGS test/build"
+
+sudo: false
