@@ -199,16 +199,17 @@ function thunkToPromise( value ) {
     } );
 }
 
-function streamToPromise( stream ) {
-    var readable = stream.readable;
-    var writable = stream.writable;
+function isReadableStream( stream ) {
+    return stream.readable || typeof stream.read === 'function' || typeof stream._read === 'function'
+           || typeof stream.pipe === 'function' || typeof stream._transform === 'function';
+}
+
+function isWritableStream( stream ) {
+    return stream.writable || typeof stream.write === 'function' || typeof stream._write === 'function';
+}
+
+function streamToPromise( stream, readable, writable ) {
     var encoding = stream.encoding;
-
-    readable = readable || typeof stream.read === 'function' || typeof stream._read === 'function' || typeof stream.pipe
-                                                                                                      === 'function'
-               || typeof stream._transform === 'function';
-
-    writable = writable || typeof stream.write === 'function' || typeof stream._write === 'function';
 
     if( readable && !writable ) {
         var _ret = (function() {
@@ -303,11 +304,19 @@ function toPromise( value ) {
             } else {
                 return arrayToPromise.call( this, arrayFrom( value ) );
             }
-        } else if( (value.readable || value.writable) && typeof value.addListener === 'function'
-                   && typeof value.removeListener === 'function' ) {
-            return streamToPromise.call( this, value );
-        } else if( Object === value.constructor ) {
-            return objectToPromise.call( this, value );
+        } else {
+            if( typeof value.addListener === 'function' && typeof value.removeListener === 'function' ) {
+                var readable = isReadableStream( value );
+                var writable = isWritableStream( value );
+
+                if( readable || writable ) {
+                    return streamToPromise.call( this, value, readable, writable );
+                }
+            }
+
+            if( Object === value.constructor ) {
+                return objectToPromise.call( this, value );
+            }
         }
     } else if( typeof value === 'function' ) {
         if( isGeneratorFunction( value ) ) {
