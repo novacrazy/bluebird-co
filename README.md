@@ -5,10 +5,12 @@ bluebird-co
 [![MIT License][license-image]][npm-url]
 [![Build Status][build-image]][build-link]
 
-A set of yield handlers for Bluebird coroutines.
+A set of high performance yield handlers for Bluebird coroutines.
 
 ## Description
 This is a reimplementation of [tj/co](https://github.com/tj/co) generator coroutines using [bluebird](https://github.com/petkaantonov/bluebird) and [Bluebird.addYieldHandler](https://github.com/petkaantonov/bluebird/blob/master/API.md#promisecoroutineaddyieldhandlerfunction-handler---void) to add in a yield handler that can transform all the types of yieldable values tj/co can and more into normal promises to resolve.
+
+[Yieldable types](#yieldable-types) include arrays of promises, objects, thunks, generators, even things like Node.js streams and ES6 iterables, plus custom types defined by you, and any combination of types.
 
 Combined with [Babel's `bluebirdCoroutines`](http://babeljs.io/docs/advanced/transformers/other/bluebird-coroutines/) transformer, you can write easy and comprehensive `async/await` functions.
 
