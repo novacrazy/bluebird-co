@@ -191,6 +191,9 @@ Returns true if the value is a generator function that when called will create a
 
 -----
 ## Changelog
+#####1.4.0-beta
+* Added support for yielding streams. Haven't written all the tests yet, though, so this version is still beta.
+
 #####1.3.1 - 1.3.2
 * Significantly improve performance of iterables.
 
