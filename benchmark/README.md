@@ -33,6 +33,7 @@ async function() {
 ```
 
 | Description  | Library                   | Op/s       | %    |
+|--------------|---------------------------|-----------:|-----:|
 | raw promises | co                        | 160,725.51 | 17%  |
 |              | co with bluebird promises | 489,315.71 | 53%  |
 |              | bluebird-co               | 924,237.12 | 100% |
