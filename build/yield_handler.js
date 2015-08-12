@@ -172,26 +172,58 @@ function arrayToPromise( value ) {
     return Promise.all( results );
 }
 
-function thunkToPromise( value ) {
+//This is separated out so it can be optimized independently to the calling function.
+function processThunkArgs( args ) {
+    var length = args.length | 0;
+
+    if( length >= 3 ) {
+        var res = new Array( --length );
+
+        for( var i = 0; i < length; ) {
+            res[i] = args[++i]; //It's a good thing this isn't undefined behavior in JavaScript
+        }
+
+        return res;
+    }
+
+    return args[1];
+}
+
+function thunkToPromiseDefer( value ) {
+    /*
+     * NOTE: I know this is technically deprecated, but it's just so much faster than using the constructor and another
+     * closure. Plus it goes around a lot of Bluebird's internals without losing much functionality.
+     *
+     * Since all errors are taken care of, I'd say it's safe enough.
+     * */
+
+    var p = Promise.defer();
+
+    try {
+        value.call( this, function( err ) {
+            if( err ) {
+                p.reject( err );
+            } else {
+                p.resolve( processThunkArgs( arguments ) );
+            }
+        } );
+    } catch( err ) {
+        p.reject( err );
+    }
+
+    return p.promise;
+}
+
+function thunkToPromiseConstructor( value ) {
     var _this = this;
 
     return new Promise( function( resolve, reject ) {
         try {
-            value.call( _this, function( err, res ) {
+            value.call( _this, function( err ) {
                 if( err ) {
                     reject( err );
                 } else {
-                    var _length = arguments.length | 0;
-
-                    if( _length > 2 ) {
-                        res = new Array( --_length );
-
-                        for( var i = 0; i < _length; ) {
-                            res[i] = arguments[++i]; //It's a good thing this isn't undefined behavior in JavaScript
-                        }
-                    }
-
-                    resolve( res );
+                    resolve( processThunkArgs( arguments ) );
                 }
             } );
         } catch( err ) {
@@ -199,6 +231,9 @@ function thunkToPromise( value ) {
         }
     } );
 }
+
+//Just in case it's fully removed in the future, keep the old version that uses the constructor around.
+var thunkToPromise = typeof Promise.defer === 'function' ? thunkToPromiseDefer : thunkToPromiseConstructor;
 
 function isReadableStream( stream ) {
     return stream.readable || typeof stream.read === 'function' || typeof stream._read === 'function'
@@ -240,24 +275,24 @@ function streamToPromise( stream, readable, writable ) {
                         } else {
                             Promise.all( parts ).then( function( results ) {
                                 if( hasBuffer && !objectMode ) {
-                                    var _length2 = results.length | 0;
+                                    var _length = results.length | 0;
 
                                     if( typeof encoding === 'string' ) {
-                                        while( --_length2 >= 0 ) {
-                                            var result = results[_length2];
+                                        while( --_length >= 0 ) {
+                                            var result = results[_length];
 
                                             if( Buffer.isBuffer( result ) ) {
-                                                results[_length2] = result.toString( encoding );
+                                                results[_length] = result.toString( encoding );
                                             }
                                         }
 
                                         resolve( results.join( '' ) );
                                     } else {
-                                        while( --_length2 >= 0 ) {
-                                            var result = results[_length2];
+                                        while( --_length >= 0 ) {
+                                            var result = results[_length];
 
                                             if( !Buffer.isBuffer( result ) ) {
-                                                results[_length2] = new Buffer( result );
+                                                results[_length] = new Buffer( result );
                                             }
                                         }
 
@@ -352,7 +387,7 @@ function toPromise( value ) {
         }
     }
 
-    for( var i = 0, _length3 = yieldHandlers.length | 0; i < _length3; ++i ) {
+    for( var i = 0, _length2 = yieldHandlers.length | 0; i < _length2; ++i ) {
         var res = yieldHandlers[i].call( this, value );
 
         if( res && typeof res.then === 'function' ) {
