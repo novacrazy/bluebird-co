@@ -37,11 +37,13 @@ function* gen_complex( iterations ) {
     }
 
     for( var i = 0; i < iterations; i++ ) {
-        yield [yield _bluebird2.default.resolve( i ), {
-            test:  yield _bluebird2.default.resolve( i ),
-            test2: _bluebird2.default.resolve( i + 1 ),
-            test3: test3
-        }];
+        yield [
+            yield _bluebird2.default.resolve( i ), {
+                test:  yield _bluebird2.default.resolve( i ),
+                test2: _bluebird2.default.resolve( i + 1 ),
+                test3: test3
+            }
+        ];
     }
 }
 
