@@ -17,7 +17,7 @@ Pull requests for new benchmarks are always welcome.
 
 ## Results
 
-Tested with io.js 2.3.0 on Windows 8, Intel i5-4690K at 3.9GHz with 32GB of memory.
+Tested with io.js 2.5.0 on Windows 8, Intel i5-4690K at 3.9GHz with 32GB of memory.
 
 ### Promises
 
