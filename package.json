@@ -1,6 +1,6 @@
 {
   "name":            "bluebird-co",
-  "version":         "1.4.0-beta",
+  "version":         "1.4.1-beta",
   "description":     "A set of yield handlers for Bluebird coroutines",
   "main":            "index.js",
   "scripts":         {
