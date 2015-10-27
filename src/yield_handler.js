@@ -78,11 +78,15 @@ function resolveGenerator( gen ) {
                 if( value && typeof value.then === 'function' ) {
                     value.then( onFulfilled, onRejected );
 
+                    return null;
+
                 } else {
                     value = toPromise.call( this, value );
 
                     if( value && typeof value.then === 'function' ) {
                         value.then( onFulfilled, onRejected );
+
+                        return null;
 
                     } else {
                         onRejected( new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` ) );
