@@ -102,6 +102,8 @@ function resolveGenerator( gen ) {
             } catch( e ) {
                 reject( e );
             }
+
+            return null;
         }
 
         function onRejected( err ) {
@@ -111,6 +113,8 @@ function resolveGenerator( gen ) {
             } catch( e ) {
                 reject( e );
             }
+
+            return null;
         }
 
         onFulfilled();
