@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "babel":         "^5.8.29",
-    "babel-core":    "^5.8.30",
+    "babel-core":    "^5.8.32",
     "babel-runtime": "^5.8.29",
     "co":            "^4.6.0",
     "grunt":               "^0.4.5",
