@@ -266,7 +266,7 @@ function streamToPromise( stream, readable, writable ) {
             return {
                 v: new Promise( function( resolve, reject ) {
                     function onData( data ) {
-                        if( objectMode || typeof data !== 'string' && (hasBuffer && !Buffer.isBuffer( data )) ) {
+                        if( objectMode || typeof data !== 'string' && hasBuffer && !Buffer.isBuffer( data ) ) {
                             objectMode = true;
 
                             data = toPromise.call( this, data );
