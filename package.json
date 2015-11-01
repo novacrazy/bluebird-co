@@ -32,7 +32,7 @@
     "url": "https://github.com/novacrazy/bluebird-co/issues"
   },
   "dependencies":    {
-    "bluebird": "^3.0.1"
+    "bluebird": "^3.0.5"
   },
   "devDependencies": {
     "babel":         "^5.8.29",
