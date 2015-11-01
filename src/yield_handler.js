@@ -392,11 +392,16 @@ export function addYieldHandler( handler ) {
     }
 }
 
+export function coroutine( fn ) {
+    return Promise.coroutine( fn );
+}
+
 export default {
     addYieldHandler,
     isThenable,
     isPromise,
     isGenerator,
     isGeneratorFunction,
-    toPromise
+    toPromise,
+    coroutine
 };

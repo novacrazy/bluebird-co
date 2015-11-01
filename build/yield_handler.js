@@ -34,6 +34,7 @@ exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
 exports.toPromise = toPromise;
 exports.addYieldHandler = addYieldHandler;
+exports.coroutine = coroutine;
 
 function _interopRequireDefault( obj ) {
     return obj && obj.__esModule ? obj : {'default': obj};
@@ -414,11 +415,16 @@ function addYieldHandler( handler ) {
     }
 }
 
+function coroutine( fn ) {
+    return Promise.coroutine( fn );
+}
+
 exports.default = {
     addYieldHandler:     addYieldHandler,
     isThenable:          isThenable,
     isPromise:           isPromise,
     isGenerator:         isGenerator,
     isGeneratorFunction: isGeneratorFunction,
-    toPromise:           toPromise
+    toPromise: toPromise,
+    coroutine: coroutine
 };
