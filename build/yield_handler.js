@@ -22,13 +22,10 @@
  * SOFTWARE.
  *
  ****/
-/**
- * Created by Aaron on 7/3/2015.
- */
-
 'use strict';
 
 exports.__esModule = true;
+exports.isPromise = undefined;
 exports.isThenable = isThenable;
 exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
@@ -36,15 +33,18 @@ exports.toPromise = toPromise;
 exports.addYieldHandler = addYieldHandler;
 exports.coroutine = coroutine;
 
-function _interopRequireDefault( obj ) {
-    return obj && obj.__esModule ? obj : {'default': obj};
-}
-
 var _bluebird = require( 'bluebird' );
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
+function _interopRequireDefault( obj ) {
+    return obj && obj.__esModule ? obj : {default: obj};
+}
+
 var Promise = _bluebird2.default;
+/**
+ * Created by Aaron on 7/3/2015.
+ */
 
 var yieldHandlers = [];
 
@@ -52,9 +52,8 @@ function isThenable( obj ) {
     return obj && typeof obj.then === 'function';
 }
 
-var isPromise = isThenable;
+var isPromise = exports.isPromise = isThenable;
 
-exports.isPromise = isPromise;
 var hasBuffer = typeof Buffer === 'function';
 
 function isGenerator( obj ) {
@@ -284,24 +283,24 @@ function streamToPromise( stream, readable, writable ) {
                         } else {
                             Promise.all( parts ).then( function( results ) {
                                 if( hasBuffer && !objectMode ) {
-                                    var _length = results.length | 0;
+                                    var length = results.length | 0;
 
                                     if( typeof encoding === 'string' ) {
-                                        while( --_length >= 0 ) {
-                                            var result = results[_length];
+                                        while( --length >= 0 ) {
+                                            var result = results[length];
 
                                             if( Buffer.isBuffer( result ) ) {
-                                                results[_length] = result.toString( encoding );
+                                                results[length] = result.toString( encoding );
                                             }
                                         }
 
                                         resolve( results.join( '' ) );
                                     } else {
-                                        while( --_length >= 0 ) {
-                                            var result = results[_length];
+                                        while( --length >= 0 ) {
+                                            var result = results[length];
 
                                             if( !Buffer.isBuffer( result ) ) {
-                                                results[_length] = new Buffer( result );
+                                                results[length] = new Buffer( result );
                                             }
                                         }
 
@@ -336,7 +335,7 @@ function streamToPromise( stream, readable, writable ) {
             };
         })();
 
-        if( typeof _ret === 'object' ) {
+        if( typeof _ret === "object" ) {
             return _ret.v;
         }
     } else {
@@ -396,7 +395,7 @@ function toPromise( value ) {
         }
     }
 
-    for( var i = 0, _length2 = yieldHandlers.length | 0; i < _length2; ++i ) {
+    for( var i = 0, length = yieldHandlers.length | 0; i < length; ++i ) {
         var res = yieldHandlers[i].call( this, value );
 
         if( res && typeof res.then === 'function' ) {
