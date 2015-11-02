@@ -7,6 +7,9 @@ bluebird-co
 
 A set of high performance yield handlers for Bluebird coroutines.
 
+### Warning
+With Babel 6 just released, there are quite a few bugs with async functions and I cannot give appropriate advice for them at this moment. Even my tests for this project are completely borked by Babel 6. However, when Babel resolves these issues, I will rewrite some parts of the README to provide a comprehensive guide to using bluebird-co within your applications for async functions.
+
 ## Description
 This is a reimplementation of [tj/co](https://github.com/tj/co) generator coroutines using [bluebird](https://github.com/petkaantonov/bluebird) and [Bluebird.addYieldHandler](https://github.com/petkaantonov/bluebird/blob/master/API.md#promisecoroutineaddyieldhandlerfunction-handler---void) to add in a yield handler that can transform all the types of yieldable values tj/co can and more into normal promises to resolve.
 
