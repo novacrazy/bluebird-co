@@ -89,7 +89,8 @@ function resolveGenerator( gen ) {
                         return null;
 
                     } else {
-                        onRejected( new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` ) );
+                        onRejected(
+                            new TypeError( `You may only yield a function, promise, generator, array, or object, but the following object was passed: "${ret.value}"` ) );
                     }
                 }
             }
@@ -165,34 +166,7 @@ function processThunkArgs( args ) {
     return args[1];
 }
 
-function thunkToPromiseDefer( value ) {
-    /*
-     * NOTE: I know this is technically deprecated, but it's just so much faster than using the constructor and another
-     * closure. Plus it goes around a lot of Bluebird's internals without losing much functionality.
-     *
-     * Since all errors are taken care of, I'd say it's safe enough.
-     * */
-
-    let p = Promise.defer();
-
-    try {
-        value.call( this, function( err ) {
-            if( err ) {
-                p.reject( err );
-
-            } else {
-                p.resolve( processThunkArgs( arguments ) );
-            }
-        } );
-
-    } catch( err ) {
-        p.reject( err );
-    }
-
-    return p.promise;
-}
-
-function thunkToPromiseConstructor( value ) {
+function thunkToPromise( value ) {
     return new Promise( ( resolve, reject ) => {
         try {
             value.call( this, function( err ) {
@@ -209,9 +183,6 @@ function thunkToPromiseConstructor( value ) {
         }
     } )
 }
-
-//Just in case it's fully removed in the future, keep the old version that uses the constructor around.
-const thunkToPromise = typeof Promise.defer === 'function' ? thunkToPromiseDefer : thunkToPromiseConstructor;
 
 function isReadableStream( stream ) {
     return stream.readable

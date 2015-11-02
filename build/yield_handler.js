@@ -122,8 +122,9 @@ function resolveGenerator( gen ) {
 
                         return null;
                     } else {
-                        onRejected( new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
-                                                   + ret.value + '"' ) );
+                        onRejected(
+                            new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
+                                           + ret.value + '"' ) );
                     }
                 }
             }
@@ -197,32 +198,7 @@ function processThunkArgs( args ) {
     return args[1];
 }
 
-function thunkToPromiseDefer( value ) {
-    /*
-     * NOTE: I know this is technically deprecated, but it's just so much faster than using the constructor and another
-     * closure. Plus it goes around a lot of Bluebird's internals without losing much functionality.
-     *
-     * Since all errors are taken care of, I'd say it's safe enough.
-     * */
-
-    var p = Promise.defer();
-
-    try {
-        value.call( this, function( err ) {
-            if( err ) {
-                p.reject( err );
-            } else {
-                p.resolve( processThunkArgs( arguments ) );
-            }
-        } );
-    } catch( err ) {
-        p.reject( err );
-    }
-
-    return p.promise;
-}
-
-function thunkToPromiseConstructor( value ) {
+function thunkToPromise( value ) {
     var _this = this;
 
     return new Promise( function( resolve, reject ) {
@@ -239,9 +215,6 @@ function thunkToPromiseConstructor( value ) {
         }
     } );
 }
-
-//Just in case it's fully removed in the future, keep the old version that uses the constructor around.
-var thunkToPromise = typeof Promise.defer === 'function' ? thunkToPromiseDefer : thunkToPromiseConstructor;
 
 function isReadableStream( stream ) {
     return stream.readable || typeof stream.read === 'function' || typeof stream._read === 'function'
@@ -424,6 +397,6 @@ exports.default = {
     isPromise:           isPromise,
     isGenerator:         isGenerator,
     isGeneratorFunction: isGeneratorFunction,
-    toPromise: toPromise,
-    coroutine: coroutine
+    toPromise:           toPromise,
+    coroutine:           coroutine
 };
