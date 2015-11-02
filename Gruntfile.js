@@ -12,84 +12,76 @@ module.exports = function( grunt ) {
                   grunt.file.read( './LICENSE', {encoding: 'utf-8'} ).replace( /\n/ig, '\n * ' ) +
                   '\n ****/';
 
+    var loose = {loose: true};
+
+    var base_plugins = [
+        ['transform-es2015-arrow-functions', loose],
+        ['transform-es2015-block-scoped-functions', loose],
+        ['transform-es2015-block-scoping', loose],
+        ['transform-es2015-computed-properties', loose],
+        ['transform-es2015-constants', loose],
+        ['transform-es2015-destructuring', loose],
+        ['transform-es2015-for-of', loose],
+        ['transform-es2015-function-name', loose],
+        ['transform-es2015-literals', loose],
+        ['transform-es2015-modules-commonjs', loose],
+        ['transform-es2015-parameters', loose],
+        ['transform-es2015-shorthand-properties', loose],
+        ['transform-es2015-spread', loose],
+        ['transform-es2015-template-literals', loose]
+    ];
+
+    var async_plugins = [
+        'syntax-async-functions',
+        ['transform-async-to-module-method', {module: 'bluebird', method: 'coroutine', loose: true}],
+        ['transform-runtime']
+    ];
+
     grunt.initConfig( {
         babel:     {
             options:   {
-                ast:          false,
-                sourceMaps:   false,
-                nonStandard:  false,
-                compact:      "false",
-                modules:      "common",
-                experimental: true
+                ast:        false,
+                sourceMaps: false,
+                compact:    false
             },
             build:     {
                 options: {
-                    loose:     "all",
-                    blacklist: [
-                        'es3.memberExpressionLiterals',
-                        'es3.propertyLiterals',
-                        'regenerator' //es6.generators
-                    ],
-                    optional:  [
-                        'spec.undefinedToVoid',
-                        'minification.constantFolding',
-                        'minification.propertyLiterals'
-                    ]
+                    plugins: base_plugins
                 },
-                files:   [{
-                    expand: true,
-                    cwd:    './src/',
-                    src:    './**/*.js',
-                    dest:   './build/'
-                }]
+                files:   [
+                    {
+                        expand: true,
+                        cwd:    './src/',
+                        src:    './**/*.js',
+                        dest:   './build/'
+                    }
+                ]
             },
             tests:     {
-                loose:   "all",
                 options: {
-                    blacklist: [
-                        'es3.memberExpressionLiterals',
-                        'es3.propertyLiterals',
-                        'regenerator', //es6.generators
-                        'es6.properties.shorthand'
-                    ],
-                    optional:  [
-                        'runtime',
-                        'spec.undefinedToVoid',
-                        'minification.constantFolding',
-                        'minification.propertyLiterals',
-                        'bluebirdCoroutines'
-                    ]
+                    plugins: base_plugins.concat( async_plugins )
                 },
-                files:   [{
-                    expand: true,
-                    cwd:    './test/src/',
-                    src:    './**/*.js',
-                    dest:   './test/build/'
-                }]
+                files:   [
+                    {
+                        expand: true,
+                        cwd:    './test/src/',
+                        src:    './**/*.js',
+                        dest:   './test/build/'
+                    }
+                ]
             },
             benchmark: {
-                loose:   "all",
                 options: {
-                    blacklist: [
-                        'es3.memberExpressionLiterals',
-                        'es3.propertyLiterals',
-                        'regenerator', //es6.generators
-                        'es6.properties.shorthand'
-                    ],
-                    optional:  [
-                        'runtime',
-                        'spec.undefinedToVoid',
-                        'minification.constantFolding',
-                        'minification.propertyLiterals',
-                        'bluebirdCoroutines'
-                    ]
+                    plugins: base_plugins.concat( async_plugins )
                 },
-                files:   [{
-                    expand: true,
-                    cwd:    './benchmark/src/',
-                    src:    './**/*.js',
-                    dest:   './benchmark/build/'
-                }]
+                files:   [
+                    {
+                        expand: true,
+                        cwd:    './benchmark/src/',
+                        src:    './**/*.js',
+                        dest:   './benchmark/build/'
+                    }
+                ]
             }
         },
         usebanner: {
