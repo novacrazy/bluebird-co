@@ -27,7 +27,8 @@ module.exports = function( grunt ) {
         ['transform-es2015-parameters', loose],
         ['transform-es2015-shorthand-properties', loose],
         ['transform-es2015-spread', loose],
-        ['transform-es2015-template-literals', loose]
+        ['transform-es2015-template-literals', loose],
+        ['transform-es2015-classes', loose]
     ];
 
     var async_plugins = [

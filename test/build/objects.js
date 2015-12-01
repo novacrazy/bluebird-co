@@ -8,6 +8,10 @@ var _bluebird = require( 'bluebird' );
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
+var _classCallCheck2 = require( 'babel-runtime/helpers/classCallCheck' );
+
+var _classCallCheck3 = _interopRequireDefault( _classCallCheck2 );
+
 var _assert = require( 'assert' );
 
 var _assert2 = _interopRequireDefault( _assert );
@@ -28,14 +32,18 @@ function _interopRequireDefault( obj ) {
 
 var readFileAsync = _bluebird2.default.promisify( _fs.readFile );
 
-class Pet {
-    constructor( name ) {
+var Pet = (function() {
+    function Pet( name ) {
+        (0, _classCallCheck3.default)( this, Pet );
+
         this.name = name;
     }
 
-    something() {
-    }
-}
+    Pet.prototype.something = function something() {
+    };
+
+    return Pet;
+})();
 
 describe( 'Coroutines yielding objects', function() {
     it( 'should aggregate several thunks', function() {

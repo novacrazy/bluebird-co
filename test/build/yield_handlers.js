@@ -4,6 +4,18 @@ var _bluebird = require( 'bluebird' );
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
+var _possibleConstructorReturn2 = require( 'babel-runtime/helpers/possibleConstructorReturn' );
+
+var _possibleConstructorReturn3 = _interopRequireDefault( _possibleConstructorReturn2 );
+
+var _inherits2 = require( 'babel-runtime/helpers/inherits' );
+
+var _inherits3 = _interopRequireDefault( _inherits2 );
+
+var _classCallCheck2 = require( 'babel-runtime/helpers/classCallCheck' );
+
+var _classCallCheck3 = _interopRequireDefault( _classCallCheck2 );
+
 var _assert = require( 'assert' );
 
 var _assert2 = _interopRequireDefault( _assert );
@@ -25,18 +37,30 @@ _2.default.addYieldHandler( function( value ) {
  * Created by Aaron on 7/10/2015.
  */
 
-class MyModel {
-    constructor( value ) {
+var MyModel = (function() {
+    function MyModel( value ) {
+        (0, _classCallCheck3.default)( this, MyModel );
+
         this._value = value;
     }
 
-    fetch() {
+    MyModel.prototype.fetch = function fetch() {
         return _bluebird2.default.resolve( this._value + ' result' );
-    }
-}
+    };
 
-class MyOtherModel extends Object {
-}
+    return MyModel;
+})();
+
+var MyOtherModel = (function( _Object ) {
+    (0, _inherits3.default)( MyOtherModel, _Object );
+
+    function MyOtherModel() {
+        (0, _classCallCheck3.default)( this, MyOtherModel );
+        return (0, _possibleConstructorReturn3.default)( this, _Object.apply( this, arguments ) );
+    }
+
+    return MyOtherModel;
+})( Object );
 
 _2.default.addYieldHandler( function( value ) {
     if( value instanceof MyModel ) {
