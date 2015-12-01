@@ -1,12 +1,6 @@
-/**
- * Created by Aaron on 7/9/2015.
- */
-
 'use strict';
 
 var _bluebird = require( 'bluebird' );
-
-var _interopRequireDefault = require( 'babel-runtime/helpers/interop-require-default' ).default;
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
@@ -18,18 +12,30 @@ var _ = require( '../../' );
 
 var _2 = _interopRequireDefault( _ );
 
+function _interopRequireDefault( obj ) {
+    return obj && obj.__esModule ? obj : {default: obj};
+}
+
 describe( 'yield <invalid>', function() {
     it( 'should throw an error', function() {
-        var test1 = _bluebird.coroutine( function* () {
-            try {
-                yield null;
-                throw new Error( 'lol' );
-            } catch( err ) {
-                (0, _assert2.default)( err instanceof TypeError );
-                (0, _assert2.default)( ~err.message.indexOf( 'yield' ) );
-            }
-        } );
+        var test1 = (function() {
+            var ref = (0, _bluebird.coroutine)( function* () {
+                try {
+                    yield null;
+                    throw new Error( 'lol' );
+                } catch( err ) {
+                    (0, _assert2.default)( err instanceof TypeError );
+                    (0, _assert2.default)( ~err.message.indexOf( 'yield' ) );
+                }
+            } );
+            return function test1() {
+                return ref.apply( this, arguments );
+            };
+        })();
 
         return test1();
     } );
 } );
+/**
+ * Created by Aaron on 7/9/2015.
+ */

@@ -1,16 +1,6 @@
-/**
- * Created by Aaron on 7/11/2015.
- */
-
-/**
- * Created by Aaron on 7/11/2015.
- */
-
 'use strict';
 
 var _bluebird = require( 'bluebird' );
-
-var _interopRequireDefault = require( 'babel-runtime/helpers/interop-require-default' ).default;
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
@@ -21,6 +11,18 @@ var _2 = _interopRequireDefault( _ );
 var _co = require( '../co' );
 
 var _co2 = require( 'co' );
+
+function _interopRequireDefault( obj ) {
+    return obj && obj.__esModule ? obj : {default: obj};
+}
+
+/**
+ * Created by Aaron on 7/11/2015.
+ */
+
+/**
+ * Created by Aaron on 7/11/2015.
+ */
 
 function* gen( iterations ) {
     for( var i = 0; i < iterations; i++ ) {
@@ -59,9 +61,14 @@ suite( 'simple generators (10 iterations)', function() {
         return yield gen( 10 );
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield gen( 10 );
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield gen( 10 );
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -88,9 +95,14 @@ suite( 'long-running generators (1000 iterations)', function() {
         return yield gen( 1000 );
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield gen( 1000 );
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield gen( 1000 );
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -117,9 +129,14 @@ suite( 'very long-running generators (10000 iterations)', function() {
         return yield gen( 10000 );
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield gen( 10000 );
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield gen( 10000 );
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -146,9 +163,14 @@ suite( 'complex generators (150 iterations)', function() {
         return yield gen_complex( 150 );
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield gen_complex( 150 );
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield gen_complex( 150 );
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );

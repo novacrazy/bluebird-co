@@ -1,12 +1,6 @@
-/**
- * Created by Aaron on 7/19/2015.
- */
-
 'use strict';
 
 var _bluebird = require( 'bluebird' );
-
-var _interopRequireDefault = require( 'babel-runtime/helpers/interop-require-default' ).default;
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
@@ -17,6 +11,14 @@ var _2 = _interopRequireDefault( _ );
 var _co = require( '../co' );
 
 var _co2 = require( 'co' );
+
+function _interopRequireDefault( obj ) {
+    return obj && obj.__esModule ? obj : {default: obj};
+}
+
+/**
+ * Created by Aaron on 7/19/2015.
+ */
 
 suite( 'raw promises', function() {
     set( 'delay', 0 );
@@ -30,9 +32,14 @@ suite( 'raw promises', function() {
         return yield _bluebird2.default.resolve( 1 );
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield _bluebird2.default.resolve( 1 );
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield _bluebird2.default.resolve( 1 );
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );

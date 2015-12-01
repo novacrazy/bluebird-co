@@ -1,12 +1,6 @@
-/**
- * Created by Aaron on 7/11/2015.
- */
-
 'use strict';
 
 var _bluebird = require( 'bluebird' );
-
-var _interopRequireDefault = require( 'babel-runtime/helpers/interop-require-default' ).default;
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
@@ -17,6 +11,14 @@ var _2 = _interopRequireDefault( _ );
 var _co = require( '../co' );
 
 var _co2 = require( 'co' );
+
+function _interopRequireDefault( obj ) {
+    return obj && obj.__esModule ? obj : {default: obj};
+}
+
+/**
+ * Created by Aaron on 7/11/2015.
+ */
 
 function get( val ) {
     return function( done ) {
@@ -50,11 +52,16 @@ suite( 'simple thunks (1 argument)', function() {
         };
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield function( done ) {
-            done( null, 10 );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield function( done ) {
+                done( null, 10 );
+            };
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
         };
-    } );
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -85,11 +92,16 @@ suite( 'simple thunks (3 arguments)', function() {
         };
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield function( done ) {
-            done( null, 1, 2, 3 );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield function( done ) {
+                done( null, 1, 2, 3 );
+            };
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
         };
-    } );
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -120,11 +132,17 @@ suite( 'thunks with many arguments (30 arguments)', function() {
         };
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield function( done ) {
-            done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield function( done ) {
+                done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                    10 );
+            };
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
         };
-    } );
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -155,11 +173,16 @@ suite( 'thunks with stupidly many arguments (3000 arguments)', function() {
         };
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield function( done ) {
-            done.apply( null, args );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield function( done ) {
+                done.apply( null, args );
+            };
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
         };
-    } );
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );

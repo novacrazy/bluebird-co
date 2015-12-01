@@ -1,12 +1,6 @@
-/**
- * Created by Aaron on 7/11/2015.
- */
-
 'use strict';
 
 var _bluebird = require( 'bluebird' );
-
-var _interopRequireDefault = require( 'babel-runtime/helpers/interop-require-default' ).default;
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
@@ -17,6 +11,14 @@ var _2 = _interopRequireDefault( _ );
 var _co = require( '../co' );
 
 var _co2 = require( 'co' );
+
+function _interopRequireDefault( obj ) {
+    return obj && obj.__esModule ? obj : {default: obj};
+}
+
+/**
+ * Created by Aaron on 7/11/2015.
+ */
 
 function* gen() {
     yield null;
@@ -52,12 +54,17 @@ suite( 'top level error handling', function() {
         }
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        try {
-            return yield null;
-        } catch( err ) {
-        }
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            try {
+                return yield null;
+            } catch( err ) {
+            }
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -89,12 +96,17 @@ suite( 'nested error handling', function() {
         }
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        try {
-            return yield gen();
-        } catch( err ) {
-        }
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            try {
+                return yield gen();
+            } catch( err ) {
+            }
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -127,12 +139,17 @@ suite( 'deep error handling (after 2000 iterations)', function() {
         }
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        try {
-            return yield e();
-        } catch( err ) {
-        }
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            try {
+                return yield e();
+            } catch( err ) {
+            }
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );

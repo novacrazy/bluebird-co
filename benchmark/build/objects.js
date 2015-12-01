@@ -1,12 +1,6 @@
-/**
- * Created by Aaron on 7/11/2015.
- */
-
 'use strict';
 
 var _bluebird = require( 'bluebird' );
-
-var _interopRequireDefault = require( 'babel-runtime/helpers/interop-require-default' ).default;
 
 var _bluebird2 = _interopRequireDefault( _bluebird );
 
@@ -17,6 +11,14 @@ var _2 = _interopRequireDefault( _ );
 var _co = require( '../co' );
 
 var _co2 = require( 'co' );
+
+function _interopRequireDefault( obj ) {
+    return obj && obj.__esModule ? obj : {default: obj};
+}
+
+/**
+ * Created by Aaron on 7/11/2015.
+ */
 
 function makeObject( size ) {
     var result = {};
@@ -42,9 +44,14 @@ suite( 'very small objects (2 keys)', function() {
         return yield makeObject( 2 );
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield makeObject( 2 );
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield makeObject( 2 );
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -71,9 +78,14 @@ suite( 'small objects (10 keys)', function() {
         return yield makeObject( 10 );
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield makeObject( 10 );
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield makeObject( 10 );
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -100,9 +112,14 @@ suite( 'large objects (2000 keys)', function() {
         return yield makeObject( 2000 );
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield makeObject( 2000 );
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield makeObject( 2000 );
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -129,9 +146,14 @@ suite( 'huge objects (10000 keys)', function() {
         return yield makeObject( 10000 );
     } );
 
-    var bluebird_version = _bluebird.coroutine( function* () {
-        return yield makeObject( 10000 );
-    } );
+    var bluebird_version = (function() {
+        var ref = (0, _bluebird.coroutine)( function* () {
+            return yield makeObject( 10000 );
+        } );
+        return function bluebird_version() {
+            return ref.apply( this, arguments );
+        };
+    })();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
