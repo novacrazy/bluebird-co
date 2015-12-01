@@ -27,7 +27,7 @@ var myAsyncFunction = (function() {
         ];
 
         _assert2.default.strictEqual( results[0], 42 );
-        (0, _assert2.default)( ~results[1].indexOf( 'exports' ) );
+        (0, _assert2.default)( results[1].indexOf( 'exports' ) !== -1 );
         _assert2.default.strictEqual( results[2][0], 1 );
         _assert2.default.strictEqual( results[2][1], 12 );
     } );

@@ -29,7 +29,7 @@ describe( 'yielding streams', function() {
                 var res = yield (0, _fs.createReadStream)( 'index.js' );
 
                 (0, _assert2.default)( Buffer.isBuffer( res ) );
-                (0, _assert2.default)( ~res.toString( 'utf-8' ).indexOf( 'exports' ) );
+                (0, _assert2.default)( res.toString( 'utf-8' ).indexOf( 'exports' ) !== -1 );
             } );
             return function test1() {
                 return ref.apply( this, arguments );
@@ -47,7 +47,7 @@ describe( 'yielding streams', function() {
                 } );
 
                 _assert2.default.strictEqual( typeof res, 'string' );
-                (0, _assert2.default)( ~res.indexOf( 'exports' ) );
+                (0, _assert2.default)( res.indexOf( 'exports' ) !== -1 );
             } );
             return function test2() {
                 return ref.apply( this, arguments );

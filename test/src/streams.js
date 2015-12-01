@@ -14,7 +14,7 @@ describe( 'yielding streams', function() {
             let res = await createReadStream( 'index.js' );
 
             assert( Buffer.isBuffer( res ) );
-            assert( ~res.toString( 'utf-8' ).indexOf( 'exports' ) );
+            assert( res.toString( 'utf-8' ).indexOf( 'exports' ) !== -1 );
         };
 
         return test1();
@@ -27,7 +27,7 @@ describe( 'yielding streams', function() {
             } );
 
             assert.strictEqual( typeof res, 'string' );
-            assert( ~res.indexOf( 'exports' ) );
+            assert( res.indexOf( 'exports' ) !== -1 );
         };
 
         return test2();

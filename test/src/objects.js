@@ -34,9 +34,9 @@ describe( 'Coroutines yielding objects', function() {
             };
 
             assert.strictEqual( 3, Object.keys( res ).length );
-            assert( ~res.a.indexOf( 'exports' ) );
-            assert( ~res.b.indexOf( 'MIT' ) );
-            assert( ~res.c.indexOf( 'devDependencies' ) );
+            assert( res.a.indexOf( 'exports' ) !== -1 );
+            assert( res.b.indexOf( 'MIT' ) !== -1 );
+            assert( res.c.indexOf( 'devDependencies' ) !== -1 );
         };
 
         return test1();
@@ -71,7 +71,7 @@ describe( 'Coroutines yielding objects', function() {
             assert.equal( false, foo.falsey );
             assert.equal( null, foo.nully );
             assert.equal( undefined, foo.undefiney );
-            assert( ~res.address.indexOf( 'exports' ) );
+            assert( res.address.indexOf( 'exports' ) !== -1 );
         };
 
         return test3();

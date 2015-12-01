@@ -239,8 +239,8 @@ describe( 'simple coroutines', function() {
 
                 assert.strictEqual( 2, errors.length );
                 var msg = 'yield';
-                assert( ~errors[0].indexOf( msg ) );
-                assert( ~errors[1].indexOf( msg ) );
+                assert( errors[0].indexOf( msg ) !== -1 );
+                assert( errors[1].indexOf( msg ) !== -1 );
             };
 
             return test11();

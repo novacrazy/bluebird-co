@@ -20,10 +20,10 @@ describe( 'yield handler recursion', function() {
             let res = await [a, [b, c]];
 
             assert.equal( 2, res.length );
-            assert( ~res[0].indexOf( 'exports' ) );
+            assert( res[0].indexOf( 'exports' ) !== -1 );
             assert.equal( 2, res[1].length );
-            assert( ~res[1][0].indexOf( 'MIT' ) );
-            assert( ~res[1][1].indexOf( 'devDependencies' ) );
+            assert( res[1][0].indexOf( 'MIT' ) !== -1 );
+            assert( res[1][1].indexOf( 'devDependencies' ) !== -1 );
         };
 
         return test1();
@@ -43,9 +43,9 @@ describe( 'yield handler recursion', function() {
                 }
             };
 
-            assert( ~res[0].indexOf( 'exports' ) );
-            assert( ~res[1][0].indexOf( 'MIT' ) );
-            assert( ~res[1][1].indexOf( 'devDependencies' ) );
+            assert( res[0].indexOf( 'exports' ) !== -1 );
+            assert( res[1][0].indexOf( 'MIT' ) !== -1 );
+            assert( res[1][1].indexOf( 'devDependencies' ) !== -1 );
         };
 
         return test2();

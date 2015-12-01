@@ -19,9 +19,9 @@ describe( 'Promise.coroutine(* -> yield [])', function() {
 
             let res = await [a, b, c];
             assert.strictEqual( 3, res.length );
-            assert( ~res[0].indexOf( 'exports' ) );
-            assert( ~res[1].indexOf( 'MIT' ) );
-            assert( ~res[2].indexOf( 'devDependencies' ) );
+            assert( res[0].indexOf( 'exports' ) !== -1 );
+            assert( res[1].indexOf( 'MIT' ) !== -1 );
+            assert( res[2].indexOf( 'devDependencies' ) !== -1 );
         };
 
         return test1();
@@ -38,9 +38,11 @@ describe( 'Promise.coroutine(* -> yield [])', function() {
 
     it( 'should support an array of generators', function() {
         let test3 = async function() {
-            let val = await [function*() {
-                return 1;
-            }()];
+            let val = await [
+                function*() {
+                    return 1;
+                }()
+            ];
             assert.deepEqual( val, [1] )
         };
 

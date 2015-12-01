@@ -281,8 +281,8 @@ describe( 'simple coroutines', function() {
 
                     _assert2.default.strictEqual( 2, errors.length );
                     var msg = 'yield';
-                    (0, _assert2.default)( ~errors[0].indexOf( msg ) );
-                    (0, _assert2.default)( ~errors[1].indexOf( msg ) );
+                    (0, _assert2.default)( errors[0].indexOf( msg ) !== -1 );
+                    (0, _assert2.default)( errors[1].indexOf( msg ) !== -1 );
                 } );
                 return function test11() {
                     return ref.apply( this, arguments );

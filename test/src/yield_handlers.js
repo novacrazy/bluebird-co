@@ -83,7 +83,7 @@ describe( 'yield with custom handler', function() {
 
             } catch( err ) {
                 assert( err instanceof TypeError );
-                assert( ~err.message.indexOf( 'yield' ) );
+                assert( err.message.indexOf( 'yield' ) !== -1 );
             }
         };
 

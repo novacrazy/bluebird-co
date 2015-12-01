@@ -34,9 +34,9 @@ describe( 'Promise.coroutine(* -> yield [])', function() {
 
                 var res = yield [a, b, c];
                 _assert2.default.strictEqual( 3, res.length );
-                (0, _assert2.default)( ~res[0].indexOf( 'exports' ) );
-                (0, _assert2.default)( ~res[1].indexOf( 'MIT' ) );
-                (0, _assert2.default)( ~res[2].indexOf( 'devDependencies' ) );
+                (0, _assert2.default)( res[0].indexOf( 'exports' ) !== -1 );
+                (0, _assert2.default)( res[1].indexOf( 'MIT' ) !== -1 );
+                (0, _assert2.default)( res[2].indexOf( 'devDependencies' ) !== -1 );
             } );
             return function test1() {
                 return ref.apply( this, arguments );

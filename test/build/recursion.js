@@ -35,10 +35,10 @@ describe( 'yield handler recursion', function() {
                 var res = yield [a, [b, c]];
 
                 _assert2.default.equal( 2, res.length );
-                (0, _assert2.default)( ~res[0].indexOf( 'exports' ) );
+                (0, _assert2.default)( res[0].indexOf( 'exports' ) !== -1 );
                 _assert2.default.equal( 2, res[1].length );
-                (0, _assert2.default)( ~res[1][0].indexOf( 'MIT' ) );
-                (0, _assert2.default)( ~res[1][1].indexOf( 'devDependencies' ) );
+                (0, _assert2.default)( res[1][0].indexOf( 'MIT' ) !== -1 );
+                (0, _assert2.default)( res[1][1].indexOf( 'devDependencies' ) !== -1 );
             } );
             return function test1() {
                 return ref.apply( this, arguments );
@@ -63,9 +63,9 @@ describe( 'yield handler recursion', function() {
                     }
                 };
 
-                (0, _assert2.default)( ~res[0].indexOf( 'exports' ) );
-                (0, _assert2.default)( ~res[1][0].indexOf( 'MIT' ) );
-                (0, _assert2.default)( ~res[1][1].indexOf( 'devDependencies' ) );
+                (0, _assert2.default)( res[0].indexOf( 'exports' ) !== -1 );
+                (0, _assert2.default)( res[1][0].indexOf( 'MIT' ) !== -1 );
+                (0, _assert2.default)( res[1][1].indexOf( 'devDependencies' ) !== -1 );
             } );
             return function test2() {
                 return ref.apply( this, arguments );

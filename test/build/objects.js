@@ -60,9 +60,9 @@ describe( 'Coroutines yielding objects', function() {
                 };
 
                 _assert2.default.strictEqual( 3, (0, _keys2.default)( res ).length );
-                (0, _assert2.default)( ~res.a.indexOf( 'exports' ) );
-                (0, _assert2.default)( ~res.b.indexOf( 'MIT' ) );
-                (0, _assert2.default)( ~res.c.indexOf( 'devDependencies' ) );
+                (0, _assert2.default)( res.a.indexOf( 'exports' ) !== -1 );
+                (0, _assert2.default)( res.b.indexOf( 'MIT' ) !== -1 );
+                (0, _assert2.default)( res.c.indexOf( 'devDependencies' ) !== -1 );
             } );
             return function test1() {
                 return ref.apply( this, arguments );
@@ -107,7 +107,7 @@ describe( 'Coroutines yielding objects', function() {
                 _assert2.default.equal( false, foo.falsey );
                 _assert2.default.equal( null, foo.nully );
                 _assert2.default.equal( undefined, foo.undefiney );
-                (0, _assert2.default)( ~res.address.indexOf( 'exports' ) );
+                (0, _assert2.default)( res.address.indexOf( 'exports' ) !== -1 );
             } );
             return function test3() {
                 return ref.apply( this, arguments );

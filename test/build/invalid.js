@@ -25,7 +25,7 @@ describe( 'yield <invalid>', function() {
                     throw new Error( 'lol' );
                 } catch( err ) {
                     (0, _assert2.default)( err instanceof TypeError );
-                    (0, _assert2.default)( ~err.message.indexOf( 'yield' ) );
+                    (0, _assert2.default)( err.message.indexOf( 'yield' ) !== -1 );
                 }
             } );
             return function test1() {
