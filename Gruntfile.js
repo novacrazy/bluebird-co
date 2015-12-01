@@ -24,7 +24,6 @@ module.exports = function( grunt ) {
         ['transform-es2015-for-of', loose],
         ['transform-es2015-function-name', loose],
         ['transform-es2015-literals', loose],
-        ['transform-es2015-modules-commonjs', loose],
         ['transform-es2015-parameters', loose],
         ['transform-es2015-shorthand-properties', loose],
         ['transform-es2015-spread', loose],
@@ -32,9 +31,10 @@ module.exports = function( grunt ) {
     ];
 
     var async_plugins = [
-        'syntax-async-functions',
+        ['syntax-async-functions', loose],
         ['transform-async-to-module-method', {module: 'bluebird', method: 'coroutine', loose: true}],
-        ['transform-runtime']
+        ['transform-es2015-modules-commonjs', loose],
+        ['transform-runtime', loose]
     ];
 
     grunt.initConfig( {
@@ -46,7 +46,7 @@ module.exports = function( grunt ) {
             },
             build:     {
                 options: {
-                    plugins: base_plugins
+                    plugins: base_plugins.concat( [['transform-es2015-modules-commonjs', loose]] )
                 },
                 files:   [
                     {
@@ -59,7 +59,7 @@ module.exports = function( grunt ) {
             },
             tests:     {
                 options: {
-                    plugins: base_plugins.concat( async_plugins )
+                    plugins: async_plugins.concat( base_plugins )
                 },
                 files:   [
                     {
@@ -72,7 +72,7 @@ module.exports = function( grunt ) {
             },
             benchmark: {
                 options: {
-                    plugins: base_plugins.concat( async_plugins )
+                    plugins: async_plugins.concat( base_plugins )
                 },
                 files:   [
                     {
