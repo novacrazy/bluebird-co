@@ -24,8 +24,16 @@ class MyModel {
     }
 }
 
-class MyOtherModel extends Object {
+class MyOtherModel {
 
+}
+
+class MyObjectModel extends Object {
+    constructor( value ) {
+        super();
+
+        this.value = Promise.resolve( value );
+    }
 }
 
 BluebirdCo.addYieldHandler( function( value ) {
@@ -74,7 +82,7 @@ describe( 'yield with custom handler', function() {
         return test3();
     } );
 
-    it( 'should throw with yields of unknown types, even if they inherit from Object', function() {
+    it( 'should throw with yields of unknown types', function() {
         let test4 = async function() {
             try {
                 let a = await new MyOtherModel();
@@ -105,4 +113,17 @@ describe( 'yield with custom handler', function() {
 
         return test5();
     } );
+
+    it( 'should consider classes that inherit from Object as objects', function() {
+        let test6 = async function() {
+            try {
+                let a = await new MyObjectModel( 5 );
+
+                assert.strictEqual( a.value, 5 );
+
+            } catch( err ) {
+                assert( false );
+            }
+        }
+    } )
 } );
