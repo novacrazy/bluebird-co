@@ -25,7 +25,7 @@
 'use strict';
 
 exports.__esModule = true;
-exports.isPromise = undefined;
+exports.wrap = exports.isPromise = undefined;
 exports.isThenable = isThenable;
 exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
@@ -123,7 +123,7 @@ function resolveGenerator( gen ) {
                         return null;
                     } else {
                         onRejected(
-                            new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
+                            new TypeError(               'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
                                            + ret.value + '"' ) );
                     }
                 }
@@ -391,6 +391,8 @@ function coroutine( fn ) {
     return Promise.coroutine( fn );
 }
 
+var wrap = exports.wrap = coroutine;
+
 exports.default = {
     addYieldHandler:     addYieldHandler,
     isThenable:          isThenable,
@@ -398,5 +400,6 @@ exports.default = {
     isGenerator:         isGenerator,
     isGeneratorFunction: isGeneratorFunction,
     toPromise:           toPromise,
-    coroutine:           coroutine
+    coroutine:           coroutine,
+    wrap:                wrap
 };

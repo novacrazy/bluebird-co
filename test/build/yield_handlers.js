@@ -51,15 +51,23 @@ var MyModel = (function() {
     return MyModel;
 })();
 
-var MyOtherModel = (function( _Object ) {
-    (0, _inherits3.default)( MyOtherModel, _Object );
+var MyOtherModel = function MyOtherModel() {
+    (0, _classCallCheck3.default)( this, MyOtherModel );
+};
 
-    function MyOtherModel() {
-        (0, _classCallCheck3.default)( this, MyOtherModel );
-        return (0, _possibleConstructorReturn3.default)( this, _Object.apply( this, arguments ) );
+var MyObjectModel = (function( _Object ) {
+    (0, _inherits3.default)( MyObjectModel, _Object );
+
+    function MyObjectModel( value ) {
+        (0, _classCallCheck3.default)( this, MyObjectModel );
+
+        var _this = (0, _possibleConstructorReturn3.default)( this, _Object.call( this ) );
+
+        _this.value = _bluebird2.default.resolve( value );
+        return _this;
     }
 
-    return MyOtherModel;
+    return MyObjectModel;
 })( Object );
 
 _2.default.addYieldHandler( function( value ) {
@@ -123,7 +131,7 @@ describe( 'yield with custom handler', function() {
         return test3();
     } );
 
-    it( 'should throw with yields of unknown types, even if they inherit from Object', function() {
+    it( 'should throw with yields of unknown types', function() {
         var test4 = (function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 try {
@@ -162,5 +170,22 @@ describe( 'yield with custom handler', function() {
         })();
 
         return test5();
+    } );
+
+    it( 'should consider classes that inherit from Object as objects', function() {
+        var test6 = (function() {
+            var ref = (0, _bluebird.coroutine)( function* () {
+                try {
+                    var a = yield new MyObjectModel( 5 );
+
+                    _assert2.default.strictEqual( a.value, 5 );
+                } catch( err ) {
+                    (0, _assert2.default)( false );
+                }
+            } );
+            return function test6() {
+                return ref.apply( this, arguments );
+            };
+        })();
     } );
 } );
