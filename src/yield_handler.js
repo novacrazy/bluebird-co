@@ -367,6 +367,8 @@ export function coroutine( fn ) {
     return Promise.coroutine( fn );
 }
 
+export const wrap = coroutine;
+
 export default {
     addYieldHandler,
     isThenable,
@@ -374,5 +376,6 @@ export default {
     isGenerator,
     isGeneratorFunction,
     toPromise,
-    coroutine
+    coroutine,
+    wrap
 };
