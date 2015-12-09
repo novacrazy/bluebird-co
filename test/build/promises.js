@@ -70,7 +70,7 @@ describe( 'yield <promise>', function() {
         it( 'should throw and resume', function() {
             var test3 = (function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
-                    var error = undefined;
+                    var error = void 0;
 
                     try {
                         yield getPromise( 1, new Error( 'boom' ) );

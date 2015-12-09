@@ -25,7 +25,7 @@
 'use strict';
 
 exports.__esModule = true;
-exports.wrap = exports.isPromise = undefined;
+exports.wrap = exports.isPromise = void 0;
 exports.isThenable = isThenable;
 exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
@@ -41,16 +41,12 @@ function _interopRequireDefault( obj ) {
     return obj && obj.__esModule ? obj : {default: obj};
 }
 
-var Promise = _bluebird2.default;
-/**
- * Created by Aaron on 7/3/2015.
- */
-
-var yieldHandlers = [];
-
 function isThenable( obj ) {
     return obj && typeof obj.then === 'function';
 }
+/**
+ * Created by Aaron on 7/3/2015.
+ */
 
 var isPromise = exports.isPromise = isThenable;
 
@@ -74,11 +70,11 @@ function isGeneratorFunction( obj ) {
     }
 }
 
-function objectToPromise( obj ) {
+function objectToPromise( obj, constructor ) {
     var keys = Object.keys( obj );
     var length = keys.length | 0;
 
-    var result = new obj.constructor();
+    var result = new constructor();
     var values = new Array( length );
 
     var i = -1;
@@ -91,7 +87,7 @@ function objectToPromise( obj ) {
         values[i] = toPromise.call( this, obj[key] );
     }
 
-    return Promise.all( values ).then( function( res ) {
+    return _bluebird2.default.all( values ).then( function( res ) {
         var i = res.length | 0;
 
         while( --i >= 0 ) {
@@ -103,7 +99,7 @@ function objectToPromise( obj ) {
 }
 
 function resolveGenerator( gen ) {
-    return new Promise( function( resolve, reject ) {
+    return new _bluebird2.default( function( resolve, reject ) {
         function next( ret ) {
             if( ret.done ) {
                 resolve( ret.value );
@@ -178,7 +174,7 @@ function arrayToPromise( value ) {
         results[length] = toPromise.call( this, value[length] );
     }
 
-    return Promise.all( results );
+    return _bluebird2.default.all( results );
 }
 
 //This is separated out so it can be optimized independently to the calling function.
@@ -201,7 +197,7 @@ function processThunkArgs( args ) {
 function thunkToPromise( value ) {
     var _this = this;
 
-    return new Promise( function( resolve, reject ) {
+    return new _bluebird2.default( function( resolve, reject ) {
         try {
             value.call( _this, function( err ) {
                 if( err ) {
@@ -237,7 +233,7 @@ function streamToPromise( stream, readable, writable ) {
             encoding = encoding || stream._readableState && stream._readableState.encoding;
 
             return {
-                v: new Promise( function( resolve, reject ) {
+                v: new _bluebird2.default( function( resolve, reject ) {
                     function onData( data ) {
                         if( objectMode || typeof data !== 'string' && hasBuffer && !Buffer.isBuffer( data ) ) {
                             objectMode = true;
@@ -254,7 +250,7 @@ function streamToPromise( stream, readable, writable ) {
                         if( err ) {
                             reject( err );
                         } else {
-                            Promise.all( parts ).then( function( results ) {
+                            _bluebird2.default.all( parts ).then( function( results ) {
                                 if( hasBuffer && !objectMode ) {
                                     var length = results.length | 0;
 
@@ -312,10 +308,10 @@ function streamToPromise( stream, readable, writable ) {
             return _ret.v;
         }
     } else {
-        return new Promise( function( resolve, reject ) {
+        return new _bluebird2.default( function( resolve, reject ) {
             function onFinish() {
                 cleanup();
-                resolve.apply( undefined, arguments );
+                resolve.apply( void 0, arguments );
             }
 
             function onError( err ) {
@@ -333,6 +329,8 @@ function streamToPromise( stream, readable, writable ) {
         } );
     }
 }
+
+toPromise.yieldHandlers = [];
 
 function toPromise( value ) {
     if( typeof value === 'object' && !!value ) {
@@ -356,20 +354,58 @@ function toPromise( value ) {
                 }
             }
 
-            if( Object === value.constructor ) {
-                return objectToPromise.call( this, value );
+            /*
+             * If there is no constructor, default to Object, because no constructor means it was
+             * created in weird circumstances.
+             * */
+
+            var _value$constructor = value.constructor;
+            var constructor = _value$constructor === void 0 ? Object : _value$constructor;
+
+            /*
+             * This is really annoying, as there is no possible way to determine whether `value` is an instance of
+             * an Object, or is a class that extends Object, given Babel 6. It seems possible in Babel 5.
+             * I'm not sure if this was an intentional change, but for the sake of forward compatibility, this will
+             * consider anything that also inherits from Object as an object.
+             * */
+
+            if( constructor === Object || Object.isPrototypeOf( constructor ) ) {
+                return objectToPromise.call( this, value, constructor );
             }
         }
     } else if( typeof value === 'function' ) {
         if( isGeneratorFunction( value ) ) {
-            return Promise.coroutine( value ).call( this );
+            return _bluebird2.default.coroutine( value ).call( this );
         } else {
             return thunkToPromise.call( this, value );
         }
     }
 
-    for( var i = 0, length = yieldHandlers.length | 0; i < length; ++i ) {
-        var res = yieldHandlers[i].call( this, value );
+    /*
+     * Custom yield handlers allow bluebird-co to be extended similarly to bluebird yield handlers, but have the
+     * added benefit of working with all the other bluebird-co yield handlers automatically.
+     * */
+    for( var _iterator = toPromise.yieldHandlers, _isArray = Array.isArray( _iterator ), _i = 0, _iterator = _isArray ?
+                                                                                                             _iterator :
+                                                                                                             _iterator[Symbol.iterator](); ; ) {
+        var _ref;
+
+        if( _isArray ) {
+            if( _i >= _iterator.length ) {
+                break;
+            }
+            _ref = _iterator[_i++];
+        } else {
+            _i = _iterator.next();
+            if( _i.done ) {
+                break;
+            }
+            _ref = _i.value;
+        }
+
+        var handler = _ref;
+
+        var res = handler.call( this, value );
 
         if( res && typeof res.then === 'function' ) {
             return res;
@@ -383,12 +419,12 @@ function addYieldHandler( handler ) {
     if( typeof handler !== 'function' ) {
         throw new TypeError( 'yield handler is not a function' );
     } else {
-        yieldHandlers.push( handler );
+        toPromise.yieldHandlers.push( handler );
     }
 }
 
 function coroutine( fn ) {
-    return Promise.coroutine( fn );
+    return _bluebird2.default.coroutine( fn );
 }
 
 var wrap = exports.wrap = coroutine;

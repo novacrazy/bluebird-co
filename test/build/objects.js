@@ -96,7 +96,7 @@ describe( 'Coroutines yielding objects', function() {
                     tobi:      new Pet( 'tobi' ),
                     falsey:    false,
                     nully:     null,
-                    undefiney: undefined
+                    undefiney: void 0
                 };
 
                 var res = yield foo;
@@ -106,7 +106,7 @@ describe( 'Coroutines yielding objects', function() {
                 _assert2.default.equal( 'tobi', res.tobi.name );
                 _assert2.default.equal( false, foo.falsey );
                 _assert2.default.equal( null, foo.nully );
-                _assert2.default.equal( undefined, foo.undefiney );
+                _assert2.default.equal( void 0, foo.undefiney );
                 (0, _assert2.default)( res.address.indexOf( 'exports' ) !== -1 );
             } );
             return function test3() {
