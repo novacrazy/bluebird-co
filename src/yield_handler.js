@@ -2,11 +2,7 @@
  * Created by Aaron on 7/3/2015.
  */
 
-import Bluebird from 'bluebird';
-
-let Promise = Bluebird;
-
-let yieldHandlers = [];
+import Promise from 'bluebird';
 
 export function isThenable( obj ) {
     return obj && typeof obj.then === 'function';
@@ -38,11 +34,11 @@ export function isGeneratorFunction( obj ) {
     }
 }
 
-function objectToPromise( obj ) {
+function objectToPromise( obj, constructor ) {
     let keys = Object.keys( obj );
     let length = keys.length | 0;
 
-    let result = new obj.constructor();
+    let result = new constructor();
     let values = new Array( length );
 
     let i = -1;
@@ -303,6 +299,8 @@ function streamToPromise( stream, readable, writable ) {
     }
 }
 
+toPromise.yieldHandlers = [];
+
 export function toPromise( value ) {
     if( typeof value === 'object' && !!value ) {
         if( typeof value.then === 'function' ) {
@@ -329,8 +327,22 @@ export function toPromise( value ) {
                 }
             }
 
-            if( Object === value.constructor ) {
-                return objectToPromise.call( this, value );
+            /*
+             * If there is no constructor, default to Object, because no constructor means it was
+             * created in weird circumstances.
+             * */
+
+            const {constructor = Object} = value;
+
+            /*
+             * This is really annoying, as there is no possible way to determine whether `value` is an instance of
+             * an Object, or is a class that extends Object, given Babel 6. It seems possible in Babel 5.
+             * I'm not sure if this was an intentional change, but for the sake of forward compatibility, this will
+             * consider anything that also inherits from Object as an object.
+             * */
+
+            if( constructor === Object || Object.isPrototypeOf( constructor ) ) {
+                return objectToPromise.call( this, value, constructor );
             }
         }
 
@@ -343,8 +355,12 @@ export function toPromise( value ) {
         }
     }
 
-    for( let i = 0, length = yieldHandlers.length | 0; i < length; ++i ) {
-        let res = yieldHandlers[i].call( this, value );
+    /*
+     * Custom yield handlers allow bluebird-co to be extended similarly to bluebird yield handlers, but have the
+     * added benefit of working with all the other bluebird-co yield handlers automatically.
+     * */
+    for( let handler of toPromise.yieldHandlers ) {
+        let res = handler.call( this, value );
 
         if( res && typeof res.then === 'function' ) {
             return res;
@@ -359,7 +375,7 @@ export function addYieldHandler( handler ) {
         throw new TypeError( 'yield handler is not a function' );
 
     } else {
-        yieldHandlers.push( handler );
+        toPromise.yieldHandlers.push( handler );
     }
 }
 
