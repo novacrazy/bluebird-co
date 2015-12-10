@@ -1,16 +1,16 @@
 {
-  "name":            "bluebird-co",
-  "version":         "1.4.1-beta",
-  "description":     "A set of yield handlers for Bluebird coroutines",
-  "main":            "index.js",
-  "scripts":         {
+  "name":             "bluebird-co",
+  "version":          "1.4.1-beta",
+  "description":      "A set of yield handlers for Bluebird coroutines",
+  "main":             "index.js",
+  "scripts":          {
     "test":           "mocha -b test/build",
     "btest":          "grunt build-tests && mocha -b test/build",
     "build":          "grunt default",
     "benchmark":      "grunt build-benchmark && matcha benchmark/build/promises.js benchmark/build/arrays.js benchmark/build/iterables.js benchmark/build/objects.js benchmark/build/generators.js benchmark/build/thunks.js benchmark/build/errors.js",
     "benchmark-save": "grunt build-benchmark && matcha -R csv  benchmark/build/promises.js benchmark/build/arrays.js benchmark/build/iterables.js benchmark/build/objects.js benchmark/build/generators.js benchmark/build/thunks.js benchmark/build/errors.js > benchmark/results.csv"
   },
-  "keywords":        [
+  "keywords":         [
     "bluebird",
     "coroutines",
     "yield",
@@ -22,19 +22,19 @@
     "iterables",
     "generators"
   ],
-  "author":          "Aaron Trent <novacrazy@gmail.com>",
-  "license":         "MIT",
-  "repository":      {
+  "author":           "Aaron Trent <novacrazy@gmail.com>",
+  "license":          "MIT",
+  "repository":       {
     "type": "git",
     "url":  "https://github.com/novacrazy/bluebird-co"
   },
-  "bugs":            {
+  "bugs":             {
     "url": "https://github.com/novacrazy/bluebird-co/issues"
   },
-  "dependencies":    {
-    "bluebird": "^3.0.6"
+  "peerDependencies": {
+    "bluebird": "^3.x"
   },
-  "devDependencies": {
+  "devDependencies":  {
     "babel":                                                "^6.3.13",
     "babel-core":                                           "^6.3.15",
     "babel-helper-define-map":                              "^6.3.13",
