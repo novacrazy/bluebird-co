@@ -71,7 +71,7 @@ function resolveGenerator( gen ) {
             } else {
                 let value = ret.value;
 
-                if( value && typeof value.then === 'function' ) {
+                if( isThenable( value ) ) {
                     value.then( onFulfilled, onRejected );
 
                     return null;
@@ -79,7 +79,7 @@ function resolveGenerator( gen ) {
                 } else {
                     value = toPromise.call( this, value );
 
-                    if( value && typeof value.then === 'function' ) {
+                    if( isThenable( value ) ) {
                         value.then( onFulfilled, onRejected );
 
                         return null;
@@ -180,125 +180,6 @@ function thunkToPromise( value ) {
     } )
 }
 
-function isReadableStream( stream ) {
-    return stream.readable
-           || typeof stream.read === 'function'
-           || typeof stream._read === 'function'
-           || typeof stream.pipe === 'function'
-           || typeof stream._transform === 'function';
-}
-
-function isWritableStream( stream ) {
-    return stream.writable
-           || typeof stream.write === 'function'
-           || typeof stream._write === 'function';
-}
-
-function streamToPromise( stream, readable, writable ) {
-    let {encoding, objectMode} = stream;
-
-    if( readable ) {
-        let parts = [];
-
-        //special behavior for Node streams.
-        encoding = encoding || (stream._readableState && stream._readableState.encoding);
-
-        return new Promise( ( resolve, reject ) => {
-            function onData( data ) {
-                if( objectMode || (typeof data !== 'string' && (hasBuffer && !Buffer.isBuffer( data ))) ) {
-                    objectMode = true;
-
-                    data = toPromise.call( this, data );
-                }
-
-                parts.push( data );
-            }
-
-            function onEnd( err ) {
-                cleanup();
-
-                if( err ) {
-                    reject( err );
-
-                } else {
-                    Promise.all( parts ).then( results => {
-                        if( hasBuffer && !objectMode ) {
-                            let length = results.length | 0;
-
-                            if( typeof encoding === 'string' ) {
-                                while( --length >= 0 ) {
-                                    let result = results[length];
-
-                                    if( Buffer.isBuffer( result ) ) {
-                                        results[length] = result.toString( encoding );
-                                    }
-                                }
-
-                                resolve( results.join( '' ) );
-
-                            } else {
-                                while( --length >= 0 ) {
-                                    let result = results[length];
-
-                                    if( !Buffer.isBuffer( result ) ) {
-                                        results[length] = new Buffer( result );
-                                    }
-                                }
-
-                                resolve( Buffer.concat( results ) );
-                            }
-
-                        } else if( objectMode ) {
-                            resolve( results );
-
-                        } else {
-                            resolve( results.join( '' ) );
-                        }
-                    } );
-                }
-            }
-
-            function onClose() {
-                cleanup();
-                resolve( void 0 );
-            }
-
-            function cleanup() {
-                stream.removeListener( 'data', onData );
-                stream.removeListener( 'end', onEnd );
-                stream.removeListener( 'error', onEnd );
-                stream.removeListener( 'close', onClose );
-            }
-
-            stream.addListener( 'data', onData );
-            stream.addListener( 'end', onEnd );
-            stream.addListener( 'error', onEnd );
-            stream.addListener( 'close', onClose );
-        } );
-
-    } else {
-        return new Promise( ( resolve, reject ) => {
-            function onFinish( ...args ) {
-                cleanup();
-                resolve( ...args );
-            }
-
-            function onError( err ) {
-                cleanup();
-                reject( err );
-            }
-
-            function cleanup() {
-                stream.removeListener( 'finish', onFinish );
-                stream.removeListener( 'error', onError );
-            }
-
-            stream.addListener( 'finish', onFinish );
-            stream.addListener( 'error', onError );
-        } );
-    }
-}
-
 toPromise.yieldHandlers = [];
 
 export function toPromise( value ) {
@@ -318,15 +199,6 @@ export function toPromise( value ) {
             }
 
         } else {
-            if( typeof value.addListener === 'function' && typeof value.removeListener === 'function' ) {
-                let readable = isReadableStream( value );
-                let writable = isWritableStream( value );
-
-                if( readable || writable ) {
-                    return streamToPromise.call( this, value, readable, writable );
-                }
-            }
-
             /*
              * If there is no constructor, default to Object, because no constructor means it was
              * created in weird circumstances.
@@ -362,7 +234,7 @@ export function toPromise( value ) {
     for( let handler of toPromise.yieldHandlers ) {
         let res = handler.call( this, value );
 
-        if( res && typeof res.then === 'function' ) {
+        if( isThenable( res ) ) {
             return res;
         }
     }
