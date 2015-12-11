@@ -22,13 +22,11 @@ var _assert2 = _interopRequireDefault( _assert );
 
 var _ = require( '../../' );
 
-var _2 = _interopRequireDefault( _ );
-
 function _interopRequireDefault( obj ) {
     return obj && obj.__esModule ? obj : {default: obj};
 }
 
-_2.default.addYieldHandler( function( value ) {
+_.coroutine.addYieldHandler( function( value ) {
     if( value === 13 ) {
         return _bluebird2.default.resolve( 10 );
     }
@@ -70,13 +68,17 @@ var MyObjectModel = (function( _Object ) {
     return MyObjectModel;
 })( Object );
 
-_2.default.addYieldHandler( function( value ) {
+_.coroutine.addYieldHandler( function( value ) {
     if( value instanceof MyModel ) {
         return value.fetch();
     }
 } );
 
 describe( 'yield with custom handler', function() {
+    it( 'should provide a consistent interface for adding yield handlers', function() {
+        _assert2.default.strictEqual( _.coroutine.addYieldHandler, _.addYieldHandler );
+    } );
+
     it( 'should work with simple yields', function() {
         var test1 = (function() {
             var ref = (0, _bluebird.coroutine)( function* () {

@@ -6,9 +6,9 @@
 import Promise from 'bluebird';
 import assert from 'assert';
 
-import BluebirdCo from '../../';
+import {coroutine, addYieldHandler} from '../../';
 
-BluebirdCo.addYieldHandler( function( value ) {
+coroutine.addYieldHandler( function( value ) {
     if( value === 13 ) {
         return Promise.resolve( 10 );
     }
@@ -36,13 +36,17 @@ class MyObjectModel extends Object {
     }
 }
 
-BluebirdCo.addYieldHandler( function( value ) {
+coroutine.addYieldHandler( function( value ) {
     if( value instanceof MyModel ) {
         return value.fetch();
     }
 } );
 
 describe( 'yield with custom handler', function() {
+    it( 'should provide a consistent interface for adding yield handlers', function() {
+        assert.strictEqual( coroutine.addYieldHandler, addYieldHandler );
+    } );
+
     it( 'should work with simple yields', function() {
         let test1 = async function() {
             let res = await 13;
