@@ -4,13 +4,20 @@
 
 import Promise from 'bluebird';
 
+coroutine.yieldHandlers = [];
+coroutine.addYieldHandler = addYieldHandler;
+
+export function coroutine( fn ) {
+    return Promise.coroutine( fn );
+}
+
+export const wrap = coroutine;
+
 export function isThenable( obj ) {
     return obj && typeof obj.then === 'function';
 }
 
-export let isPromise = isThenable;
-
-let hasBuffer = typeof Buffer === 'function';
+export const isPromise = isThenable;
 
 export function isGenerator( obj ) {
     return 'function' === typeof obj.next && 'function' === typeof obj.throw;
@@ -180,8 +187,6 @@ function thunkToPromise( value ) {
     } )
 }
 
-toPromise.yieldHandlers = [];
-
 export function toPromise( value ) {
     if( typeof value === 'object' && !!value ) {
         if( typeof value.then === 'function' ) {
@@ -231,7 +236,7 @@ export function toPromise( value ) {
      * Custom yield handlers allow bluebird-co to be extended similarly to bluebird yield handlers, but have the
      * added benefit of working with all the other bluebird-co yield handlers automatically.
      * */
-    for( let handler of toPromise.yieldHandlers ) {
+    for( let handler of coroutine.yieldHandlers ) {
         let res = handler.call( this, value );
 
         if( isThenable( res ) ) {
@@ -247,15 +252,9 @@ export function addYieldHandler( handler ) {
         throw new TypeError( 'yield handler is not a function' );
 
     } else {
-        toPromise.yieldHandlers.push( handler );
+        coroutine.yieldHandlers.push( handler );
     }
 }
-
-export function coroutine( fn ) {
-    return Promise.coroutine( fn );
-}
-
-export const wrap = coroutine;
 
 export default {
     addYieldHandler,

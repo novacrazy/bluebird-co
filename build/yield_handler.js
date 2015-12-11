@@ -25,13 +25,13 @@
 'use strict';
 
 exports.__esModule = true;
-exports.wrap = exports.isPromise = void 0;
+exports.isPromise = exports.wrap = void 0;
+exports.coroutine = coroutine;
 exports.isThenable = isThenable;
 exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
 exports.toPromise = toPromise;
 exports.addYieldHandler = addYieldHandler;
-exports.coroutine = coroutine;
 
 var _bluebird = require( 'bluebird' );
 
@@ -41,16 +41,24 @@ function _interopRequireDefault( obj ) {
     return obj && obj.__esModule ? obj : {default: obj};
 }
 
-function isThenable( obj ) {
-    return obj && typeof obj.then === 'function';
-}
+coroutine.yieldHandlers = [];
 /**
  * Created by Aaron on 7/3/2015.
  */
 
-var isPromise = exports.isPromise = isThenable;
+coroutine.addYieldHandler = addYieldHandler;
 
-var hasBuffer = typeof Buffer === 'function';
+function coroutine( fn ) {
+    return _bluebird2.default.coroutine( fn );
+}
+
+var wrap = exports.wrap = coroutine;
+
+function isThenable( obj ) {
+    return obj && typeof obj.then === 'function';
+}
+
+var isPromise = exports.isPromise = isThenable;
 
 function isGenerator( obj ) {
     return 'function' === typeof obj.next && 'function' === typeof obj.throw;
@@ -212,8 +220,6 @@ function thunkToPromise( value ) {
     } );
 }
 
-toPromise.yieldHandlers = [];
-
 function toPromise( value ) {
     if( typeof value === 'object' && !!value ) {
         if( typeof value.then === 'function' ) {
@@ -258,7 +264,7 @@ function toPromise( value ) {
      * Custom yield handlers allow bluebird-co to be extended similarly to bluebird yield handlers, but have the
      * added benefit of working with all the other bluebird-co yield handlers automatically.
      * */
-    for( var _iterator = toPromise.yieldHandlers, _isArray = Array.isArray( _iterator ), _i = 0, _iterator = _isArray ?
+    for( var _iterator = coroutine.yieldHandlers, _isArray = Array.isArray( _iterator ), _i = 0, _iterator = _isArray ?
                                                                                                              _iterator :
                                                                                                              _iterator[Symbol.iterator](); ; ) {
         var _ref;
@@ -292,15 +298,9 @@ function addYieldHandler( handler ) {
     if( typeof handler !== 'function' ) {
         throw new TypeError( 'yield handler is not a function' );
     } else {
-        toPromise.yieldHandlers.push( handler );
+        coroutine.yieldHandlers.push( handler );
     }
 }
-
-function coroutine( fn ) {
-    return _bluebird2.default.coroutine( fn );
-}
-
-var wrap = exports.wrap = coroutine;
 
 exports.default = {
     addYieldHandler:     addYieldHandler,
