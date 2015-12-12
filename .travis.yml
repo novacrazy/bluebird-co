@@ -10,5 +10,7 @@ matrix:
     - node_js: "node"
 
 script: "mocha -b $NODE_FLAGS test/build"
+before_script:
+  - npm install bluebird@3
 
 sudo: false
