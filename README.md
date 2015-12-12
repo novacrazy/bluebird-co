@@ -10,7 +10,7 @@ A set of high performance yield handlers for Bluebird coroutines.
 # Description
 bluebird-co is a reimplementation of [tj/co](https://github.com/tj/co) generator coroutines using [bluebird](https://github.com/petkaantonov/bluebird), [Bluebird.coroutine](http://bluebirdjs.com/docs/api/promise.coroutine.html) and [Bluebird.coroutine.addYieldHandler](http://bluebirdjs.com/docs/api/promise.coroutine.addyieldhandler.html) to insert a yield handler that can transform all the same yieldable value types as tj/co and more.
 
-[Yieldable Types]() include arrays of promises, objects with promises as properties, thunks, other generators, and even ES6 iterables. Plus bluebird-co allows for additional yield handlers to be added that work together in combination with all the existing yield handlers.
+[Yieldable Types](#yieldable-types) include arrays of promises, objects with promises as properties, thunks, other generators, and even ES6 iterables. Plus bluebird-co allows for additional yield handlers to be added that work together in combination with all the existing yield handlers.
 
 Combined with [Babel's `async-to-module-method`](http://babeljs.io/docs/plugins/transform-async-to-module-method/) (or `bluebirdCoroutines` in Babel 5) transformer, you can write easy and comprehensive `async/await` functions.
 
@@ -79,7 +79,7 @@ myAsyncFunction().then(...);
 ##### For more examples, see the [tj/co README](https://github.com/tj/co/blob/master/Readme.md#examples) and the [Bluebird Coroutines API](http://bluebirdjs.com/docs/api/promise.coroutine.html).
 
 
-# Yieldable types
+# Yieldable Types
 
 * Promises
 * Arrays
@@ -87,13 +87,13 @@ myAsyncFunction().then(...);
 * Generators and GeneratorFunctions
 * Iterables (like `new Set([1, 2, 3]).values()`)
 * Functions (as Thunks)
-* Custom data types via [`.addYieldHandler(fn)`]()
+* Custom data types via [`.addYieldHandler(fn)`#addyieldhandlerfn--function
 * Any combination or nesting of the above.
 
 # Custom yieldable types
-It may become desirable to add custom yield handling for types not listed above based on the needs of a certain application. To make this easy, bluebird-co provides an analogue to Bluebird's [Bluebird.coroutine.addYieldHandler]() that works together in combination with the above yield handlers.
+It may become desirable to add custom yield handling for types not listed above based on the needs of a certain application. To make this easy, bluebird-co provides an analogue to Bluebird's [Bluebird.coroutine.addYieldHandler](http://bluebirdjs.com/docs/api/promise.coroutine.addyieldhandler.html) that works together in combination with the above yield handlers.
 
-To do this, bluebird-co provides the [`.coroutine.addYieldHandler(fn)`]() function, or just [`.addYieldHandler(fn)`]() for short. The first is for strict compatibility with Bluebird.
+To do this, bluebird-co provides the [`.coroutine.addYieldHandler(fn)`](#addyieldhandlerfn--function) function, or just [`.addYieldHandler(fn)`](#addyieldhandlerfn--function) for short. The first is for strict compatibility with Bluebird.
 
 Example of automatically fetching model data by yielding the model instance:
 ```javascript
@@ -135,7 +135,7 @@ All functions and properties listed below are exported by the `bluebird-co` modu
 -----
 ##### `.toPromise(value : any)` -> `Promise<any> | any`
 
-`toPromise` is the central function of bluebird-co. It takes any of the supported yieldable types (and those added via [`.addYieldHandler`]()), and attempts to convert it to a Promise. Any Promises within the value are resolved before the returned Promise resolves.
+`toPromise` is the central function of bluebird-co. It takes any of the supported yieldable types (and those added via [`.addYieldHandler`](#addyieldhandlerfn--function)), and attempts to convert it to a Promise. Any Promises within the value are resolved before the returned Promise resolves.
 
 In the event that the given value cannot be transformed into a Promise, like when it is not in the possible yieldable types, the original value is returned. When used in conjunction with Bluebird coroutines, Bluebird will throw an error because the value is not a Promise instance.
 
@@ -145,9 +145,9 @@ In the event that the given value cannot be transformed into a Promise, like whe
 
 Very similar to [Bluebird.coroutine.addYieldHandler](http://bluebirdjs.com/docs/api/promise.coroutine.addyieldhandler.html), `.addYieldHandler` allows custom types to be processed by bluebird-co in conjunction with any other yieldable types, even other custom yield handlers. This includes nested yieldable types.
 
-Aside from the [caveats]() of `Object` types when using custom yield handlers, any other type or value can be handled, even null, undefined, Symbols, anything. However, built-in yield handlers cannot be overridden.
+Aside from the [caveats](#caveats) of `Object` types when using custom yield handlers, any other type or value can be handled, even null, undefined, Symbols, anything. However, built-in yield handlers cannot be overridden.
 
-See the above section on [Custom yieldable types]() for an example.
+See the above section on [Custom yieldable types](#custom-yieldable-types) for an example.
 
 -----
 ##### `.coroutine(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`)` -> `Function`
