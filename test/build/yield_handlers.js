@@ -189,5 +189,7 @@ describe( 'yield with custom handler', function() {
                 return ref.apply( this, arguments );
             };
         })();
+
+        return test6();
     } );
 } );

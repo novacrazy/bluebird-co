@@ -128,6 +128,8 @@ describe( 'yield with custom handler', function() {
             } catch( err ) {
                 assert( false );
             }
-        }
+        };
+
+        return test6();
     } )
 } );
