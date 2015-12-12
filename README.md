@@ -161,7 +161,7 @@ The `.wrap` alias is provided to be a drop-in replacement for `co.wrap`.
 ##### `.execute(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`, ...args : any[])` -> `Promise<any>`
 **alias**: `.co(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`, ...args : any[])` -> `Promise<any>`
 
-This called [`.coroutine`](), then invokes the resulting function with the arguments provided.
+This calls [`.coroutine`](), then invokes the resulting function with the arguments provided.
 
 It is meant as a drop in replacement for tj/co `co`, like so:
 
