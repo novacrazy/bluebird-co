@@ -7,76 +7,58 @@ bluebird-co
 
 A set of high performance yield handlers for Bluebird coroutines.
 
-### Warning
-With Babel 6 just released, there are quite a few bugs with async functions and I cannot give appropriate advice for them at this moment. Even my tests for this project are completely borked by Babel 6. However, when Babel resolves these issues, I will rewrite some parts of the README to provide a comprehensive guide to using bluebird-co within your applications for async functions.
+# Description
+bluebird-co is a reimplementation of [tj/co](https://github.com/tj/co) generator coroutines using [bluebird](https://github.com/petkaantonov/bluebird), [Bluebird.coroutine](http://bluebirdjs.com/docs/api/promise.coroutine.html) and [Bluebird.coroutine.addYieldHandler](http://bluebirdjs.com/docs/api/promise.coroutine.addyieldhandler.html) to insert a yield handler that can transform all the same yieldable value types as tj/co and more.
 
-## Description
-This is a reimplementation of [tj/co](https://github.com/tj/co) generator coroutines using [bluebird](https://github.com/petkaantonov/bluebird) and [Bluebird.addYieldHandler](https://github.com/petkaantonov/bluebird/blob/master/API.md#promisecoroutineaddyieldhandlerfunction-handler---void) to add in a yield handler that can transform all the types of yieldable values tj/co can and more into normal promises to resolve.
+[Yieldable Types]() include arrays of promises, objects with promises as properties, thunks, other generators, and even ES6 iterables. Plus bluebird-co allows for additional yield handlers to be added that work together in combination with all the existing yield handlers.
 
-[Yieldable types](#yieldable-types) include arrays of promises, objects, thunks, generators, even things like Node.js streams and ES6 iterables, plus custom types defined by you, and any combination of types.
+Combined with [Babel's `async-to-module-method`](http://babeljs.io/docs/plugins/transform-async-to-module-method/) (or `bluebirdCoroutines` in Babel 5) transformer, you can write easy and comprehensive `async/await` functions.
 
-Combined with [Babel's `bluebirdCoroutines`](http://babeljs.io/docs/advanced/transformers/other/bluebird-coroutines/) transformer, you can write easy and comprehensive `async/await` functions.
-
-## Performance
-Given Bluebird's fame for high performance promises, it should come as no surprise that bluebird-co can achieve up to a couple orders of magnitude better performance on some particular tasks than tj/co, with most coroutines being about two to eight times faster with bluebird-co.
+# Performance
+Squeezing out the most performance out of every asynchronous operation was a high priority for bluebird-co, and as a result it is much faster than tj/co in essentially every scenario.
 
 [See here for detailed benchmarks](https://github.com/novacrazy/bluebird-co/tree/master/benchmark)
 
-## Usage
-`require('bluebird-co')` and done.
+# Usage
+bluebird-co includes Bluebird as a [peer dependency](https://docs.npmjs.com/files/package.json#peerdependencies) so that it will use any already installed instance of Bluebird, making it easier to bootstrap and integrate.
 
-or
+Using automatic bootstrapping:
+```javascript
+require('bluebird-co');
+```
+
+and done.
+
+Alternatively, manually adding the yield handler to Bluebird:
 
 ```javascript
-var Promise = require('bluebird');
-var BluebirdCo = require('bluebird-co/manual');
+var Promise     = require('bluebird'),
+    bluebird_co = require('bluebird-co/manual');
 
-Promise.coroutine.addYieldHandler(BluebirdCo.toPromise);
+Promise.coroutine.addYieldHandler(bluebird_co.toPromise);
 ```
 
-##### Usage in detail (to ensure everything works)
+In the automatic bootstrapping version, it actually executes the same code snippet as above. Allowing manual bootstrapping allows for control over the process if desired.
 
-`bluebird-co` works by requiring `bluebird` and calling `Bluebird.coroutine.addYieldHandler` to add the appropriate functionality. 
+# Example coroutines
+**Note**: bluebird-co has to be added to Bluebird via automatic bootstrapping or manual addition before these snippets can work.
 
-However, to ensure everything works you will need to install `bluebird` before any other module, so it exists in your `node_modules` folder. Then when you install any other module, including `bluebird-co`, they will require the already installed copy of `bluebird` instead of installing another, independent copy in their own `node_modules` folder.
-
-Likewise, if you intend to override `co.wrap`, you will have to install `co` before any module that relies on `co`, that way `koa` and the like will use it instead of installing their own copy.
-
-Your package.json should look something like this:
-```json
-{
-    "...": "...",
-    "dependencies": {
-        "bluebird":     "^2.9.33",
-        "co":           "^4.5.4",
-        "bluebird-co":  "^1.0.2"
-    },
-    "...": "..."
-}
-```
-
-before installing any other module that relies on those.
-
-#####**NOTE**: Before you delete your package.json out of frustration
-You can achieve the desired state of your `node_modules` by simply installing `bluebird`, `co` optionally, then `bluebird-co`, saving them to your `package.json`, then deleting your `node_modules` folder. Then run `npm install`, and it'll install your dependencies without duplicates.
-
-## Example coroutine
 ```javascript
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 
-var myAsyncFunction = Promise.coroutine(function*(){
+var myAsyncFunction = Promise.coroutine(function*() {
     var results = yield [Promise.delay( 10 ).return( 42 ),
                          readFileAsync( 'index.js', 'utf-8' ),
                          [1, Promise.resolve( 12 )]];
-    
+
     console.log(results); //[42, "somefile contents", [1, 12]]
 });
 
 myAsyncFunction().then(...);
 ```
 
-## ES7 version
+### ES7 version
 ```javascript
 import Promise from 'bluebird';
 import {readFile} from 'fs';
@@ -87,136 +69,150 @@ async function myAsyncFunction() {
     let results = await [Promise.delay( 10 ).return( 42 ),
                          readFileAsync( 'index.js', 'utf-8' ),
                          [1, Promise.resolve( 12 )]];
-                         
+
     console.log(results); //[42, "somefile contents", [1, 12]]
 }
 
 myAsyncFunction().then(...);
 ```
 
-##### For more examples, see the [tj/co README](https://github.com/tj/co/blob/master/Readme.md#examples) and the [Bluebird Coroutines API](https://github.com/petkaantonov/bluebird/blob/master/API.md#generators).
+##### For more examples, see the [tj/co README](https://github.com/tj/co/blob/master/Readme.md#examples) and the [Bluebird Coroutines API](http://bluebirdjs.com/docs/api/promise.coroutine.html).
 
-## Yieldable types
+
+# Yieldable types
 
 * Promises
 * Arrays
 * Objects
 * Generators and GeneratorFunctions
 * Iterables (like `new Set([1, 2, 3]).values()`)
-* Streams (like `fs.createReadStream('index.js')`)
 * Functions (as Thunks)
-* Custom data types via `BluebirdCo.addYieldHandler`
+* Custom data types via [`.addYieldHandler(fn)`]()
 * Any combination or nesting of the above.
 
-## Overriding `co.wrap`
-In my own experience, mixing bluebird coroutines and co/co.wrap can result in less than savory stack traces and other things. Here is a simple way to override almost all common usages of the co library.
+# Custom yieldable types
+It may become desirable to add custom yield handling for types not listed above based on the needs of a certain application. To make this easy, bluebird-co provides an analogue to Bluebird's [Bluebird.coroutine.addYieldHandler]() that works together in combination with the above yield handlers.
 
+To do this, bluebird-co provides the [`.coroutine.addYieldHandler(fn)`]() function, or just [`.addYieldHandler(fn)`]() for short. The first is for strict compatibility with Bluebird.
+
+Example of automatically fetching model data by yielding the model instance:
 ```javascript
-var Promise = require('bluebird');
-var co = require('co');
-
-co.wrap = function(fn) {
-    return Promise.coroutine(fn);
-}
-```
-
-I've been using this method with Koa and a few other libraries for a while now and it seems to work. However, if a library invokes `co` directly, it will fail to replace that. 
-
-## Extra API
-
-#####`BluebirdCo.toPromise(value : any)` -> `Promise | any`
-This is the actual yield handler that is used to convert all the supported types into promises which can be resolved by Bluebird's coroutine system. You give it an array, object, thunk, generator or whatever that contains promises and it will try to convert it to a promise that will resolve to be a fully resolved structure.
-
-If you pass in `undefined`, `null`, an instance of a class that doesn't have a yield handler, or an object created with `Object.create(null)`, it will fail and return that value unchanged. Normally this would trigger an error in `Bluebird.coroutine` that can be caught, but `toPromise` by itself will let it silently pass through.
-
-If you require bluebird-co as `require('bluebird-co/manual')`, you can add `toPromise` to your instance of Bluebird or even something else by yourself like this:
-
-```javascript
-var Promise = require('bluebird');
-var BluebirdCo = require('bluebird-co/manual');
-
-Promise.coroutine.addYieldHandler(BluebirdCo.toPromise);
-```
-
-#####`BluebirdCo.addYieldHandler(handler : Function)`
-Although this library comes with enough handlers for most occasions, you might need more specific handling of some types that the library cannot handle by default. `BluebirdCo.addYieldHandler` works basically the same as the normal `Bluebird.addYieldHandler` function but interoperates fully with the rest of BluebirdCo's handlers. 
-
-Example:
-```javascript
-import Promise from 'bluebird';
-import BluebirdCo from 'bluebird-co'; //Automatically adds most yield handlers
+import {coroutine} from 'bluebird-co';
 
 class MyModel {
-    async function fetch() {
-        //some async work...
+    async fetch() {
+        //do stuff
+        return data;
     }
 }
 
-BluebirdCo.addYieldHandler(value => {
+coroutine.addYieldHandler(function(value) {
     if(value instanceof MyModel) {
         return value.fetch();
     }
 });
 
-async function getData() {
-    let data = await {
-        model1: new MyModel('something'),
-        model2: [new MyModel(1), new MyModel(2)]
-    };
-    
-    console.log(data); //{model1: 'something result', model2: ['result 1', 'result 2']}
-}
+async function test() {
+    let model = new MyModel();
 
-getData().then(...);
+    let data = await model; //calls model.fetch() and waits on it.
+}
 ```
 
-you get the idea.
+Additionally, you can even access the array of yield handlers manually if you ever need to remove one, like so:
+```javascript
+console.log(coroutine.yieldHandlers); //array of functions
+```
 
-The normal behavior when yielding unknown values is either to throw an error if it's on the top level (the object in the above example), or to silently ignore it and return it unchanged if it was within an array or object, etc. 
+#### Caveats:
 
-Adding a custom yield handler would allow you to define new behavior for handling unknown types, like automatically fetching data from models in the above example.
+Although this works for most classes and even null, it will **NOT** work if the class inherits from `Object` or if `Object` is in the prototype chain for the value's constructor. If it inherits from `Object`, it will be considered an `Object` instance and processed like any other object. Values without any `constructor` property will be considered an `Object`, as well.
 
------
-#####`BluebirdCo.isThenable(value : any)` -> `boolean`
-Alias: `isPromise`
+# API
 
-Return true if the value has a `.then` function or is an instance of `Promise`
-
------
-#####`BluebirdCo.isGenerator(value : any)` -> `boolean`
-
-Returns true if the value is an instance of a generator.
+All functions and properties listed below are exported by the `bluebird-co` module.
 
 -----
-#####`BluebirdCo.isGeneratorFunction(value : any)` -> `boolean`
+##### `.toPromise(value : any)` -> `Promise<any> | any`
 
-Returns true if the value is a generator function that when called will create a new generator instance.
+`toPromise` is the central function of bluebird-co. It takes any of the supported yieldable types (and those added via [`.addYieldHandler`]()), and attempts to convert it to a Promise. Any Promises within the value are resolved before the returned Promise resolves.
+
+In the event that the given value cannot be transformed into a Promise, like when it is not in the possible yieldable types, the original value is returned. When used in conjunction with Bluebird coroutines, Bluebird will throw an error because the value is not a Promise instance.
 
 -----
-## Changelog
-#####1.4.0-beta
-* Added support for yielding streams. Haven't written all the tests yet, though, so this version is still beta.
+##### `.addYieldHandler(fn : Function)`
+**alias**: `.coroutine.addYieldHandler(fn : Function)`
 
-#####1.3.1 - 1.3.2
+Very similar to [Bluebird.coroutine.addYieldHandler](http://bluebirdjs.com/docs/api/promise.coroutine.addyieldhandler.html), `.addYieldHandler` allows custom types to be processed by bluebird-co in conjunction with any other yieldable types, even other custom yield handlers. This includes nested yieldable types.
+
+Aside from the [caveats]() of `Object` types when using custom yield handlers, any other type or value can be handled, even null, undefined, Symbols, anything. However, built-in yield handlers cannot be overridden.
+
+See the above section on [Custom yieldable types]() for an example.
+
+-----
+##### `.coroutine(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`)` -> `Function`
+**alias**: `.wrap(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`)` -> `Function`
+
+This calls [Bluebird.coroutine](http://bluebirdjs.com/docs/api/promise.coroutine.html) and returns the resulting function. When called, the returned function will return a Promise.
+
+The `.wrap` alias is provided to be a drop-in replacement for `co.wrap`.
+
+-----
+##### `.coroutine.yieldHanlders` -> `Array<Function>`
+
+Exposes all custom yield handlers that have been added.
+
+bluebird-co expects this to be an array, so don't overwrite it with something silly.
+
+-----
+##### `.isThenable(value : any)` -> `boolean`
+**alias**: `.isPromise(value : any)` -> `boolean`
+
+```javascript
+function isThenable(value) {
+    return value && typeof value.then === 'function';
+}
+```
+
+-----
+##### `.isGenerator(value : any)` -> `boolean`
+
+Checks if the value is a generator instance with `.next` and `.throw`.
+
+-----
+##### `.isGeneratorFunction(value : any)` -> `boolean`
+
+Checks if the value is a [`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction).
+
+-----
+# Changelog
+##### 2.0.0
+* Improve docs
+* Upgrade to Bluebird 3.0
+* Upgrade to Babel 6 for build system
+* (**MAJOR**) Change behavior of classes that inherit from `Object`
+* Small internal improvements
+
+##### 1.3.1 - 1.3.2
 * Significantly improve performance of iterables.
 
-#####1.3.0
+##### 1.3.0
 * Basic support for Iterables
 
-#####1.2.0
+##### 1.2.0
 * Allow manual addition of the yield handler via requiring `bluebird-co/manual`
 * Exposed `toPromise` function in extra API
 
-#####1.1.2 - 1.1.12
+##### 1.1.2 - 1.1.12
 * Optimizations and bugfixes
 
-#####1.1.1
+##### 1.1.1
 * Don't export `isNativeObject`, because it isn't generic enough to use in most places, only internally under the right circumstances.
 
-#####1.1.0
+##### 1.1.0
 * Differentiate between native objects and class instances. Fixes `addYieldHandler` functionality when used with class instances, but does not accept class instances as objects when there is not a handler for them.
 
-#####1.0.0 - 1.0.5
+##### 1.0.0 - 1.0.5
 * Initial releases, documentation and bugfixes.
 
 -----
