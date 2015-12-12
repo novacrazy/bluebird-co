@@ -158,6 +158,27 @@ This calls [Bluebird.coroutine](http://bluebirdjs.com/docs/api/promise.coroutine
 The `.wrap` alias is provided to be a drop-in replacement for `co.wrap`.
 
 -----
+##### `.execute(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`, ...args : any[])` -> `Promise<any>`
+**alias**: `.co(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`, ...args : any[])` -> `Promise<any>`
+
+This called [`.coroutine`](), then invokes the resulting function with the arguments provided.
+
+It is meant as a drop in replacement for tj/co `co`, like so:
+
+```javascript
+//import {co} from 'bluebird-co';
+var co = require('bluebird-co').co;
+
+function* do_stuff(num) {
+    return num;
+}
+
+co(do_stuff, 10).then(function(result){
+    console.log(result); //10
+});
+```
+
+-----
 ##### `.coroutine.yieldHanlders` -> `Array<Function>`
 
 Exposes all custom yield handlers that have been added.
@@ -186,6 +207,11 @@ Checks if the value is a [`GeneratorFunction`](https://developer.mozilla.org/en-
 
 -----
 # Changelog
+
+##### 2.1.0
+* Added `.execute`/`.co` functions.
+* (**BUILD**) As of this release, the build is failing only because Babel runtime is screwed up.
+
 ##### 2.0.0
 * Improve docs
 * Upgrade to Bluebird 3.0
