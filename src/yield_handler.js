@@ -11,7 +11,12 @@ export function coroutine( fn ) {
     return Promise.coroutine( fn );
 }
 
+export function execute( fn, ...args ) {
+    return coroutine( fn ).apply( this, args );
+}
+
 export const wrap = coroutine;
+export const co = execute;
 
 export function isThenable( obj ) {
     return obj && typeof obj.then === 'function';
@@ -255,14 +260,3 @@ export function addYieldHandler( handler ) {
         coroutine.yieldHandlers.push( handler );
     }
 }
-
-export default {
-    addYieldHandler,
-    isThenable,
-    isPromise,
-    isGenerator,
-    isGeneratorFunction,
-    toPromise,
-    coroutine,
-    wrap
-};

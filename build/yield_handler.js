@@ -25,8 +25,9 @@
 'use strict';
 
 exports.__esModule = true;
-exports.isPromise = exports.wrap = void 0;
+exports.isPromise = exports.co = exports.wrap = void 0;
 exports.coroutine = coroutine;
+exports.execute = execute;
 exports.isThenable = isThenable;
 exports.isGenerator = isGenerator;
 exports.isGeneratorFunction = isGeneratorFunction;
@@ -52,7 +53,16 @@ function coroutine( fn ) {
     return _bluebird2.default.coroutine( fn );
 }
 
+function execute( fn ) {
+    for( var _len = arguments.length, args = Array( _len > 1 ? _len - 1 : 0 ), _key = 1; _key < _len; _key++ ) {
+        args[_key - 1] = arguments[_key];
+    }
+
+    return coroutine( fn ).apply( this, args );
+}
+
 var wrap = exports.wrap = coroutine;
+var co = exports.co = execute;
 
 function isThenable( obj ) {
     return obj && typeof obj.then === 'function';
@@ -301,14 +311,3 @@ function addYieldHandler( handler ) {
         coroutine.yieldHandlers.push( handler );
     }
 }
-
-exports.default = {
-    addYieldHandler:     addYieldHandler,
-    isThenable:          isThenable,
-    isPromise:           isPromise,
-    isGenerator:         isGenerator,
-    isGeneratorFunction: isGeneratorFunction,
-    toPromise:           toPromise,
-    coroutine:           coroutine,
-    wrap:                wrap
-};
