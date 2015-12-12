@@ -1,9 +1,9 @@
 {
-  "name":             "bluebird-co",
-  "version":          "1.4.1-beta",
-  "description":      "A set of yield handlers for Bluebird coroutines",
-  "main":             "index.js",
-  "scripts":          {
+  "name":        "bluebird-co",
+  "version":     "2.0.0",
+  "description": "A set of yield handlers for Bluebird coroutines",
+  "main":        "index.js",
+  "scripts":     {
     "test":           "mocha -b test/build",
     "btest":          "grunt build-tests && mocha -b test/build",
     "build":          "grunt default",
