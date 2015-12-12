@@ -126,7 +126,7 @@ describe( 'yield with custom handler', function() {
                 assert.strictEqual( a.value, 5 );
 
             } catch( err ) {
-                assert( false );
+                assert( false, err );
             }
         };
 

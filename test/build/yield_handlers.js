@@ -182,7 +182,7 @@ describe( 'yield with custom handler', function() {
 
                     _assert2.default.strictEqual( a.value, 5 );
                 } catch( err ) {
-                    (0, _assert2.default)( false );
+                    (0, _assert2.default)( false, err );
                 }
             } );
             return function test6() {
