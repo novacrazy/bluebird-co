@@ -15,7 +15,7 @@ bluebird-co is a reimplementation of [tj/co](https://github.com/tj/co) generator
 Combined with [Babel's `async-to-module-method`](http://babeljs.io/docs/plugins/transform-async-to-module-method/) (or `bluebirdCoroutines` in Babel 5) transformer, you can write easy and comprehensive `async/await` functions.
 
 # Performance
-Squeezing out the most performance out of every asynchronous operation was a high priority for bluebird-co, and as a result it is much faster than tj/co in essentially every scenario.
+Squeezing the most performance out of every asynchronous operation was a high priority for bluebird-co, and as a result it is much faster than tj/co in essentially every scenario.
 
 [See here for detailed benchmarks](https://github.com/novacrazy/bluebird-co/tree/master/benchmark)
 
