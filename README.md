@@ -210,7 +210,7 @@ Checks if the value is a [`GeneratorFunction`](https://developer.mozilla.org/en-
 
 ##### 2.1.0
 * Added `.execute`/`.co` functions.
-* (**BUILD**) As of this release, the build is failing only because Babel runtime is screwed up.
+* ~~(**BUILD**)~~(**FIXED**) As of this release, the build is failing only because Babel runtime is screwed up.
 
 ##### 2.0.0
 * Improve docs
