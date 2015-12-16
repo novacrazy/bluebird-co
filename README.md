@@ -14,6 +14,14 @@ bluebird-co is a reimplementation of [tj/co](https://github.com/tj/co) generator
 
 Combined with [Babel's `async-to-module-method`](http://babeljs.io/docs/plugins/transform-async-to-module-method/) (or `bluebirdCoroutines` in Babel 5) transformer, you can write easy and comprehensive `async/await` functions.
 
+# Quickstart
+
+To install:
+`npm install bluebird-co`
+
+Ensure Bluebird is installed:
+`npm install bluebird@3`
+
 # Performance
 Squeezing the most performance out of every asynchronous operation was a high priority for bluebird-co, and as a result it is much faster than tj/co in essentially every scenario.
 
@@ -36,9 +44,41 @@ var Promise     = require('bluebird'),
     bluebird_co = require('bluebird-co/manual');
 
 Promise.coroutine.addYieldHandler(bluebird_co.toPromise);
+
+var fn = Promise.coroutine(function*(){
+    //do stuff
+});
+
+fn().then(...);
 ```
 
-In the automatic bootstrapping version, it actually executes the same code snippet as above. Allowing manual bootstrapping allows for control over the process if desired.
+In the automatic bootstrapping version, it actually executes the same first four lines of code as above to add the yield handler. Bluebird-co provides manual bootstrapping for control over the process if desired.
+
+### Usage with Babel 6:
+
+Babel 6 provides the [transform-async-to-module-method](http://babeljs.io/docs/plugins/transform-async-to-module-method/) plugin which can pass a generator to a function to convert it to an asynchronous coroutine. Using bluebird-co instead of the default Bluebird install will automatically bootstrap the yield handler while remaining completely transparent.
+
+**.babelrc file**
+```javascript
+{
+    "plugins": [
+        "syntax-async-functions",
+        ["transform-async-to-module-method", {
+            "module": "bluebird-co",
+            "method": "coroutine"
+        }]
+    ]
+}
+```
+
+**ES7 file to be transformed**
+```javascript
+async function fn() {
+    //do stuff
+}
+
+fn().then(...);
+```
 
 # Example coroutines
 **Note**: bluebird-co has to be added to Bluebird via automatic bootstrapping or manual addition before these snippets can work.
@@ -207,6 +247,10 @@ Checks if the value is a [`GeneratorFunction`](https://developer.mozilla.org/en-
 
 -----
 # Changelog
+
+##### 2.1.1
+* Add simple quickstart section to README
+* Add usage docs with Babel 6
 
 ##### 2.1.0
 * Added `.execute`/`.co` functions.
