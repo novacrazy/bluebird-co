@@ -33,7 +33,6 @@ module.exports = function( grunt ) {
     ];
 
     var async_plugins = [
-        ['syntax-async-functions', loose],
         ['transform-async-to-module-method', {module: 'bluebird', method: 'coroutine', loose: true}],
         ['transform-es2015-modules-commonjs', loose],
         ['transform-runtime', loose]

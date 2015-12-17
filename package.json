@@ -1,9 +1,9 @@
 {
-  "name":        "bluebird-co",
-  "version":     "2.1.1",
-  "description": "A set of yield handlers for Bluebird coroutines",
-  "main":        "index.js",
-  "scripts":     {
+  "name":             "bluebird-co",
+  "version":          "2.1.1",
+  "description":      "A set of yield handlers for Bluebird coroutines",
+  "main":             "index.js",
+  "scripts":          {
     "test":           "mocha -b test/build",
     "btest":          "grunt build-tests && mocha -b test/build",
     "build":          "grunt default",
@@ -34,11 +34,10 @@
   "peerDependencies": {
     "bluebird": "^3.x"
   },
-  "devDependencies": {
+  "devDependencies":  {
     "babel":                                                "^6.3.13",
     "babel-core":                                           "^6.3.17",
     "babel-helper-define-map":                              "^6.3.13",
-    "babel-plugin-syntax-async-functions":                  "^6.3.13",
     "babel-plugin-transform-async-to-generator":            "^6.3.13",
     "babel-plugin-transform-async-to-module-method":        "^6.3.13",
     "babel-plugin-transform-es2015-arrow-functions":        "^6.3.13",

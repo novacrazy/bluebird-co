@@ -62,7 +62,6 @@ Babel 6 provides the [transform-async-to-module-method](http://babeljs.io/docs/p
 ```javascript
 {
     "plugins": [
-        "syntax-async-functions",
         ["transform-async-to-module-method", {
             "module": "bluebird-co",
             "method": "coroutine"
