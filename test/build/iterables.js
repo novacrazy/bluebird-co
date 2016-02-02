@@ -22,7 +22,7 @@ function _interopRequireDefault( obj ) {
 
 describe( 'yielding iterables', function() {
     it( 'should work', function() {
-        var test1 = (function() {
+        var test1 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var a = yield new _set2.default( [
                     _bluebird2.default.resolve( 1 ), 2, [_bluebird2.default.resolve( 3 ), 4], 5
@@ -33,7 +33,7 @@ describe( 'yielding iterables', function() {
             return function test1() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test1();
     } );

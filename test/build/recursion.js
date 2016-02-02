@@ -26,7 +26,7 @@ var readFileAsync = _bluebird2.default.promisify( _fs.readFile );
 
 describe( 'yield handler recursion', function() {
     it( 'should aggregate arrays within arrays', function() {
-        var test1 = (function() {
+        var test1 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var a = readFileAsync( 'index.js', 'utf8' );
                 var b = readFileAsync( 'LICENSE', 'utf8' );
@@ -43,13 +43,13 @@ describe( 'yield handler recursion', function() {
             return function test1() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test1();
     } );
 
     it( 'should aggregate objects within objects', function() {
-        var test2 = (function() {
+        var test2 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var a = readFileAsync( 'index.js', 'utf8' );
                 var b = readFileAsync( 'LICENSE', 'utf8' );
@@ -70,7 +70,7 @@ describe( 'yield handler recursion', function() {
             return function test2() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test2();
     } );

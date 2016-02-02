@@ -19,7 +19,7 @@ var readFileAsync = _bluebird2.default.promisify( _fs.readFile );
  * Created by Aaron on 7/9/2015.
  */
 
-var myAsyncFunction = (function() {
+var myAsyncFunction = function() {
     var ref = (0, _bluebird.coroutine)( function* () {
         var results = yield [
             _bluebird2.default.delay( 10 ).return( 42 ), readFileAsync( 'index.js', 'utf-8' ),
@@ -34,7 +34,7 @@ var myAsyncFunction = (function() {
     return function myAsyncFunction() {
         return ref.apply( this, arguments );
     };
-})();
+}();
 
 describe( 'Example function from README', function() {
     it( 'should work normally', function() {

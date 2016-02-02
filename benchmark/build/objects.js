@@ -44,14 +44,14 @@ suite( 'very small objects (2 keys)', function() {
         return yield makeObject( 2 );
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield makeObject( 2 );
         } );
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -78,14 +78,14 @@ suite( 'small objects (10 keys)', function() {
         return yield makeObject( 10 );
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield makeObject( 10 );
         } );
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -112,14 +112,14 @@ suite( 'large objects (2000 keys)', function() {
         return yield makeObject( 2000 );
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield makeObject( 2000 );
         } );
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -146,14 +146,14 @@ suite( 'huge objects (10000 keys)', function() {
         return yield makeObject( 10000 );
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield makeObject( 10000 );
         } );
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );

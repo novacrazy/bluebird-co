@@ -26,7 +26,7 @@ var readFileAsync = _bluebird2.default.promisify( _fs.readFile );
 
 describe( 'Promise.coroutine(* -> yield [])', function() {
     it( 'should aggregate several thunks', function() {
-        var test1 = (function() {
+        var test1 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var a = readFileAsync( 'index.js', 'utf8' );
                 var b = readFileAsync( 'LICENSE', 'utf8' );
@@ -41,13 +41,13 @@ describe( 'Promise.coroutine(* -> yield [])', function() {
             return function test1() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test1();
     } );
 
     it( 'should noop with no args', function() {
-        var test2 = (function() {
+        var test2 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var res = yield [];
                 _assert2.default.strictEqual( 0, res.length );
@@ -55,25 +55,25 @@ describe( 'Promise.coroutine(* -> yield [])', function() {
             return function test2() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test2();
     } );
 
     it( 'should support an array of generators', function() {
-        var test3 = (function() {
+        var test3 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var val = yield [
-                    (function* () {
+                    function* () {
                         return 1;
-                    })()
+                    }()
                 ];
                 _assert2.default.deepEqual( val, [1] );
             } );
             return function test3() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test3();
     } );

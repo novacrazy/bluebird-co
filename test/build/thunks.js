@@ -33,13 +33,13 @@ function get( val, err, error ) {
 describe( 'simple coroutines', function() {
     describe( 'with no yields', function() {
         it( 'should work', function() {
-            var test1 = (function() {
+            var test1 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                 } );
                 return function test1() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test1();
         } );
@@ -47,7 +47,7 @@ describe( 'simple coroutines', function() {
 
     describe( 'with one yield', function() {
         it( 'should work', function() {
-            var test2 = (function() {
+            var test2 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var a = yield get( 1 );
                     _assert2.default.strictEqual( 1, a );
@@ -55,7 +55,7 @@ describe( 'simple coroutines', function() {
                 return function test2() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test2();
         } );
@@ -63,7 +63,7 @@ describe( 'simple coroutines', function() {
 
     describe( 'with several yields', function() {
         it( 'should work', function() {
-            var test3 = (function() {
+            var test3 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var a = yield get( 1 );
                     var b = yield get( 2 );
@@ -74,7 +74,7 @@ describe( 'simple coroutines', function() {
                 return function test3() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test3();
         } );
@@ -88,7 +88,7 @@ describe( 'simple coroutines', function() {
                 };
             }
 
-            var test4 = (function() {
+            var test4 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var out = yield exec( 'something' );
                     _assert2.default.deepEqual( [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], out );
@@ -96,7 +96,7 @@ describe( 'simple coroutines', function() {
                 return function test4() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test4();
         } );
@@ -104,7 +104,7 @@ describe( 'simple coroutines', function() {
 
     describe( 'when the function throws', function() {
         it( 'should be caught', function() {
-            var test5 = (function() {
+            var test5 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     try {
                         var a = yield get( 1, null, new Error( 'boom' ) );
@@ -115,7 +115,7 @@ describe( 'simple coroutines', function() {
                 return function test5() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test5();
         } );
@@ -123,7 +123,7 @@ describe( 'simple coroutines', function() {
 
     describe( 'when an error is passed then thrown', function() {
         it( 'should only catch the first error only', function() {
-            var test6 = (function() {
+            var test6 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     return yield function( done ) {
                         done( new Error( 'first' ) );
@@ -134,7 +134,7 @@ describe( 'simple coroutines', function() {
                 return function test6() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test6().then( function() {
                 throw new Error( 'wtf' );
@@ -146,7 +146,7 @@ describe( 'simple coroutines', function() {
 
     describe( 'when an error is passed', function() {
         it( 'should throw and resume', function() {
-            var test7 = (function() {
+            var test7 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var error = void 0;
 
@@ -163,7 +163,7 @@ describe( 'simple coroutines', function() {
                 return function test7() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test7();
         } );
@@ -173,7 +173,7 @@ describe( 'simple coroutines', function() {
         it( 'should work', function() {
             var hit = [];
 
-            var test8 = (function() {
+            var test8 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var a = yield get( 1 );
                     var b = yield get( 2 );
@@ -215,7 +215,7 @@ describe( 'simple coroutines', function() {
                 return function test8() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test8();
         } );
@@ -224,14 +224,14 @@ describe( 'simple coroutines', function() {
     describe( 'return values', function() {
         describe( 'with a callback', function() {
             it( 'should be passed', function() {
-                var test9 = (function() {
+                var test9 = function() {
                     var ref = (0, _bluebird.coroutine)( function* () {
                         return [yield get( 1 ), yield get( 2 ), yield get( 3 )];
                     } );
                     return function test9() {
                         return ref.apply( this, arguments );
                     };
-                })();
+                }();
 
                 return test9().then( function( res ) {
                     _assert2.default.deepEqual( [1, 2, 3], res );
@@ -241,7 +241,7 @@ describe( 'simple coroutines', function() {
 
         describe( 'when nested', function() {
             it( 'should return the value', function() {
-                var test10 = (function() {
+                var test10 = function() {
                     var ref = (0, _bluebird.coroutine)( function* () {
                         var other = yield (0, _bluebird.coroutine)( function* () {
                             return [yield get( 4 ), yield get( 5 ), yield get( 6 )];
@@ -252,7 +252,7 @@ describe( 'simple coroutines', function() {
                     return function test10() {
                         return ref.apply( this, arguments );
                     };
-                })();
+                }();
 
                 return test10().then( function( res ) {
                     _assert2.default.deepEqual( [1, 2, 3, 4, 5, 6], res );
@@ -263,7 +263,7 @@ describe( 'simple coroutines', function() {
 
     describe( 'when yielding neither a function nor a promise', function() {
         it( 'should throw', function() {
-            var test11 = (function() {
+            var test11 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var errors = [];
 
@@ -287,7 +287,7 @@ describe( 'simple coroutines', function() {
                 return function test11() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test11();
         } );
@@ -295,7 +295,7 @@ describe( 'simple coroutines', function() {
 
     describe( 'with errors', function() {
         it( 'should throw', function() {
-            var test12 = (function() {
+            var test12 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var errors = [];
 
@@ -316,13 +316,13 @@ describe( 'simple coroutines', function() {
                 return function test12() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test12();
         } );
 
         it( 'should catch errors on .send()', function() {
-            var test13 = (function() {
+            var test13 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var errors = [];
                     try {
@@ -342,13 +342,13 @@ describe( 'simple coroutines', function() {
                 return function test13() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test13();
         } );
 
         it( 'should pass future errors to the callback', function() {
-            var test14 = (function() {
+            var test14 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     yield get( 1 );
                     yield get( 2, null, new Error( 'fail' ) );
@@ -358,7 +358,7 @@ describe( 'simple coroutines', function() {
                 return function test14() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test14().catch( function( err ) {
                 _assert2.default.strictEqual( 'fail', err.message );
@@ -366,7 +366,7 @@ describe( 'simple coroutines', function() {
         } );
 
         it( 'should pass immediate errors to the callback', function() {
-            var test15 = (function() {
+            var test15 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     yield get( 1 );
                     yield get( 2, new Error( 'fail' ) );
@@ -376,7 +376,7 @@ describe( 'simple coroutines', function() {
                 return function test15() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test15().catch( function( err ) {
                 _assert2.default.strictEqual( 'fail', err.message );
@@ -384,14 +384,14 @@ describe( 'simple coroutines', function() {
         } );
 
         it( 'should catch errors on the first invocation', function() {
-            var test16 = (function() {
+            var test16 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     throw new Error( 'fail' );
                 } );
                 return function test16() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test16().catch( function( err ) {
                 _assert2.default.strictEqual( 'fail', err.message );

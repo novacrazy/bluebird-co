@@ -54,7 +54,7 @@ suite( 'top level error handling', function() {
         }
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             try {
                 return yield null;
@@ -64,7 +64,7 @@ suite( 'top level error handling', function() {
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -96,7 +96,7 @@ suite( 'nested error handling', function() {
         }
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             try {
                 return yield gen();
@@ -106,7 +106,7 @@ suite( 'nested error handling', function() {
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -139,7 +139,7 @@ suite( 'deep error handling (after 2000 iterations)', function() {
         }
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             try {
                 return yield e();
@@ -149,7 +149,7 @@ suite( 'deep error handling (after 2000 iterations)', function() {
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );

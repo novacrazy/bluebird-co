@@ -25,14 +25,14 @@ var ctx = {
 
 describe( 'Promise.coroutine(...).call(this)', function() {
     it( 'should pass the context', function() {
-        var test1 = (function() {
+        var test1 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 _assert2.default.strictEqual( ctx, this );
             } );
             return function test1() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test1.call( ctx );
     } );

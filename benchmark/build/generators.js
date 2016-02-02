@@ -61,14 +61,14 @@ suite( 'simple generators (10 iterations)', function() {
         return yield gen( 10 );
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield gen( 10 );
         } );
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -95,14 +95,14 @@ suite( 'long-running generators (1000 iterations)', function() {
         return yield gen( 1000 );
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield gen( 1000 );
         } );
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -129,14 +129,14 @@ suite( 'very long-running generators (10000 iterations)', function() {
         return yield gen( 10000 );
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield gen( 10000 );
         } );
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -163,14 +163,14 @@ suite( 'complex generators (150 iterations)', function() {
         return yield gen_complex( 150 );
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield gen_complex( 150 );
         } );
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );

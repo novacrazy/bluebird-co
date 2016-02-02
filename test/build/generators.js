@@ -34,7 +34,7 @@ function* work() {
 describe( 'Coroutines yielding generators', function() {
     describe( 'with a generator function', function() {
         it( 'should iterate through generators', function() {
-            var test1 = (function() {
+            var test1 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var a = yield work;
                     var b = yield work;
@@ -50,13 +50,13 @@ describe( 'Coroutines yielding generators', function() {
                 return function test1() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test1();
         } );
 
         it( 'should catch errors', function() {
-            var test2 = (function() {
+            var test2 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     return yield function* () {
                         throw new Error( 'boom' );
@@ -65,7 +65,7 @@ describe( 'Coroutines yielding generators', function() {
                 return function test2() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test2().then( function() {
                 throw new Error( 'wtf' );

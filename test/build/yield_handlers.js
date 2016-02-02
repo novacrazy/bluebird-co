@@ -35,7 +35,7 @@ _.coroutine.addYieldHandler( function( value ) {
  * Created by Aaron on 7/10/2015.
  */
 
-var MyModel = (function() {
+var MyModel = function() {
     function MyModel( value ) {
         (0, _classCallCheck3.default)( this, MyModel );
 
@@ -47,13 +47,13 @@ var MyModel = (function() {
     };
 
     return MyModel;
-})();
+}();
 
 var MyOtherModel = function MyOtherModel() {
     (0, _classCallCheck3.default)( this, MyOtherModel );
 };
 
-var MyObjectModel = (function( _Object ) {
+var MyObjectModel = function( _Object ) {
     (0, _inherits3.default)( MyObjectModel, _Object );
 
     function MyObjectModel( value ) {
@@ -66,7 +66,7 @@ var MyObjectModel = (function( _Object ) {
     }
 
     return MyObjectModel;
-})( Object );
+}( Object );
 
 _.coroutine.addYieldHandler( function( value ) {
     if( value instanceof MyModel ) {
@@ -80,7 +80,7 @@ describe( 'yield with custom handler', function() {
     } );
 
     it( 'should work with simple yields', function() {
-        var test1 = (function() {
+        var test1 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var res = yield 13;
 
@@ -89,13 +89,13 @@ describe( 'yield with custom handler', function() {
             return function test1() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test1();
     } );
 
     it( 'should work with nested yields', function() {
-        var test2 = (function() {
+        var test2 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var res = yield {
                     k: 13,
@@ -107,13 +107,13 @@ describe( 'yield with custom handler', function() {
             return function test2() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test2();
     } );
 
     it( 'should work with nested yields of class instances', function() {
-        var test3 = (function() {
+        var test3 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var data = yield {
                     model1: new MyModel( 'something' ),
@@ -128,13 +128,13 @@ describe( 'yield with custom handler', function() {
             return function test3() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test3();
     } );
 
     it( 'should throw with yields of unknown types', function() {
-        var test4 = (function() {
+        var test4 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 try {
                     var a = yield new MyOtherModel();
@@ -148,13 +148,13 @@ describe( 'yield with custom handler', function() {
             return function test4() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test4();
     } );
 
     it( 'should silently ignore nested yields of unknown types', function() {
-        var test5 = (function() {
+        var test5 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var a = yield {
                     model1: new MyOtherModel()
@@ -169,13 +169,13 @@ describe( 'yield with custom handler', function() {
             return function test5() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test5();
     } );
 
     it( 'should consider classes that inherit from Object as objects', function() {
-        var test6 = (function() {
+        var test6 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 try {
                     var a = yield new MyObjectModel( 5 );
@@ -190,7 +190,7 @@ describe( 'yield with custom handler', function() {
             return function test6() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test6();
     } );

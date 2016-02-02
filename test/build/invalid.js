@@ -18,7 +18,7 @@ function _interopRequireDefault( obj ) {
 
 describe( 'yield <invalid>', function() {
     it( 'should throw an error', function() {
-        var test1 = (function() {
+        var test1 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 try {
                     yield null;
@@ -31,7 +31,7 @@ describe( 'yield <invalid>', function() {
             return function test1() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test1();
     } );

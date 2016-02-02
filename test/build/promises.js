@@ -32,7 +32,7 @@ function getPromise( val, err ) {
 describe( 'yield <promise>', function() {
     describe( 'with one promise yield', function() {
         it( 'should work', function() {
-            var test1 = (function() {
+            var test1 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var a = yield getPromise( 1 );
 
@@ -41,7 +41,7 @@ describe( 'yield <promise>', function() {
                 return function test1() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test1();
         } );
@@ -49,7 +49,7 @@ describe( 'yield <promise>', function() {
 
     describe( 'with several promise yields', function() {
         it( 'should work', function() {
-            var test2 = (function() {
+            var test2 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var a = yield getPromise( 1 );
                     var b = yield getPromise( 2 );
@@ -60,7 +60,7 @@ describe( 'yield <promise>', function() {
                 return function test2() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test2();
         } );
@@ -68,7 +68,7 @@ describe( 'yield <promise>', function() {
 
     describe( 'when a promise is rejected', function() {
         it( 'should throw and resume', function() {
-            var test3 = (function() {
+            var test3 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     var error = void 0;
 
@@ -87,7 +87,7 @@ describe( 'yield <promise>', function() {
                 return function test3() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             return test3();
         } );
@@ -95,7 +95,7 @@ describe( 'yield <promise>', function() {
 
     describe( 'when yielding a non-standard promise-like', function() {
         it( 'should return a real Promise', function() {
-            var test4 = (function() {
+            var test4 = function() {
                 var ref = (0, _bluebird.coroutine)( function* () {
                     return yield {
                         then: function then() {
@@ -105,7 +105,7 @@ describe( 'yield <promise>', function() {
                 return function test4() {
                     return ref.apply( this, arguments );
                 };
-            })();
+            }();
 
             (0, _assert2.default)( test4() instanceof _bluebird2.default );
         } );

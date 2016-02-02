@@ -32,7 +32,7 @@ function _interopRequireDefault( obj ) {
 
 var readFileAsync = _bluebird2.default.promisify( _fs.readFile );
 
-var Pet = (function() {
+var Pet = function() {
     function Pet( name ) {
         (0, _classCallCheck3.default)( this, Pet );
 
@@ -43,11 +43,11 @@ var Pet = (function() {
     };
 
     return Pet;
-})();
+}();
 
 describe( 'Coroutines yielding objects', function() {
     it( 'should aggregate several thunks', function() {
-        var test1 = (function() {
+        var test1 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var a = readFileAsync( 'index.js', 'utf8' );
                 var b = readFileAsync( 'LICENSE', 'utf8' );
@@ -67,13 +67,13 @@ describe( 'Coroutines yielding objects', function() {
             return function test1() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test1();
     } );
 
     it( 'should noop with no args', function() {
-        var test2 = (function() {
+        var test2 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var res = yield {};
                 _assert2.default.strictEqual( 0, (0, _keys2.default)( res ).length );
@@ -81,13 +81,13 @@ describe( 'Coroutines yielding objects', function() {
             return function test2() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test2();
     } );
 
     it( 'should ignore non-thunkable properties', function() {
-        var test3 = (function() {
+        var test3 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var foo = {
                     name:      {first: 'tobi'},
@@ -112,7 +112,7 @@ describe( 'Coroutines yielding objects', function() {
             return function test3() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test3();
     } );
@@ -124,7 +124,7 @@ describe( 'Coroutines yielding objects', function() {
             };
         }
 
-        var test4 = (function() {
+        var test4 = function() {
             var ref = (0, _bluebird.coroutine)( function* () {
                 var before = {
                     sun:  timedThunk( 30 ),
@@ -141,7 +141,7 @@ describe( 'Coroutines yielding objects', function() {
             return function test4() {
                 return ref.apply( this, arguments );
             };
-        })();
+        }();
 
         return test4();
     } );

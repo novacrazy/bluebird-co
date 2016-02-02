@@ -32,14 +32,14 @@ suite( 'raw promises', function() {
         return yield _bluebird2.default.resolve( 1 );
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield _bluebird2.default.resolve( 1 );
         } );
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );

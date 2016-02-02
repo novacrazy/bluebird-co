@@ -52,7 +52,7 @@ suite( 'simple thunks (1 argument)', function() {
         };
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield function( done ) {
                 done( null, 10 );
@@ -61,7 +61,7 @@ suite( 'simple thunks (1 argument)', function() {
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -92,7 +92,7 @@ suite( 'simple thunks (3 arguments)', function() {
         };
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield function( done ) {
                 done( null, 1, 2, 3 );
@@ -101,7 +101,7 @@ suite( 'simple thunks (3 arguments)', function() {
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -132,7 +132,7 @@ suite( 'thunks with many arguments (30 arguments)', function() {
         };
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield function( done ) {
                 done( null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -142,7 +142,7 @@ suite( 'thunks with many arguments (30 arguments)', function() {
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );
@@ -173,7 +173,7 @@ suite( 'thunks with stupidly many arguments (3000 arguments)', function() {
         };
     } );
 
-    var bluebird_version = (function() {
+    var bluebird_version = function() {
         var ref = (0, _bluebird.coroutine)( function* () {
             return yield function( done ) {
                 done.apply( null, args );
@@ -182,7 +182,7 @@ suite( 'thunks with stupidly many arguments (3000 arguments)', function() {
         return function bluebird_version() {
             return ref.apply( this, arguments );
         };
-    })();
+    }();
 
     bench( 'co', function( next ) {
         co_version().then( next, console.error );

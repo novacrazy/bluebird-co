@@ -64,6 +64,8 @@ function execute( fn ) {
 var wrap = exports.wrap = coroutine;
 var co = exports.co = execute;
 
+co.wrap = wrap; //Simple alias that makes it like tj/co
+
 function isThenable( obj ) {
     return obj && typeof obj.then === 'function';
 }
@@ -137,7 +139,7 @@ function resolveGenerator( gen ) {
                         return null;
                     } else {
                         onRejected(
-                            new TypeError(               'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
+                            new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
                                            + ret.value + '"' ) );
                     }
                 }
