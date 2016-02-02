@@ -115,6 +115,14 @@ async function myAsyncFunction() {
 myAsyncFunction().then(...);
 ```
 
+### tj/co drop-in replacement
+```javascript
+import {co} from 'bluebird-co';
+
+co(...);
+co.wrap(...);
+```
+
 ##### For more examples, see the [tj/co README](https://github.com/tj/co/blob/master/Readme.md#examples) and the [Bluebird Coroutines API](http://bluebirdjs.com/docs/api/promise.coroutine.html).
 
 
@@ -191,6 +199,7 @@ See the above section on [Custom yieldable types](#custom-yieldable-types) for a
 -----
 ##### `.coroutine(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`)` -> `Function`
 **alias**: `.wrap(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`)` -> `Function`
+**alias**: `.co.wrap(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`)` -> `Function`
 
 This calls [Bluebird.coroutine](http://bluebirdjs.com/docs/api/promise.coroutine.html) and returns the resulting function. When called, the returned function will return a Promise.
 
@@ -246,6 +255,9 @@ Checks if the value is a [`GeneratorFunction`](https://developer.mozilla.org/en-
 
 -----
 # Changelog
+
+##### 2.1.2
+* Add `.co.wrap` alias for `.wrap`
 
 ##### 2.1.1
 * Add simple quickstart section to README
