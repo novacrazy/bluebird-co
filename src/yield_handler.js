@@ -18,6 +18,8 @@ export function execute( fn, ...args ) {
 export const wrap = coroutine;
 export const co = execute;
 
+co.wrap = wrap; //Simple alias that makes it like tj/co
+
 export function isThenable( obj ) {
     return obj && typeof obj.then === 'function';
 }
