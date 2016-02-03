@@ -199,6 +199,7 @@ See the above section on [Custom yieldable types](#custom-yieldable-types) for a
 -----
 ##### `.coroutine(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`)` -> `Function`
 **alias**: `.wrap(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`)` -> `Function`
+
 **alias**: `.co.wrap(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`)` -> `Function`
 
 This calls [Bluebird.coroutine](http://bluebirdjs.com/docs/api/promise.coroutine.html) and returns the resulting function. When called, the returned function will return a Promise.
