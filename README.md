@@ -207,10 +207,10 @@ This calls [Bluebird.coroutine](http://bluebirdjs.com/docs/api/promise.coroutine
 The `.wrap` alias is provided to be a drop-in replacement for `co.wrap`.
 
 -----
-##### `.execute(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`, ...args : any[])` -> `Promise<any>`
-**alias**: `.co(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`, ...args : any[])` -> `Promise<any>`
+##### `.execute(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`|`[`Generator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator)`, ...args : any[])` -> `Promise<any>`
+**alias**: `.co(gfn : `[`GeneratorFunction`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction)`|`[`Generator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator)`, ...args : any[])` -> `Promise<any>`
 
-This calls [`.coroutine`](), then invokes the resulting function with the arguments provided.
+This calls [`.coroutine`](), then invokes the resulting function with the arguments provided, or just runs the generator object directly.
 
 It is meant as a drop in replacement for tj/co `co`, like so:
 
@@ -256,6 +256,9 @@ Checks if the value is a [`GeneratorFunction`](https://developer.mozilla.org/en-
 
 -----
 # Changelog
+
+##### 2.2.0
+* Allow `.co` to accept generators and generator functions like `tj/co` does. (thanks [pkaminski](https://github.com/pkaminski))
 
 ##### 2.1.2
 * Add `.co.wrap` alias for `.wrap`
