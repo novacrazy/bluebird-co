@@ -12,7 +12,18 @@ export function coroutine( fn ) {
 }
 
 export function execute( fn, ...args ) {
-    return coroutine( fn ).apply( this, args );
+    if( isGenerator( fn ) ) {
+        return resolveGenerator( fn );
+    } else if( isGeneratorFunction( fn ) ) {
+        return coroutine( fn ).apply( this, args );
+    } else {
+        const value = fn.apply( this, args );
+        if( isGenerator( value ) ) {
+            return resolveGenerator( value );
+        } else {
+            throw new Error( 'Can\'t make a coroutine from: ' + value );
+        }
+    }
 }
 
 export const wrap = coroutine;
