@@ -2,9 +2,9 @@
  * Created by Aaron on 7/3/2015.
  */
 
-import Promise from 'bluebird';
+import Promise from "bluebird";
 
-coroutine.yieldHandlers = [];
+coroutine.yieldHandlers   = [];
 coroutine.addYieldHandler = addYieldHandler;
 
 export function coroutine( fn ) {
@@ -27,7 +27,7 @@ export function execute( fn, ...args ) {
 }
 
 export const wrap = coroutine;
-export const co = execute;
+export const co   = execute;
 
 co.wrap = wrap; //Simple alias that makes it like tj/co
 
@@ -60,7 +60,7 @@ export function isGeneratorFunction( obj ) {
 }
 
 function objectToPromise( obj, constructor ) {
-    let keys = Object.keys( obj );
+    let keys   = Object.keys( obj );
     let length = keys.length | 0;
 
     let result = new constructor();
@@ -145,7 +145,7 @@ function resolveGenerator( gen ) {
 
 function arrayFromIterable( iter ) {
     let results = [];
-    let ret = iter.next();
+    let ret     = iter.next();
 
     while( !ret.done ) {
         results.push( ret.value );
