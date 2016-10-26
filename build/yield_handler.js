@@ -34,31 +34,39 @@ exports.isGeneratorFunction = isGeneratorFunction;
 exports.toPromise = toPromise;
 exports.addYieldHandler = addYieldHandler;
 
-var _bluebird = require( 'bluebird' );
+var _bluebird = require('bluebird');
 
-var _bluebird2 = _interopRequireDefault( _bluebird );
+var _bluebird2 = _interopRequireDefault(_bluebird);
 
-function _interopRequireDefault( obj ) {
-    return obj && obj.__esModule ? obj : {default: obj};
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-coroutine.yieldHandlers = [];
-/**
- * Created by Aaron on 7/3/2015.
- */
+coroutine.yieldHandlers = []; /**
+                               * Created by Aaron on 7/3/2015.
+                               */
 
 coroutine.addYieldHandler = addYieldHandler;
 
-function coroutine( fn ) {
-    return _bluebird2.default.coroutine( fn );
+function coroutine(fn) {
+    return _bluebird2.default.coroutine(fn);
 }
 
-function execute( fn ) {
-    for( var _len = arguments.length, args = Array( _len > 1 ? _len - 1 : 0 ), _key = 1; _key < _len; _key++ ) {
+function execute(fn) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
     }
 
-    return coroutine( fn ).apply( this, args );
+    if (isGenerator(fn)) {
+        return resolveGenerator(fn);
+    } else if (isGeneratorFunction(fn)) {
+        return coroutine(fn).apply(this, args);
+    } else {
+        var value = fn.apply(this, args);
+        if (isGenerator(value)) {
+            return resolveGenerator(value);
+        } else {
+            throw new Error('Can\'t make a coroutine from: ' + value);
+        }
+    }
 }
 
 var wrap = exports.wrap = coroutine;
@@ -66,22 +74,22 @@ var co = exports.co = execute;
 
 co.wrap = wrap; //Simple alias that makes it like tj/co
 
-function isThenable( obj ) {
+function isThenable(obj) {
     return obj && typeof obj.then === 'function';
 }
 
 var isPromise = exports.isPromise = isThenable;
 
-function isGenerator( obj ) {
+function isGenerator(obj) {
     return 'function' === typeof obj.next && 'function' === typeof obj.throw;
 }
 
-function isGeneratorFunction( obj ) {
+function isGeneratorFunction(obj) {
     var constructor = obj.constructor;
 
-    if( !constructor ) {
+    if (!constructor) {
         return false;
-    } else if( 'GeneratorFunction' === constructor.name || 'GeneratorFunction' === constructor.displayName ) {
+    } else if ('GeneratorFunction' === constructor.name || 'GeneratorFunction' === constructor.displayName) {
         return true;
     } else {
         var prototype = constructor.prototype;
@@ -90,92 +98,90 @@ function isGeneratorFunction( obj ) {
     }
 }
 
-function objectToPromise( obj, constructor ) {
-    var keys = Object.keys( obj );
+function objectToPromise(obj, constructor) {
+    var keys = Object.keys(obj);
     var length = keys.length | 0;
 
     var result = new constructor();
-    var values = new Array( length );
+    var values = new Array(length);
 
     var i = -1;
 
-    while( ++i < length ) {
+    while (++i < length) {
         var key = keys[i];
 
         result[key] = void 0;
 
-        values[i] = toPromise.call( this, obj[key] );
+        values[i] = toPromise.call(this, obj[key]);
     }
 
-    return _bluebird2.default.all( values ).then( function( res ) {
+    return _bluebird2.default.all(values).then(function (res) {
         var i = res.length | 0;
 
-        while( --i >= 0 ) {
+        while (--i >= 0) {
             result[keys[i]] = res[i];
         }
 
         return result;
-    } );
+    });
 }
 
-function resolveGenerator( gen ) {
-    return new _bluebird2.default( function( resolve, reject ) {
-        function next( ret ) {
-            if( ret.done ) {
-                resolve( ret.value );
+function resolveGenerator(gen) {
+    return new _bluebird2.default(function (resolve, reject) {
+        function next(ret) {
+            if (ret.done) {
+                resolve(ret.value);
             } else {
                 var value = ret.value;
 
-                if( isThenable( value ) ) {
-                    value.then( onFulfilled, onRejected );
+                if (isThenable(value)) {
+                    value.then(onFulfilled, onRejected);
 
                     return null;
                 } else {
-                    value = toPromise.call( this, value );
+                    value = toPromise.call(this, value);
 
-                    if( isThenable( value ) ) {
-                        value.then( onFulfilled, onRejected );
+                    if (isThenable(value)) {
+                        value.then(onFulfilled, onRejected);
 
                         return null;
                     } else {
-                        onRejected(
-                            new TypeError( 'You may only yield a function, promise, generator, array, or object, but the following object was passed: "'
-                                           + ret.value + '"' ) );
+                        onRejected(new TypeError('You may only yield a function, promise, generator, array, or object, but the following object was passed: "' + ret.value + '"'));
                     }
                 }
             }
         }
 
-        function onFulfilled( res ) {
+        function onFulfilled(res) {
             try {
-                next( gen.next( res ) );
-            } catch( e ) {
-                reject( e );
+                next(gen.next(res));
+            } catch (e) {
+                reject(e);
             }
 
             return null;
         }
 
-        function onRejected( err ) {
+        function onRejected(err) {
             try {
-                next( gen.throw( err ) );
-            } catch( e ) {
-                reject( e );
+                next(gen.throw(err));
+            } catch (e) {
+                reject(e);
             }
 
             return null;
         }
 
         onFulfilled();
-    } );
+    });
 }
 
-function arrayFromIterable( iter ) {
+function arrayFromIterable(iter) {
     var results = [];
     var ret = iter.next();
 
-    while( !ret.done ) {
-        results.push( ret.value );
+    while (!ret.done) {
+        results.push(ret.value);
 
         ret = iter.next();
     }
@@ -185,26 +191,26 @@ function arrayFromIterable( iter ) {
 
 var arrayFrom = typeof Array.from === 'function' ? Array.from : arrayFromIterable;
 
-function arrayToPromise( value ) {
+function arrayToPromise(value) {
     var length = value.length | 0;
 
-    var results = new Array( length );
+    var results = new Array(length);
 
-    while( --length >= 0 ) {
-        results[length] = toPromise.call( this, value[length] );
+    while (--length >= 0) {
+        results[length] = toPromise.call(this, value[length]);
     }
 
-    return _bluebird2.default.all( results );
+    return _bluebird2.default.all(results);
 }
 
 //This is separated out so it can be optimized independently to the calling function.
-function processThunkArgs( args ) {
+function processThunkArgs(args) {
     var length = args.length | 0;
 
-    if( length >= 3 ) {
-        var res = new Array( --length );
+    if (length >= 3) {
+        var res = new Array(--length);
 
-        for( var i = 0; i < length; ) {
+        for (var i = 0; i < length;) {
             res[i] = args[++i]; //It's a good thing this isn't undefined behavior in JavaScript
         }
 
@@ -214,35 +220,35 @@ function processThunkArgs( args ) {
     return args[1];
 }
 
-function thunkToPromise( value ) {
+function thunkToPromise(value) {
     var _this = this;
 
-    return new _bluebird2.default( function( resolve, reject ) {
+    return new _bluebird2.default(function (resolve, reject) {
         try {
-            value.call( _this, function( err ) {
-                if( err ) {
-                    reject( err );
+            value.call(_this, function (err) {
+                if (err) {
+                    reject(err);
                 } else {
-                    resolve( processThunkArgs( arguments ) );
+                    resolve(processThunkArgs(arguments));
                 }
-            } );
-        } catch( err ) {
-            reject( err );
+            });
+        } catch (err) {
+            reject(err);
         }
-    } );
+    });
 }
 
-function toPromise( value ) {
-    if( typeof value === 'object' && !!value ) {
-        if( typeof value.then === 'function' ) {
+function toPromise(value) {
+    if (typeof value === 'object' && !!value) {
+        if (typeof value.then === 'function') {
             return value;
-        } else if( Array.isArray( value ) ) {
-            return arrayToPromise.call( this, value );
-        } else if( 'function' === typeof value.next ) {
-            if( 'function' === typeof value.throw ) {
-                return resolveGenerator.call( this, value );
+        } else if (Array.isArray(value)) {
+            return arrayToPromise.call(this, value);
+        } else if ('function' === typeof value.next) {
+            if ('function' === typeof value.throw) {
+                return resolveGenerator.call(this, value);
             } else {
-                return arrayToPromise.call( this, arrayFrom( value ) );
+                return arrayToPromise.call(this, arrayFrom(value));
             }
         } else {
             /*
@@ -250,8 +256,8 @@ function toPromise( value ) {
              * created in weird circumstances.
              * */
 
-            var _value$constructor = value.constructor;
-            var constructor = _value$constructor === void 0 ? Object : _value$constructor;
+            var _value$constructor = value.constructor,
+                _constructor = _value$constructor === void 0 ? Object : _value$constructor;
 
             /*
              * This is really annoying, as there is no possible way to determine whether `value` is an instance of
@@ -260,15 +266,15 @@ function toPromise( value ) {
              * consider anything that also inherits from Object as an object.
              * */
 
-            if( constructor === Object || Object.isPrototypeOf( constructor ) ) {
-                return objectToPromise.call( this, value, constructor );
+            if (_constructor === Object || Object.isPrototypeOf(_constructor)) {
+                return objectToPromise.call(this, value, _constructor);
             }
         }
-    } else if( typeof value === 'function' ) {
-        if( isGeneratorFunction( value ) ) {
-            return _bluebird2.default.coroutine( value ).call( this );
+    } else if (typeof value === 'function') {
+        if (isGeneratorFunction(value)) {
+            return _bluebird2.default.coroutine(value).call(this);
         } else {
-            return thunkToPromise.call( this, value );
+            return thunkToPromise.call(this, value);
         }
     }
 
@@ -276,29 +282,23 @@ function toPromise( value ) {
      * Custom yield handlers allow bluebird-co to be extended similarly to bluebird yield handlers, but have the
      * added benefit of working with all the other bluebird-co yield handlers automatically.
      * */
-    for( var _iterator = coroutine.yieldHandlers, _isArray = Array.isArray( _iterator ), _i = 0, _iterator = _isArray ?
-                                                                                                             _iterator :
-                                                                                                             _iterator[Symbol.iterator](); ; ) {
+    for (var _iterator = coroutine.yieldHandlers, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
         var _ref;
 
-        if( _isArray ) {
-            if( _i >= _iterator.length ) {
-                break;
-            }
+        if (_isArray) {
+            if (_i >= _iterator.length) break;
             _ref = _iterator[_i++];
         } else {
             _i = _iterator.next();
-            if( _i.done ) {
-                break;
-            }
+            if (_i.done) break;
             _ref = _i.value;
         }
 
         var handler = _ref;
 
-        var res = handler.call( this, value );
+        var res = handler.call(this, value);
 
-        if( isThenable( res ) ) {
+        if (isThenable(res)) {
             return res;
         }
     }
@@ -306,10 +306,10 @@ function toPromise( value ) {
     return value;
 }
 
-function addYieldHandler( handler ) {
-    if( typeof handler !== 'function' ) {
-        throw new TypeError( 'yield handler is not a function' );
+function addYieldHandler(handler) {
+    if (typeof handler !== 'function') {
+        throw new TypeError('yield handler is not a function');
     } else {
-        coroutine.yieldHandlers.push( handler );
+        coroutine.yieldHandlers.push(handler);
     }
 }
